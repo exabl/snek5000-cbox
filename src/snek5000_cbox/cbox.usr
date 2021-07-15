@@ -1,0 +1,216 @@
+c-----------------------------------------------------------------------
+      subroutine uservp (ix,iy,iz,ieg)
+      include 'SIZE'
+      include 'NEKUSE'          ! UDIFF, UTRANS
+      include 'INPUT'           ! UPARAM
+      include 'TSTEP'           ! TSTEP
+
+c     argument list
+      integer ix, iy, iz, ieg
+
+c     local variables
+      real Pr_,Ra_
+
+c     decide the non dimensionalization of the equations
+      Pr_ = abs(UPARAM(2))
+      Ra_ = abs(UPARAM(3))
+c     set the coefficients
+c     direct problem
+    
+      if (IFIELD.eq.1) then     !     momentum equations
+            UTRANS = 1./Pr_
+            UDIFF  = 1./sqrt(Ra_)
+      elseif (IFIELD.eq.2) then !     temperature equation
+            UTRANS = 1.0
+            UDIFF  = 1./sqrt(Ra_)
+      endif
+     
+      return
+      end
+c-----------------------------------------------------------------------
+      subroutine userf  (ix,iy,iz,ieg)
+      include 'SIZE'
+      include 'NEKUSE'          ! FF[XYZ]
+      include 'PARALLEL'        ! GLLEL
+      include 'SOLN'            ! VTRANS,TP
+      include 'INPUT'           ! IF3D
+      include 'ADJOINT'         ! IFADJ, G_ADJ
+
+c     argument list
+      integer ix,iy,iz,ieg
+      
+c     local variable
+      integer iel
+      real rtmp
+
+c     local element number
+      iel=GLLEL(ieg)
+
+c     forcing, put boussinesq
+      if (IFPERT) then
+      ip=ix+NX1*(iy-1+NY1*(iz-1+NZ1*(iel-1)))
+      rtmp = TP(ip,1,1)/VTRANS(ix,iy,iz,iel,1)
+      else
+      rtmp = T(ix,iy,iz,iel,1)/VTRANS(ix,iy,iz,iel,1)
+      endif
+
+
+      FFX = 0
+      FFY = rtmp
+      if (IF3D) FFZ = 0
+
+      return
+      end
+c---------------------------------------------------------------------
+      subroutine userq  (ix,iy,iz,ieg)
+      include 'SIZE'
+      include 'TOTAL'
+      include 'NEKUSE'
+
+      qvol   = 0.0
+      source = 0.0
+      return
+      end
+c-----------------------------------------------------------------------
+      subroutine userchk
+
+      include 'SIZE'            ! NX1, NY1, NZ1, NELV, NIO
+      include 'INPUT'           ! UPARAM, CPFLD
+      include 'TSTEP'           ! ISTEP, IOSTEP, TIME, LASTEP
+      include 'SOLN'            ! V[XYZ], T, V[XYZ]P, TP, PRP
+      include 'MASS'            ! BM1
+      include 'ADJOINT'         ! IFADJ, G_ADJ, BETA_B, DTD[XYZ]
+
+c     local variables
+      
+      integer n, nit
+      real Pr_,Ra_
+      
+      if (ISTEP.eq.0) then
+        
+         TIME = 0
+         if (IFPERT) then
+            call perturb_fields(ix,iy,iz,ieg)
+         endif          
+c     decide the non dimensionalization of the equations
+         Pr_ = abs(UPARAM(2))
+         Ra_ = abs(UPARAM(3))
+
+c     set fluid properties
+         if (IFADJ) then
+            CPFLD(1,1)=Pr_/sqrt(Ra_)
+            CPFLD(1,2)=1.0
+            
+            CPFLD(2,1)=1.0/sqrt(Ra_)
+            CPFLD(2,2)=1.0
+         else
+            CPFLD(1,1)=1.0/sqrt(Ra_)
+            CPFLD(1,2)=1.0/Pr_
+            
+            CPFLD(2,1)=1.0/sqrt(Ra_)
+            CPFLD(2,2)=1.0
+         endif
+      endif
+
+c     converged field
+      nit = 1000 !dumping frequency
+      if (IFPERT) then
+
+         if (mod(ISTEP,nit).eq.0) then
+c           write perturbation field
+            call outpost2(VXP,VYP,VZP,PRP,TP,1,'prt')
+         endif
+      end if 
+      return  
+      end
+c-----------------------------------------------------------------------
+c-----------------------------------------------------------------------
+      subroutine userbc (ix,iy,iz,iside,ieg)
+      include 'SIZE'
+      include 'TSTEP'
+      include 'INPUT'
+      include 'NEKUSE'
+      common /rayleigh_r/ rapr,ta2pr
+
+      ux=0.
+      uy=0.
+      uz=0.
+
+    !  temp=0.  !     Temp = 0 on top, 1 on bottom
+      if (x.eq.0) then
+         temp=-0.5000
+      elseif (x .eq. 1.0) then
+         temp=0.5000
+      endif
+    !  if (if3d) then
+    !     temp = 1-z
+    !  elseif (ifaxis) then  !      domain is on interval x in [-1,0]
+    !     temp = 1.+x
+    !  else                  ! 2D:  domain is on interval y in [0,1]
+    !     temp = 1.-y
+    !  endif
+
+
+      return
+      end
+c-----------------------------------------------------------------------
+      subroutine useric (ix,iy,iz,ieg)
+      include 'SIZE'
+      include 'TOTAL'
+      include 'NEKUSE'
+
+      temp = 0
+      ux=0.0
+      uy=0.0
+      uz=0.0
+
+      return
+      end
+c ----------------------------------------------------------------------      
+c     This routine to modify element vertices
+      subroutine usrdat
+      include 'SIZE'
+      
+      return
+      end
+c-----------------------------------------------------------------------
+      subroutine usrdat2
+      include 'SIZE'
+
+      return
+      end
+c-----------------------------------------------------------------------
+      subroutine usrdat3
+      return
+      end
+c-----------------------------------------------------------------------
+      subroutine perturb_fields (ix,iy,iz,ieg)
+
+      include 'SIZE'
+      include 'NEKUSE'          ! UX, UY, UZ, TEMP, Z
+      include 'SOLN'            ! V[XYZ], T, V[XYZ]P, TP, PRP
+
+
+
+c     velocity random distribution
+      
+      call random_number(VXP)
+      VXP  = 0.00000001*(2*VXP - 1)
+
+      call random_number(VYP)
+      VYP  = 0.00000001*(4*VYP - 2)
+
+      UZP = 0.0
+      
+c     temperature random distribution
+      call random_number(TP)
+      TP= 0.00000001*(TP - 0.5)
+
+c     pressure random distribution
+      !call random_number(PRP)
+      !PRP= 0.000001*(0.5*PRP - 0.25)
+
+
+
+      return
+      end
