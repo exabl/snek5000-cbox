@@ -44,6 +44,26 @@ class SimulCbox(SimulNek):
         params = super().create_default_params()
         # Re-define default values for parameters here, if necessary
         # following ``cbox.par``, ``cbox.box`` and ``SIZE`` files
+
+        params.oper.dim = 2
+
+        params.oper.Lx = 1
+        params.oper.Ly = 1
+        params.oper.Lz = 1
+
+        params.oper.boundary = ['W', 'W', 'W', 'W']
+        params.oper.boundary_scalars = ['t', 't', 'I', 'I']
+
+        params.nek.temperature.conductivity = 1.
+        params.nek.problemtype.variable_properties = True
+
+        params.oper.elem.order = 9
+        params.oper.elem.order_out = 9
+
+        # params.nek.general.time_stepper = "BDF3"
+
+        params.nek.general.user_params = {2: 0.71, 3: 1.8e8}
+
         return params
 
 
