@@ -1,5 +1,6 @@
 from snek5000.info import InfoSolverMake
 from snek5000.solvers.base import SimulNek
+
 # To use KTH Framework import SimulKTH instead
 # from snek5000.solvers.kth import SimulKTH
 
@@ -19,17 +20,18 @@ class InfoSolverCbox(InfoSolverMake):
         self.classes.Output.module_name = "snek5000_cbox.output"
         self.classes.Output.class_name = "OutputCbox"
 
+        self.par_sections_disabled = ("mesh", "scalar01", "cvode")
+
 
 class SimulCbox(SimulNek):
-    """A solver which compiles and runs using a Snakefile.
+    """A solver which compiles and runs using a Snakefile."""
 
-    """
     InfoSolver = InfoSolverCbox
 
-    @staticmethod
-    def _complete_params_with_default(params):
+    @classmethod
+    def _complete_params_with_default(cls, params):
         """Add missing default parameters."""
-        params = SimulNek._complete_params_with_default(params)
+        params = super()._complete_params_with_default(params)
         # Extend with new default parameters here, for example:
 
         # params.nek.velocity._set_attrib("advection", True)
@@ -51,10 +53,13 @@ class SimulCbox(SimulNek):
         params.oper.Ly = 1
         params.oper.Lz = 1
 
-        params.oper.boundary = ['W', 'W', 'W', 'W']
-        params.oper.boundary_scalars = ['t', 't', 'I', 'I']
+        params.oper.boundary = ["W", "W", "W", "W"]
+        params.oper.boundary_scalars = ["t", "t", "I", "I"]
 
-        params.nek.temperature.conductivity = 1.
+        params.nek.temperature.rho_cp = 1.0
+        params.nek.temperature.conductivity = 1.0
+        params.nek.temperature.residual_tol = 1e-8
+
         params.nek.problemtype.variable_properties = True
 
         params.oper.elem.order = 9
