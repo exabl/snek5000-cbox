@@ -16,4 +16,4 @@ print(sim.path_run)
 
 # sim.make.list()
 
-sim.make.exec(resources={"nproc": 2})
+sim.make.exec(["run_fg"], resources={"nproc": 2})

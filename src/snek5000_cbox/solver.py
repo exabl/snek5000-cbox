@@ -35,6 +35,7 @@ class SimulCbox(SimulNek):
         # Extend with new default parameters here, for example:
 
         # params.nek.velocity._set_attrib("advection", True)
+        params.nek.problemtype._set_attrib("solve_base_flow", True)
         return params
 
     @classmethod
@@ -68,6 +69,7 @@ class SimulCbox(SimulNek):
         # params.nek.general.time_stepper = "BDF3"
 
         params.nek.general.user_params = {2: 0.71, 3: 1.8e8}
+        params.nek.problemtype.equation = 'incompLinNS'
 
         return params
 
