@@ -120,10 +120,13 @@ c     converged field
 c           write perturbation field
             call outpost2(VXP,VYP,VZP,PRP,TP,1,'prt')
          endif
-      end if
+      endif
 
+      nit = 100
 c     history points
-      call hpts()
+      if (mod(ISTEP,nit).eq.0) then
+          call hpts()
+      endif
 
       return
       end
