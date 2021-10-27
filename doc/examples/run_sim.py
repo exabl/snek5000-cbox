@@ -10,6 +10,9 @@ params.oper.nx = 8
 params.oper.ny = 8
 params.oper.nz = 8
 
+params.output.history_points.points = [(0.5, 0.2), (0.5, 0.8)]
+params.oper.max.hist = 2
+
 sim = Simul(params)
 
 print(sim.path_run)
