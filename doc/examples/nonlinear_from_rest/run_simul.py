@@ -1,3 +1,15 @@
+"""
+
+Example of calls:
+
+```
+
+
+```
+
+"""
+
+
 import argparse
 
 from snek5000_cbox.solver import Simul
@@ -15,6 +27,12 @@ parser.add_argument(
     "-Ra", "--Rayleigh", type=float, default=1.0e08, help="Rayleigh number"
 )
 
+parser.add_argument("-nx", type=int, default=8, help="number of x elements")
+parser.add_argument("-ny", type=int, default=8, help="number of y elements")
+parser.add_argument("-nz", type=int, default=8, help="number of z elements")
+parser.add_argument("--order", type=int, default=9, help="order")
+parser.add_argument("--dim", type=int, default=2, help="2d or 3d")
+
 
 def main(args):
 
@@ -25,20 +43,20 @@ def main(args):
     params.oper.Lz = Lx * args.asp_z
 
     params.oper.nproc_min = 2
-    dim = params.oper.dim = 2  # 2D or 3D
+    dim = params.oper.dim = args.dim
 
-    nx = params.oper.nx = 8  # Number of x elements
-    ny = params.oper.ny = 8  # Number of y elements
-    nz = params.oper.nz = 8  # Number of z elements
+    nx = params.oper.nx = args.nx
+    ny = params.oper.ny = args.ny
+    # nz = params.oper.nz = args.nz
 
-    order = params.oper.elem.order = 9
+    order = params.oper.elem.order = args.order
 
-    params.output.sub_directory = f"examples_cbox/{dim}D/NL_sim/asp_{args.A_y:.2f}/mesh{nx*order}_{ny*order}/Ra_{args.Ra}"
+    params.output.sub_directory = f"examples_cbox/{dim}D/NL_sim/asp_{args.asp_y:.2f}/mesh{nx*order}_{ny*order}/Ra_{args.Ra}"
 
     params.nek.general.user_params = {2: args.Pr, 3: args.Ra}
 
     params.nek.general.num_steps = 20000
-    params.nek.general.write_interval = 100  # Dumping frequency
+    params.nek.general.write_interval = 100  # dumping frequency
 
     params.nek.general.dt = 0.005
     params.nek.general.time_stepper = "BDF3"

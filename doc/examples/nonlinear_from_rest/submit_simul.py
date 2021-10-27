@@ -3,12 +3,13 @@ from fluiddyn.clusters.legi import Calcul8 as Cluster
 cluster = Cluster()
 
 cluster.commands_setting_env = [
+    "PROJET_DIR=/fsnet/project/meige/2020/20CONVECTION",
     "source /etc/profile",
-    "source /.fsnet/data/legi/calcul9/home/khoubani8a/useful/project/20CONVECTION/Software/miniconda3/etc/profile.d/conda.sh",
+    "source $PROJET_DIR/Software/miniconda3/etc/profile.d/conda.sh",
     "conda activate",
-    'export NEK_SOURCE_ROOT="/.fsnet/data/legi/calcul9/home/khoubani8a/Documents/Nek5000"',
-    'export PATH="$PATH:$NEK_SOURCE_ROOT/bin"',
-    'export FLUIDSIM_PATH="/.fsnet/project/meige/2020/20CONVECTION/numerical/',
+    "export NEK_SOURCE_ROOT=$HOME/Documents/Nek5000",
+    "export PATH=$PATH:$NEK_SOURCE_ROOT/bin",
+    "export FLUIDSIM_PATH=$PROJET_DIR/numerical/",
 ]
 
 cluster.has_to_add_name_cluster = False
@@ -19,9 +20,8 @@ for Ra_num in Ra_numbs:
 
     cluster.submit_command(
         f"python run_simul.py -Ra {Ra_num} ",
-        name_run="test",
+        name_run=f"test_Ra{Ra_num:.2e}",
         nb_cores_per_node=10,
         omp_num_threads=1,
         ask=False,
-        run_with_exec=True,
     )
