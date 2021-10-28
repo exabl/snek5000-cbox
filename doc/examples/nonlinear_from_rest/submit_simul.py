@@ -18,8 +18,8 @@ Ra_numbs = [1.0e07, 1.0e08]
 
 for Ra_num in Ra_numbs:
 
-    cluster.submit_command(
-        f"python run_simul.py -Ra {Ra_num} ",
+    cluster.submit_script(
+        f"run_simul.py -R {Ra_num}",
         name_run=f"test_Ra{Ra_num:.2e}",
         nb_cores_per_node=10,
         omp_num_threads=1,

@@ -50,10 +50,15 @@ def main(args):
     # nz = params.oper.nz = args.nz
 
     order = params.oper.elem.order = args.order
+    Ra = args.Rayleigh
+    Pr = args.Prandtl
+    A_y = args.asp_y
 
-    params.output.sub_directory = f"examples_cbox/{dim}D/NL_sim/asp_{args.asp_y:.2f}/mesh{nx*order}_{ny*order}/Ra_{args.Ra}"
+    params.output.sub_directory = (
+        f"examples_cbox/{dim}D/NL_sim/asp_{A_y:.2f}/mesh{nx*order}_{ny*order}/Ra_{Ra}"
+    )
 
-    params.nek.general.user_params = {2: args.Pr, 3: args.Ra}
+    params.nek.general.user_params = {2: Pr, 3: Ra}
 
     params.nek.general.num_steps = 20000
     params.nek.general.write_interval = 100  # dumping frequency
@@ -73,3 +78,5 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     params, sim = main(args)
+
+sim.make.exec(["run_fg"])
