@@ -13,29 +13,30 @@ aspect_ratio = 1.
 Pr_num = 0.71  # Prandtl number
 Ra_num = 1.0e08  # Rayleigh number
 
+params.output.sub_directory = "examples_cbox"
+
 params.oper.nproc_min = 2
-params.oper.dim = 2  # 2D or 3D
+params.oper.dim = 2
 
-params.output.sub_directory = f"examples_cbox/{params.oper.dim}D/A_{aspect_ratio:.2f}"
-
-params.oper.nx = 8  # Number of x elements
-params.oper.ny = 8  # Number of y elements
-params.oper.nz = 8  # Number of z elements
-
-params.output.history_points.points = [(0.5, 0.2), (0.5, 0.8)]
-params.oper.max.hist = 3
+# number of elements
+params.oper.nx = 8
+params.oper.ny = 8
+params.oper.nz = 8
 
 Lx = params.oper.Lx = 1.0
-params.oper.Ly = Lx * aspect_ratio  # Y aspect ratio
+params.oper.Ly = Lx * aspect_ratio
+
+params.oper.elem.order = 9
+
+coords = params.output.history_points.coords = [(0.5, 0.2), (0.5, 0.8)]
+params.oper.max.hist = len(coords) + 1
 
 params.nek.general.user_params = {2: Pr_num, 3: Ra_num}
 
-params.oper.elem.order = 9  # Number of points per element
-
 params.nek.general.num_steps = 20000
-params.nek.general.write_interval = 100  # Dumping frequency
+params.nek.general.write_interval = 100
 params.nek.general.dt = 0.005
-params.nek.general.time_stepper = "BDF3"  # Time scheme order
+params.nek.general.time_stepper = "BDF3"
 
 sim = Simul(params)
 
