@@ -19,10 +19,16 @@ from snek5000_cbox.solver import Simul
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument("-a_y", "--aspect-ratio-y", type=float, default=1.0, help="Y aspect ratio")
-parser.add_argument("-a_z", "--aspect-ratio-z", type=float, default=1.0, help="Z aspect ratio")
+parser.add_argument(
+    "-a_y", "--aspect-ratio-y", type=float, default=1.0, help="Y aspect ratio"
+)
+parser.add_argument(
+    "-a_z", "--aspect-ratio-z", type=float, default=1.0, help="Z aspect ratio"
+)
 
-parser.add_argument("-Pr", "--Prandtl", type=float, default=0.71, help="Prandtl number")
+parser.add_argument(
+    "-Pr", "--Prandtl", type=float, default=0.71, help="Prandtl number"
+)
 
 parser.add_argument(
     "-Ra", "--Rayleigh", type=float, default=1.0e08, help="Rayleigh number"
@@ -52,7 +58,10 @@ def main(args):
 
     order = params.oper.elem.order = args.order
 
-    params.output.sub_directory = f"examples_cbox/{dim}D/NL_sim/asp_{args.asp_y:.2f}/mesh{nx*order}_{ny*order}/Ra_{args.Rayleigh}"
+    params.output.sub_directory = (
+        f"examples_cbox/{dim}D/NL_sim/asp_{args.aspect_ratio_y:.2f}"
+        f"/mesh{nx*order}_{ny*order}/Ra_{args.Rayleigh}"
+    )
 
     params.nek.general.user_params = {2: args.Prandtl, 3: args.Rayleigh}
 
@@ -66,7 +75,6 @@ def main(args):
     params.oper.max.hist = 3
 
     sim = Simul(params)
-
     sim.make.exec(["run"])
 
     return params, sim
@@ -74,5 +82,4 @@ def main(args):
 
 if __name__ == "__main__":
     args = parser.parse_args()
-
     params, sim = main(args)
