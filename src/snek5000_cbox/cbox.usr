@@ -69,6 +69,7 @@ c---------------------------------------------------------------------
 
       qvol   = 0.0
       source = 0.0
+      
       return
       end
 c-----------------------------------------------------------------------
@@ -83,11 +84,13 @@ c-----------------------------------------------------------------------
 
 c     local variables
 
-      integer n, nit
+      integer n, nit_pert, nit_hist
       real Pr_,Ra_
 
-      if (ISTEP.eq.0) then
+      nit_pert = UPARAM(4)
+      nit_hist = UPARAM(5)
 
+      if (ISTEP.eq.0) then
          TIME = 0
          if (IFPERT) then
             call perturb_fields(ix,iy,iz,ieg)
@@ -112,25 +115,21 @@ c     set fluid properties
          endif
       endif
 
-c     converged field
-      nit = 1000 !dumping frequency
+c     perturbation field
       if (IFPERT) then
-
-         if (mod(ISTEP,nit).eq.0) then
+         if (mod(ISTEP,nit_pert).eq.0) then
 c           write perturbation field
             call outpost2(VXP,VYP,VZP,PRP,TP,1,'prt')
          endif
       endif
 
-      nit = 100
 c     history points
-      if (mod(ISTEP,nit).eq.0) then
+      if (mod(ISTEP,nit_hist).eq.0) then
           call hpts()
       endif
 
       return
       end
-c-----------------------------------------------------------------------
 c-----------------------------------------------------------------------
       subroutine userbc (ix,iy,iz,iside,ieg)
       include 'SIZE'
@@ -143,20 +142,11 @@ c-----------------------------------------------------------------------
       uy=0.
       uz=0.
 
-    !  temp=0.  !     Temp = 0 on top, 1 on bottom
       if (x.eq.0) then
          temp=-0.5000
       elseif (x .eq. 1.0) then
          temp=0.5000
       endif
-    !  if (if3d) then
-    !     temp = 1-z
-    !  elseif (ifaxis) then  !      domain is on interval x in [-1,0]
-    !     temp = 1.+x
-    !  else                  ! 2D:  domain is on interval y in [0,1]
-    !     temp = 1.-y
-    !  endif
-
 
       return
       end
@@ -188,6 +178,7 @@ c-----------------------------------------------------------------------
       end
 c-----------------------------------------------------------------------
       subroutine usrdat3
+      
       return
       end
 c-----------------------------------------------------------------------
@@ -196,8 +187,6 @@ c-----------------------------------------------------------------------
       include 'SIZE'
       include 'NEKUSE'          ! UX, UY, UZ, TEMP, Z
       include 'SOLN'            ! V[XYZ], T, V[XYZ]P, TP, PRP
-
-
 
 c     velocity random distribution
 
@@ -216,8 +205,6 @@ c     temperature random distribution
 c     pressure random distribution
       !call random_number(PRP)
       !PRP= 0.000001*(0.5*PRP - 0.25)
-
-
 
       return
       end

@@ -7,17 +7,18 @@ use something like: export FLUIDSIM_PATH="/fsnet/project/meige/2020/20CONVECTION
 import numpy as np
 
 from snek5000_cbox.solver import Simul
+
 # from phill.solver import Simul
 
 params = Simul.create_default_params()
 
-aspect_ratio = 1.
+aspect_ratio = 1.0
 Pr = 0.71  # Prandtl number
 
 # for aspect ratio 1, Ra_c = 1.825E08
 Ra = 1.83e08  # Rayleigh number
 
-params.output.sub_directory = "examples_cbox"
+params.output.sub_directory = "cbox"
 
 params.oper.nproc_min = 2
 params.oper.dim = 2
@@ -50,12 +51,15 @@ coords = [(x, y) for x in xs for y in ys]
 params.output.history_points.coords = coords
 params.oper.max.hist = len(coords) + 1
 
-params.nek.general.user_params = {2: Pr, 3: Ra}
-
-params.nek.general.num_steps = 100000
-params.nek.general.write_interval = 1000
+params.nek.general.num_steps = 10000
+params.nek.general.write_interval = 100
 params.nek.general.dt = 0.01
 params.nek.general.time_stepper = "BDF3"
+
+w_pert = write_interval_pert_field = 1000
+w_hist = write_interval_hist_points = 100
+
+params.nek.general.user_params = {2: Pr, 3: Ra, 4: w_pert, 5: w_hist}
 
 sim = Simul(params)
 

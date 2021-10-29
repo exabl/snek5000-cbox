@@ -1,4 +1,14 @@
+import numpy as np
+
 from fluiddyn.clusters.legi import Calcul8 as Cluster
+
+aspect_ratio = 1.0
+nb_elements = 16
+order = 10
+num_steps = 2000000
+dt = 0.005
+
+better_Ra_c_numbers = {1.0: 1.825e8}
 
 cluster = Cluster()
 
@@ -12,20 +22,23 @@ cluster.commands_setting_env = [
     "export FLUIDSIM_PATH=$PROJET_DIR/numerical/",
 ]
 
-cluster.has_to_add_name_cluster = False
+if aspect_ratio in better_Ra_c_numbers:
+    Ra_c_guessed = better_Ra_c_numbers[aspect_ratio]
+else:
+    Ra_c_guessed = 1.93e8 * aspect_ratio ** -3.15
 
-Ra_numbs = [1.0e07, 1.0e08]
-num_elems = [16, 32]
-orders = [10, 14]
+Ra_numbs = np.logspace(np.log10(0.99 * Ra_c_guessed), np.log10(1.02 * Ra_c_guessed), 5)
+
+print(Ra_numbs)
 
 for Ra_num in Ra_numbs:
-    for num_elem in num_elems:
-        for order in orders:
 
-            cluster.submit_script(
-                f"run_simul.py -R {Ra_num} -nx {num_elem} -ny {num_elem} -O {order}",
-                name_run=f"test_Ra{Ra_num:.2e}_msh_{num_elem*order}_{num_elem*order}",
-                nb_cores_per_node=10,
-                omp_num_threads=1,
-                ask=False,
-            )
+    cluster.submit_script(
+        f"run_simul.py -R {Ra_num} -nx {nb_elements} -ny {nb_elements} "
+        f"--order {order} --num-steps {num_steps} --dt {dt} "
+        f"-a_y {aspect_ratio}",
+        name_run=f"asp_{aspect_ratio:.2f}_Ra{Ra_num:.3e}",
+        nb_cores_per_node=10,
+        omp_num_threads=1,
+        ask=False,
+    )
