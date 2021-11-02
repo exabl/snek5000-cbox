@@ -34,7 +34,6 @@ parser.add_argument(
 )
 
 parser.add_argument("-nx", type=int, default=8, help="number of x elements")
-parser.add_argument("-ny", type=int, default=8, help="number of y elements")
 parser.add_argument("-nz", type=int, default=8, help="number of z elements")
 parser.add_argument("--order", type=int, default=9, help="order")
 parser.add_argument("--dim", type=int, default=2, help="2d or 3d")
@@ -57,7 +56,7 @@ def main(args):
     dim = params.oper.dim = args.dim
 
     nx = params.oper.nx = args.nx
-    ny = params.oper.ny = args.ny
+    ny = params.oper.ny = int(nx*args.aspect_ratio_y)
     # nz = params.oper.nz = args.nz
 
     order = params.oper.elem.order = args.order
