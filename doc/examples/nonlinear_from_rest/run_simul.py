@@ -68,8 +68,6 @@ def main(args):
         f"/msh_{nx*order}_{ny*order}/Ra_{args.Rayleigh:.3e}"
     )
 
-    params.nek.general.user_params = {2: args.Prandtl, 3: args.Rayleigh}
-
     params.nek.general.num_steps = args.num_steps
     params.nek.general.write_interval = 1000  # dumping frequency
 
