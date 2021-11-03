@@ -61,6 +61,7 @@ class SimulCbox(SimulNek):
         params.nek.temperature.residual_tol = 1e-8
 
         params.nek.problemtype.variable_properties = True
+        params.nek.problemtype.stress_formulation = True
 
         params.oper.elem.order = 9
         params.oper.elem.order_out = 9
