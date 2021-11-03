@@ -86,6 +86,7 @@ c     local variables
 
       integer n, nit_pert, nit_hist
       real Pr_,Ra_
+      logical :: hist_file_exists
 
       nit_pert = UPARAM(4)
       nit_hist = UPARAM(5)
@@ -126,12 +127,12 @@ c           write perturbation field
       endif
 
 c     history points
-      if (hist_file_exists) then
-         if (mod(ISTEP,nit_hist).eq.0) then
-            call hpts()
-         endif
+      !if (hist_file_exists) then
+      if (mod(ISTEP,nit_hist).eq.0) then
+         call hpts()
       endif
-
+      !endif
+      !write(*,*) hist_file_exists
       return
       end
 c-----------------------------------------------------------------------
@@ -160,14 +161,14 @@ c-----------------------------------------------------------------------
       include 'TOTAL'
       include 'NEKUSE'
 
-      logical :: hist_file_exists
+      !logical :: hist_file_exists
 
       temp = 0
       ux=0.0
       uy=0.0
       uz=0.0
 
-      INQUIRE(FILE="cbox.his", EXIST=hist_file_exists)
+      !INQUIRE(FILE="cbox.his", EXIST=hist_file_exists)
 
       return
       end
