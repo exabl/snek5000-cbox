@@ -69,7 +69,7 @@ c---------------------------------------------------------------------
 
       qvol   = 0.0
       source = 0.0
-      
+
       return
       end
 c-----------------------------------------------------------------------
@@ -87,8 +87,8 @@ c     local variables
       integer n, nit_pert, nit_hist
       real Pr_,Ra_
 
-      nit_pert = UPARAM(4)
-      nit_hist = UPARAM(5)
+      nit_pert = UPARAM(1)
+      nit_hist = UPARAM(2)
 
       if (ISTEP.eq.0) then
          TIME = 0
@@ -96,10 +96,10 @@ c     local variables
          if (IFPERT) then
             call perturb_fields(ix,iy,iz,ieg)
          endif
-         
+
 c     decide the non dimensionalization of the equations
-         Pr_ = abs(UPARAM(2))
-         Ra_ = abs(UPARAM(3))
+         Pr_ = abs(UPARAM(3))
+         Ra_ = abs(UPARAM(4))
 
 c     set fluid properties
          if (IFADJ) then
@@ -180,7 +180,7 @@ c-----------------------------------------------------------------------
       end
 c-----------------------------------------------------------------------
       subroutine usrdat3
-      
+
       return
       end
 c-----------------------------------------------------------------------

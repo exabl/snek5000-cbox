@@ -30,6 +30,8 @@ class SimulCbox(SimulKTH):
     def _complete_params_with_default(cls, params):
         """Add missing default parameters."""
         params = super()._complete_params_with_default(params)
+        params._set_attribs({"prandtl": 0.71, "rayleigh": 1.8e8})
+        params._record_nek_user_params({"prandtl": 3, "rayleigh": 4})
         return params
 
     @classmethod
@@ -60,8 +62,6 @@ class SimulCbox(SimulKTH):
         params.oper.elem.order_out = 9
 
         # params.nek.general.time_stepper = "BDF3"
-
-        params.nek.general.user_params = {2: 0.71, 3: 1.8e8}
 
         return params
 
