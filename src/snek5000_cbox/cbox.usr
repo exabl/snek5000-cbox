@@ -126,8 +126,10 @@ c           write perturbation field
       endif
 
 c     history points
-      if (mod(ISTEP,nit_hist).eq.0) then
-          call hpts()
+      if (hist_file_exists) then
+         if (mod(ISTEP,nit_hist).eq.0) then
+            call hpts()
+         endif
       endif
 
       return
@@ -158,10 +160,14 @@ c-----------------------------------------------------------------------
       include 'TOTAL'
       include 'NEKUSE'
 
+      logical :: hist_file_exists
+
       temp = 0
       ux=0.0
       uy=0.0
       uz=0.0
+
+      INQUIRE(FILE="cbox.his", EXIST=hist_file_exists)
 
       return
       end
