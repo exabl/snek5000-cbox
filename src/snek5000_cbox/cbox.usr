@@ -92,6 +92,10 @@ c     local variables
 
       if (ISTEP.eq.0) then
          TIME = 0
+
+         if (IFPERT) then
+            call perturb_fields(ix,iy,iz,ieg)
+         endif
          
 c     decide the non dimensionalization of the equations
          Pr_ = abs(UPARAM(2))
@@ -153,16 +157,11 @@ c-----------------------------------------------------------------------
       include 'SIZE'
       include 'TOTAL'
       include 'NEKUSE'
-      include 'SOLN'            ! V[XYZ], T, V[XYZ]P, TP, PRP
 
       temp = 0
       ux=0.0
       uy=0.0
       uz=0.0
-
-      if (IFPERT) then
-            call perturb_fields(ix,iy,iz,ieg)
-      endif
 
       return
       end
