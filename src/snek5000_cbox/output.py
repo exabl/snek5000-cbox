@@ -11,11 +11,6 @@ class OutputCbox(OutputBase):
         Sources for inclusion to makefile_usr.inc
         Dict[directory]  -> list of source files
         """
-        # return {}
-
-        # For example this is the list of extra files required for the KTH
-        # Framework:
-
         return {
             "toolbox": [
                 ("frame.f", "FRAMELP"),

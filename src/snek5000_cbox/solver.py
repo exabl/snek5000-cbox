@@ -1,8 +1,6 @@
 from snek5000.info import InfoSolverMake
-from snek5000.solvers.base import SimulNek
 
-# To use KTH Framework import SimulKTH instead
-# from snek5000.solvers.kth import SimulKTH
+from snek5000.solvers.kth import SimulKTH
 
 
 class InfoSolverCbox(InfoSolverMake):
@@ -23,7 +21,7 @@ class InfoSolverCbox(InfoSolverMake):
         self.par_sections_disabled = ("mesh", "scalar01", "cvode")
 
 
-class SimulCbox(SimulNek):
+class SimulCbox(SimulKTH):
     """A solver which compiles and runs using a Snakefile."""
 
     InfoSolver = InfoSolverCbox
@@ -32,9 +30,6 @@ class SimulCbox(SimulNek):
     def _complete_params_with_default(cls, params):
         """Add missing default parameters."""
         params = super()._complete_params_with_default(params)
-        # Extend with new default parameters here, for example:
-
-        # params.nek.velocity._set_attrib("advection", True)
         return params
 
     @classmethod
@@ -44,8 +39,6 @@ class SimulCbox(SimulNek):
 
         """
         params = super().create_default_params()
-        # Re-define default values for parameters here, if necessary
-        # following ``cbox.par``, ``cbox.box`` and ``SIZE`` files
 
         params.oper.dim = 2
 
