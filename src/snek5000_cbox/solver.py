@@ -31,7 +31,7 @@ class SimulCbox(SimulKTH):
         """Add missing default parameters."""
         params = super()._complete_params_with_default(params)
         params._set_attribs({"prandtl": 0.71, "rayleigh": 1.8e8})
-        params._record_nek_user_params({"prandtl": 3, "rayleigh": 4})
+        params._record_nek_user_params({"prandtl": 8, "rayleigh": 9})
         return params
 
     @classmethod

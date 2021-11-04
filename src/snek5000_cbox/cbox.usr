@@ -12,8 +12,8 @@ c     local variables
       real Pr_,Ra_
 
 c     decide the non dimensionalization of the equations
-      Pr_ = abs(UPARAM(3))
-      Ra_ = abs(UPARAM(4))
+      Pr_ = abs(UPARAM(8))
+      Ra_ = abs(UPARAM(9))
 c     set the coefficients
 c     direct problem
 
@@ -98,8 +98,8 @@ c     local variables
          endif
 
 c     decide the non dimensionalization of the equations
-         Pr_ = abs(UPARAM(3))
-         Ra_ = abs(UPARAM(4))
+         Pr_ = abs(UPARAM(8))
+         Ra_ = abs(UPARAM(9))
 
 c     set fluid properties
          if (IFADJ) then
