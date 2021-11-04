@@ -87,8 +87,8 @@ c     local variables
       integer n, nit_pert, nit_hist
       real Pr_,Ra_
 
-      nit_pert = UPARAM(1)
-      nit_hist = UPARAM(2)
+      nit_hist = UPARAM(1)
+      nit_pert = UPARAM(10)
 
       if (ISTEP.eq.0) then
          TIME = 0
