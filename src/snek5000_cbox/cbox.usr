@@ -12,8 +12,8 @@ c     local variables
       real Pr_,Ra_
 
 c     decide the non dimensionalization of the equations
-      Pr_ = abs(UPARAM(2))
-      Ra_ = abs(UPARAM(3))
+      Pr_ = abs(UPARAM(3))
+      Ra_ = abs(UPARAM(4))
 c     set the coefficients
 c     direct problem
 
