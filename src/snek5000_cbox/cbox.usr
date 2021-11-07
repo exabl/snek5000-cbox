@@ -12,8 +12,8 @@ c     local variables
       real Pr_,Ra_
 
 c     decide the non dimensionalization of the equations
-      Pr_ = abs(UPARAM(8))
-      Ra_ = abs(UPARAM(9))
+      Pr_ = abs(UPARAM(1))
+      Ra_ = abs(UPARAM(2))
 c     set the coefficients
 c     direct problem
 
@@ -87,8 +87,8 @@ c     local variables
       integer n, nit_pert, nit_hist
       real Pr_,Ra_
 
-      nit_hist = UPARAM(1)
-      nit_pert = UPARAM(10)
+      nit_hist = UPARAM(10)
+      nit_pert = UPARAM(3)
 
       if (ISTEP.eq.0) then
          TIME = 0
@@ -98,8 +98,8 @@ c     local variables
          endif
 
 c     decide the non dimensionalization of the equations
-         Pr_ = abs(UPARAM(8))
-         Ra_ = abs(UPARAM(9))
+         Pr_ = abs(UPARAM(1))
+         Ra_ = abs(UPARAM(2))
 
 c     set fluid properties
          if (IFADJ) then

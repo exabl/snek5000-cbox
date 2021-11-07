@@ -31,7 +31,7 @@ class SimulCbox(SimulKTH):
         """Add missing default parameters."""
         params = super()._complete_params_with_default(params)
         params._set_attribs({"prandtl": 0.71, "rayleigh": 1.8e8})
-        params._record_nek_user_params({"prandtl": 8, "rayleigh": 9})
+        params._record_nek_user_params({"prandtl": 1, "rayleigh": 2})
         return params
 
     @classmethod
@@ -68,7 +68,7 @@ class SimulCbox(SimulKTH):
             attribs={"write_interval_pert_field": 1000},
         )
         params.output.phys_fields._record_nek_user_params(
-            {"write_interval_pert_field": 10}
+            {"write_interval_pert_field": 3}
         )
 
         return params
