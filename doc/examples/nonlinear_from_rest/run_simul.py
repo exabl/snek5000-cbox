@@ -63,7 +63,7 @@ def main(args):
     params.oper.elem.order_out = order
 
     params.output.sub_directory = (
-        f"cbox/{dim}D/NL_sim/asp_{args.aspect_ratio_y:.2f}"
+        f"cbox2/{dim}D/NL_sim/asp_{args.aspect_ratio_y:.3f}"
         f"/msh_{nx*order}_{ny*order}/Ra_{args.Rayleigh:.3e}"
     )
 
