@@ -71,7 +71,7 @@ def main(args):
     )
 
     params.nek.general.num_steps = args.num_steps
-    params.nek.general.write_interval = 1000  # dumping frequency
+    params.nek.general.write_interval = 1000
 
     params.nek.general.dt = args.dt
     params.nek.general.time_stepper = "BDF3"
