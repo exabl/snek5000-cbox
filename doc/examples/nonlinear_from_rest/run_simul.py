@@ -48,6 +48,9 @@ def main(args):
 
     params = Simul.create_default_params()
 
+    params.prandtl = args.Prandtl
+    params.rayleigh = args.Rayleigh
+
     Lx = params.oper.Lx = 1.0
     Ly = params.oper.Ly = Lx * args.aspect_ratio_y
     params.oper.Lz = Lx * args.aspect_ratio_z
@@ -68,20 +71,13 @@ def main(args):
     )
 
     params.nek.general.num_steps = args.num_steps
-    params.nek.general.write_interval = 1000  # dumping frequency
+    params.nek.general.write_interval = 1000
 
     params.nek.general.dt = args.dt
     params.nek.general.time_stepper = "BDF3"
 
-    w_pert = write_interval_pert_field = 1000
-    w_hist = write_interval_hist_points = 100
-
-    params.nek.general.user_params = {
-        2: args.Prandtl,
-        3: args.Rayleigh,
-        4: w_pert,
-        5: w_hist,
-    }
+    params.output.phys_fields.write_interval_pert_field = 1000
+    params.output.history_points.write_interval = 100
 
     # creation of the coordinates of the points saved by history points
     n1d = 5
@@ -109,4 +105,3 @@ def main(args):
 if __name__ == "__main__":
     args = parser.parse_args()
     params, sim = main(args)
-

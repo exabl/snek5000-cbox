@@ -4,7 +4,6 @@ from snek5000_cbox.templates import box, size, makefile_usr
 
 
 class OutputCbox(OutputBase):
-
     @property
     def makefile_usr_sources(self):
         """
