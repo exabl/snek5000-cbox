@@ -63,9 +63,8 @@ class SimulCbox(SimulKTH):
 
         # params.nek.general.time_stepper = "BDF3"
 
-        params.output._set_child(
-            "phys_fields",
-            attribs={"write_interval_pert_field": 1000},
+        params.output.phys_fields._set_attribs(
+            {"write_interval_pert_field": 1000},
         )
         params.output.phys_fields._record_nek_user_params(
             {"write_interval_pert_field": 3}
