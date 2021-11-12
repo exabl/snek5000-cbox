@@ -61,24 +61,7 @@ def test_simple_simul():
 
     sim = Simul(params)
 
-    sim.make.exec(["run_fg"], resources={"nproc": 2})
-
-    sim = load(sim.path_run)
-    coords, df = sim.output.history_points.load()
-
-    assert coords.ndim == 2 and coords.shape == (n1d ** 2, 2)
-
-    times = df[df.index_points == 0].time
-    t_max = times.max()
-
-    assert t_max == num_steps * params.nek.general.dt
-    assert len(times) == num_steps / params.output.history_points.write_interval + 1
-
-    # check a physical result: since there is no probe close to the center,
-    # the temperature values at the end are > 0.15 and < 0.4
-    temperature_last = df[df.time == t_max].temperature
-    assert temperature_last.abs().max() < 0.4
-    assert temperature_last.abs().min() > 0.15
+    sim.make.list()
 
     # if everything is fine, we can cleanup the directory of the simulation
     rmtree(sim.path_run, ignore_errors=True)
