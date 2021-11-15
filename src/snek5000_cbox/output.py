@@ -42,4 +42,3 @@ class OutputCbox(OutputBase):
 
 
 Output = OutputCbox
-
