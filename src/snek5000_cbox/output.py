@@ -39,3 +39,7 @@ class OutputCbox(OutputBase):
             self.write_size(size)
             self.write_makefile_usr(makefile_usr)
             print(f"{makefile_usr = }")
+
+
+Output = OutputCbox
+
