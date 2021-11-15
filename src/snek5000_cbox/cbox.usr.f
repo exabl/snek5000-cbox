@@ -1,4 +1,4 @@
-!-----------------------------------------------------------------------
+!======================================================================
       subroutine uservp (ix,iy,iz,ieg)
       include 'SIZE'
       include 'NEKUSE'          ! UDIFF, UTRANS
@@ -27,7 +27,7 @@
 
       return
       end
-!-----------------------------------------------------------------------
+!======================================================================
       subroutine userf  (ix,iy,iz,ieg)
       include 'SIZE'
       include 'NEKUSE'          ! FF[XYZ]
@@ -61,7 +61,7 @@
 
       return
       end
-!---------------------------------------------------------------------
+!======================================================================
       subroutine userq  (ix,iy,iz,ieg)
       include 'SIZE'
       include 'TOTAL'
@@ -72,7 +72,7 @@
 
       return
       end
-!-----------------------------------------------------------------------
+!======================================================================
       subroutine userchk
 
       include 'SIZE'            ! NX1, NY1, NZ1, NELV, NIO
@@ -92,7 +92,8 @@
 
       if (ISTEP.eq.0) then
          TIME = 0
-
+!     start framework
+         call frame_start
          if (IFPERT) then
             call perturb_fields(ix,iy,iz,ieg)
          endif
@@ -117,6 +118,15 @@
          endif
       endif
 
+!     monitor simulation
+      call frame_monitor
+!     save/load files for full-restart
+      call chkpt_main
+!     finalise framework
+      if (istep.eq.nsteps.or.lastep.eq.1) then
+         call frame_end
+      endif
+
       ! perturbation field
       if (IFPERT) then
          if (mod(ISTEP,nit_pert).eq.0) then
@@ -132,7 +142,7 @@
 
       return
       end
-!-----------------------------------------------------------------------
+!======================================================================
       subroutine userbc (ix,iy,iz,iside,ieg)
       include 'SIZE'
       include 'TSTEP'
@@ -152,7 +162,7 @@
 
       return
       end
-!-----------------------------------------------------------------------
+!======================================================================
       subroutine useric (ix,iy,iz,ieg)
       include 'SIZE'
       include 'TOTAL'
@@ -165,25 +175,25 @@
 
       return
       end
-!-----------------------------------------------------------------------
+!======================================================================
       ! This routine to modify element vertices
       subroutine usrdat
       include 'SIZE'
 
       return
       end
-!-----------------------------------------------------------------------
+!======================================================================
       subroutine usrdat2
       include 'SIZE'
 
       return
       end
-!-----------------------------------------------------------------------
+!======================================================================
       subroutine usrdat3
 
       return
       end
-!-----------------------------------------------------------------------
+!======================================================================
       subroutine perturb_fields (ix,iy,iz,ieg)
 
       include 'SIZE'
@@ -210,3 +220,33 @@
 
       return
       end
+!======================================================================
+      subroutine frame_usr_register
+      implicit none
+      include 'SIZE'
+      include 'FRAMELP'
+!-----------------------------------------------------------------------
+!     register modules
+      call io_register
+      call chkpt_register
+      return
+      end subroutine
+!======================================================================
+      subroutine frame_usr_init
+      implicit none
+      include 'SIZE'
+      include 'FRAMELP'
+!-----------------------------------------------------------------------
+!     initialise modules
+      call chkpt_init
+      return
+      end subroutine
+!======================================================================
+      subroutine frame_usr_end
+      implicit none
+      include 'SIZE'
+      include 'FRAMELP'
+!-----------------------------------------------------------------------
+      
+      return
+      end subroutine

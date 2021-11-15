@@ -14,7 +14,7 @@ aspect_ratio = 1.0
 params.prandtl = 0.71
 
 # for aspect ratio 1, Ra_c = 1.825e08
-params.rayleigh = 1.83e08
+params.rayleigh = 1.8e08
 
 params.output.sub_directory = "examples_cbox/simple"
 
@@ -48,11 +48,11 @@ coords = [(x, y) for x in xs for y in ys]
 params.output.history_points.coords = coords
 params.oper.max.hist = len(coords) + 1
 
-params.nek.general.end_time = 300
+endtime = params.nek.general.end_time = 1000
 params.nek.general.stop_at = "endTime"
 
 params.nek.general.write_control = "runTime"
-params.nek.general.write_interval = 10.0
+write_interval =params.nek.general.write_interval = 10.0
 
 params.nek.general.variable_dt = True
 params.nek.general.target_cfl = 2.0
@@ -62,7 +62,9 @@ params.nek.general.extrapolation = "OIFS"
 params.output.phys_fields.write_interval_pert_field = 500
 params.output.history_points.write_interval = 10
 
+params.nek.chkpoint.chkp_interval = int(endtime/write_interval)
+
 sim = Simul(params)
 
 # sim.make.exec(["run_fg"])
-sim.make.exec(["run_fg"], resources={"nproc": 2})
+sim.make.exec(["run_fg"], resources={"nproc": 4})
