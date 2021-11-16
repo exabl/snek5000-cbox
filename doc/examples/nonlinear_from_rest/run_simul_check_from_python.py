@@ -10,9 +10,21 @@ However, this has no impact for snek (see
 https://snek5000.readthedocs.io/en/latest/configuring.html#overriding-configuration-with-environment-variable)
 so one needs to modified the host config file.
 
+
+```
+MPIEXEC_FLAGS: "--oversubscribe --report-pid PID.txt"
+```
+
 TODO: We should be able to set sensitivity to environment variables from the
 launching script. Or to directly set environment variables from the function
 `sim.make.exec`.
+
+Example of commands:
+
+```
+python run_simul_check_from_python.py -nx 12 --order 8 -Ra 1.89e08 -np 4
+python run_simul_check_from_python.py -nx 12 --order 10 -Ra 1.89e08 -np 4
+```
 
 """
 
@@ -43,13 +55,17 @@ parser.add_argument(
     "-Ra", "--Rayleigh", type=float, default=1.84e08, help="Rayleigh number"
 )
 
-parser.add_argument("-nx", type=int, default=8, help="number of x elements")
-parser.add_argument("-nz", type=int, default=8, help="number of z elements")
-parser.add_argument("--order", type=int, default=9, help="order")
+parser.add_argument("-nx", type=int, default=12, help="number of x elements")
+parser.add_argument("-nz", type=int, default=12, help="number of z elements")
+parser.add_argument("--order", type=int, default=8, help="order")
 parser.add_argument("--dim", type=int, default=2, help="2d or 3d")
 
-parser.add_argument("--end-time", type=float, default=1000, help="End time")
+parser.add_argument("--end-time", type=float, default=2000, help="End time")
 parser.add_argument("--dt-max", type=float, default=0.1, help="Maximum dt")
+
+parser.add_argument(
+    "-np", "--nb-mpi-procs", type=int, default=2, help="Number of MPI processes"
+)
 
 
 def main(args):
@@ -89,9 +105,9 @@ def main(args):
     params.nek.general.dt = args.dt_max
 
     params.nek.general.variable_dt = True
-    params.nek.general.target_cfl = 0.5
+    params.nek.general.target_cfl = 2.0
     params.nek.general.time_stepper = "BDF3"
-    # params.nek.general.extrapolation = "OIFS"
+    params.nek.general.extrapolation = "OIFS"
 
     params.output.phys_fields.write_interval_pert_field = 1000
     params.output.history_points.write_interval = 10
@@ -114,7 +130,7 @@ def main(args):
     params.oper.max.hist = len(coords) + 1
 
     sim = Simul(params)
-    sim.make.exec("run", resources={"nproc": 2})
+    sim.make.exec("run", resources={"nproc": args.nb_mpi_procs})
 
     return params, sim
 
@@ -125,8 +141,12 @@ if __name__ == "__main__":
 
     pid_file = sim.path_run / "PID.txt"
 
+    n = 0
     while not pid_file.exists():
         sleep(1)
+        n += 1
+        if n > 20:
+            raise RuntimeError(f"{pid_file} does not exist.")
 
     with open(pid_file) as file:
         pid = int(file.read().strip())
@@ -147,14 +167,21 @@ if __name__ == "__main__":
         temperature = probe.temperature
         times = probe.time
 
+        duration_avg = 50.0
+
         temp0_std = np.std(
-            temperature[(t_last - 100 < times) & (times < t_last - 50)]
+            temperature[
+                (t_last - 2 * duration_avg < times)
+                & (times < t_last - duration_avg)
+            ]
         )
-        temp1_std = np.std(temperature[(t_last - 50 < times) & (times < t_last)])
+        temp1_std = np.std(
+            temperature[(t_last - duration_avg < times) & (times < t_last)]
+        )
 
         print(
-            f"{t_last = }, {abs(temp0_std - temp1_std) / temp0_std = },"
-            f" {temp1_std = }"
+            f"{t_last = }, {abs(temp0_std - temp1_std) / temp0_std = :.3f},"
+            f" {temp1_std = :.3g}"
         )
 
         if abs(temp0_std - temp1_std) / temp0_std < 0.2 and temp1_std > 0.01:
