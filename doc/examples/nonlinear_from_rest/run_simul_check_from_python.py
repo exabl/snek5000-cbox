@@ -31,6 +31,7 @@ import argparse
 from time import sleep
 import os
 import signal
+from time import perf_counter
 
 import numpy as np
 
@@ -164,7 +165,11 @@ if __name__ == "__main__":
     while check_running():
         sleep(10)
         # TODO: make this call faster even for large .his file
+        # see https://github.com/exabl/snek5000/issues/108
+        # and https://github.com/exabl/snek5000/tree/faster-history-points-load
+        t0 = perf_counter()
         coords, df = sim.output.history_points.load()
+        print(f"history_points loaded in {perf_counter() - t0:.2f} s")
         probe = df[df.index_points == 5]
         t_last = probe.time.max()
 
