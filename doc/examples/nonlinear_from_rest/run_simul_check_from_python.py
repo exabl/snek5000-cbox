@@ -8,8 +8,8 @@ export MPIEXEC="mpirun --oversubscribe --report-pid PID.txt"
 
 However, this has no impact for snek (see
 https://snek5000.readthedocs.io/en/latest/configuring.html#overriding-configuration-with-environment-variable)
-so one needs to modified the host config file.
-
+so one needs to create a config file `$HOME/.config/snek5000.yml` (copy the
+default config file) and modify it as follow:
 
 ```
 MPIEXEC_FLAGS: "--oversubscribe --report-pid PID.txt"
@@ -22,7 +22,6 @@ launching script. Or to directly set environment variables from the function
 Example of commands:
 
 ```
-python run_simul_check_from_python.py -nx 12 --order 8 -Ra 1.89e08 -np 4
 python run_simul_check_from_python.py -nx 12 --order 10 -Ra 1.89e08 -np 4
 ```
 
@@ -153,15 +152,23 @@ if __name__ == "__main__":
 
     print(f"{pid = }")
 
-    t_last = 0.0
-    while t_last < params.nek.general.end_time:
+    def check_running():
+        """ Check For the existence of a unix pid. """
+        try:
+            os.kill(pid, 0)
+        except OSError:
+            return False
+        else:
+            return True
+
+    while check_running():
         sleep(10)
         # TODO: make this call faster even for large .his file
         coords, df = sim.output.history_points.load()
         probe = df[df.index_points == 5]
         t_last = probe.time.max()
 
-        if t_last < 250:
+        if t_last < 200:
             continue
 
         temperature = probe.temperature
