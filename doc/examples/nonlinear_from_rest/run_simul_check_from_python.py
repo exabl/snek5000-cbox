@@ -47,24 +47,22 @@ parser.add_argument(
     "-a_z", "--aspect-ratio-z", type=float, default=1.0, help="Z aspect ratio"
 )
 
-parser.add_argument(
-    "-Pr", "--Prandtl", type=float, default=0.71, help="Prandtl number"
-)
+parser.add_argument("-Pr", "--Prandtl", type=float, default=0.71, help="Prandtl number")
 
 parser.add_argument(
-    "-Ra", "--Rayleigh", type=float, default=1.84e08, help="Rayleigh number"
+    "-Ra", "--Rayleigh", type=float, default=1.89e08, help="Rayleigh number"
 )
 
 parser.add_argument("-nx", type=int, default=12, help="number of x elements")
 parser.add_argument("-nz", type=int, default=12, help="number of z elements")
-parser.add_argument("--order", type=int, default=8, help="order")
+parser.add_argument("--order", type=int, default=10, help="order")
 parser.add_argument("--dim", type=int, default=2, help="2d or 3d")
 
 parser.add_argument("--end-time", type=float, default=4000, help="End time")
 parser.add_argument("--dt-max", type=float, default=0.1, help="Maximum dt")
 
 parser.add_argument(
-    "-np", "--nb-mpi-procs", type=int, default=2, help="Number of MPI processes"
+    "-np", "--nb-mpi-procs", type=int, default=4, help="Number of MPI processes"
 )
 
 
@@ -89,12 +87,8 @@ def main(args):
     order = params.oper.elem.order = args.order
     params.oper.elem.order_out = order
 
-    params.output.sub_directory = (
-        f"cbox/{dim}D/NL_sim/asp_{args.aspect_ratio_y:.2f}"
-    )
-    params.short_name_type_run = (
-        f"msh_{nx*order}_{ny*order}_Ra_{args.Rayleigh:.3e}"
-    )
+    params.output.sub_directory = f"cbox/{dim}D/NL_sim/asp_{args.aspect_ratio_y:.2f}"
+    params.short_name_type_run = f"msh_{nx*order}_{ny*order}_Ra_{args.Rayleigh:.3e}"
 
     params.nek.general.end_time = args.end_time
     params.nek.general.stop_at = "endTime"
@@ -174,7 +168,7 @@ if __name__ == "__main__":
         print(f"history_points loaded in {perf_counter() - t0:.2f} s")
         t_last = df.time.max()
 
-        if t_last < 200:
+        if t_last < 300:
             continue
 
         temperature = df.temperature
@@ -184,8 +178,7 @@ if __name__ == "__main__":
 
         temp0_std = np.std(
             temperature[
-                (t_last - 2 * duration_avg < times)
-                & (times < t_last - duration_avg)
+                (t_last - 2 * duration_avg < times) & (times < t_last - duration_avg)
             ]
         )
         temp1_std = np.std(
