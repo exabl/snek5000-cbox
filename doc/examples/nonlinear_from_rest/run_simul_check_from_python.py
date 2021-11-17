@@ -32,8 +32,11 @@ from time import sleep
 import os
 import signal
 from time import perf_counter
+import builtins
 
 import numpy as np
+
+from fluiddyn.util import time_as_str
 
 from snek5000_cbox.solver import Simul
 
@@ -47,7 +50,9 @@ parser.add_argument(
     "-a_z", "--aspect-ratio-z", type=float, default=1.0, help="Z aspect ratio"
 )
 
-parser.add_argument("-Pr", "--Prandtl", type=float, default=0.71, help="Prandtl number")
+parser.add_argument(
+    "-Pr", "--Prandtl", type=float, default=0.71, help="Prandtl number"
+)
 
 parser.add_argument(
     "-Ra", "--Rayleigh", type=float, default=1.89e08, help="Rayleigh number"
@@ -87,8 +92,12 @@ def main(args):
     order = params.oper.elem.order = args.order
     params.oper.elem.order_out = order
 
-    params.output.sub_directory = f"cbox/{dim}D/NL_sim/asp_{args.aspect_ratio_y:.2f}"
-    params.short_name_type_run = f"msh_{nx*order}_{ny*order}_Ra_{args.Rayleigh:.3e}"
+    params.output.sub_directory = (
+        f"cbox/{dim}D/NL_sim/asp_{args.aspect_ratio_y:.2f}"
+    )
+    params.short_name_type_run = (
+        f"msh_{nx*order}_{ny*order}_Ra_{args.Rayleigh:.3e}"
+    )
 
     params.nek.general.end_time = args.end_time
     params.nek.general.stop_at = "endTime"
@@ -145,6 +154,13 @@ if __name__ == "__main__":
     with open(pid_file) as file:
         pid = int(file.read().strip())
 
+    path_log_py = sim.path_run / f"log_py_{time_as_str()}.txt"
+
+    def print(*args, sep=" ", end="\n", **kwargs):
+        builtins.print(*args, **kwargs)
+        with open(path_log_py, "a") as file:
+            file.write(sep.join(str(arg) for arg in args) + end)
+
     print(f"{pid = }")
 
     def check_running():
@@ -165,8 +181,11 @@ if __name__ == "__main__":
         coords, df = sim.output.history_points.load_1point(
             index_point=5, key="temperature"
         )
-        print(f"history_points loaded in {perf_counter() - t0:.2f} s")
         t_last = df.time.max()
+        print(
+            f"{time_as_str()}, {t_last = :.2f}: "
+            f"history_points loaded in {perf_counter() - t0:.2f} s"
+        )
 
         if t_last < 300:
             continue
@@ -178,7 +197,8 @@ if __name__ == "__main__":
 
         temp0_std = np.std(
             temperature[
-                (t_last - 2 * duration_avg < times) & (times < t_last - duration_avg)
+                (t_last - 2 * duration_avg < times)
+                & (times < t_last - duration_avg)
             ]
         )
         temp1_std = np.std(
@@ -186,7 +206,7 @@ if __name__ == "__main__":
         )
 
         print(
-            f"{t_last = }, {abs(temp0_std - temp1_std) / temp0_std = :.3f},"
+            f"  {abs(temp0_std - temp1_std) / temp0_std = :.3f},"
             f" {temp1_std = :.3g}"
         )
 

@@ -25,6 +25,10 @@ cluster.commands_setting_env = [
 
 for aspect_ratio in aspect_ratios:
 
+    nb_elements_y = int(nb_elements * aspect_ratio)
+    if nb_elements * aspect_ratio - nb_elements_y:
+        raise ValueError
+
     Ra_c_test = Ra_c_tests[aspect_ratio]
 
     cluster.submit_script(
@@ -32,7 +36,7 @@ for aspect_ratio in aspect_ratios:
         f"--order {order} --end-time {end_time} -np {nb_procs} "
         f"-a_y {aspect_ratio}",
         name_run=f"asp_{aspect_ratio:.2f}_Ra_{Ra_c_test:.3e}_msh_"
-        f"{nb_elements*order}_{int(nb_elements*aspect_ratio*order)}",
+        f"{nb_elements*order}_{int(nb_elements*aspect_ratio)*order}",
         nb_cores_per_node=nb_procs,
         omp_num_threads=1,
         ask=False,
