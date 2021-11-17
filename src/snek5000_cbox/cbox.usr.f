@@ -61,7 +61,7 @@
 
       return
       end
-!---------------------------------------------------------------------
+!-----------------------------------------------------------------------
       subroutine userq  (ix,iy,iz,ieg)
       include 'SIZE'
       include 'TOTAL'
@@ -92,7 +92,8 @@
 
       if (ISTEP.eq.0) then
          TIME = 0
-
+!     start framework
+         call frame_start
          if (IFPERT) then
             call perturb_fields(ix,iy,iz,ieg)
          endif
@@ -115,6 +116,15 @@
             CPFLD(2,1)=1.0/sqrt(Ra_)
             CPFLD(2,2)=1.0
          endif
+      endif
+
+!     monitor simulation
+      call frame_monitor
+!     save/load files for full-restart
+      call chkpt_main
+!     finalise framework
+      if (istep.eq.nsteps.or.lastep.eq.1) then
+         call frame_end
       endif
 
       ! perturbation field
@@ -210,3 +220,34 @@
 
       return
       end
+!-----------------------------------------------------------------------
+      subroutine frame_usr_register
+      implicit none
+      include 'SIZE'
+      include 'FRAMELP'
+
+!     register modules
+      call io_register
+      call chkpt_register
+
+      return
+      end subroutine
+!-----------------------------------------------------------------------
+      subroutine frame_usr_init
+      implicit none
+      include 'SIZE'
+      include 'FRAMELP'
+
+!     initialise modules
+      call chkpt_init
+
+      return
+      end subroutine
+!-----------------------------------------------------------------------
+      subroutine frame_usr_end
+      implicit none
+      include 'SIZE'
+      include 'FRAMELP'
+      
+      return
+      end subroutine
