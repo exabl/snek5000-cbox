@@ -96,7 +96,7 @@ def main(args):
         f"cbox/{dim}D/NL_sim/asp_{args.aspect_ratio_y:.2f}"
     )
     params.short_name_type_run = (
-        f"msh_{nx*order}_{ny*order}_Ra_{args.Rayleigh:.3e}"
+        f"Ra{args.Rayleigh:.3e}_{nx*order}x{ny*order}"
     )
 
     params.nek.general.end_time = args.end_time
