@@ -60,7 +60,7 @@ parser.add_argument("-nz", type=int, default=12, help="number of z elements")
 parser.add_argument("--order", type=int, default=8, help="order")
 parser.add_argument("--dim", type=int, default=2, help="2d or 3d")
 
-parser.add_argument("--end-time", type=float, default=2000, help="End time")
+parser.add_argument("--end-time", type=float, default=4000, help="End time")
 parser.add_argument("--dt-max", type=float, default=0.1, help="Maximum dt")
 
 parser.add_argument(
@@ -154,7 +154,7 @@ if __name__ == "__main__":
     print(f"{pid = }")
 
     def check_running():
-        """ Check For the existence of a unix pid. """
+        """Check For the existence of a unix pid."""
         try:
             os.kill(pid, 0)
         except OSError:
@@ -168,16 +168,17 @@ if __name__ == "__main__":
         # see https://github.com/exabl/snek5000/issues/108
         # and https://github.com/exabl/snek5000/tree/faster-history-points-load
         t0 = perf_counter()
-        coords, df = sim.output.history_points.load()
+        coords, df = sim.output.history_points.load_1point(
+            index_point=5, key="temperature"
+        )
         print(f"history_points loaded in {perf_counter() - t0:.2f} s")
-        probe = df[df.index_points == 5]
-        t_last = probe.time.max()
+        t_last = df.time.max()
 
         if t_last < 200:
             continue
 
-        temperature = probe.temperature
-        times = probe.time
+        temperature = df.temperature
+        times = df.time
 
         duration_avg = 50.0
 
