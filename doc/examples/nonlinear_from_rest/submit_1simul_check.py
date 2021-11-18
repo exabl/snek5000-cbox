@@ -4,8 +4,8 @@ from fluiddyn.clusters.legi import Calcul8 as Cluster
 
 from critical_Ra import Ra_c as Ra_c_tests
 
-aspect_ratio = 0.875
-nx = 16
+aspect_ratio = 1.25
+nx = 12
 order = 10
 end_time = 4000
 nb_procs = 10
