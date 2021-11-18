@@ -187,13 +187,13 @@ if __name__ == "__main__":
             f"history_points loaded in {perf_counter() - t0:.2f} s"
         )
 
-        if t_last < 300:
+        if t_last < 500:
             continue
 
         temperature = df.temperature
         times = df.time
 
-        duration_avg = 50.0
+        duration_avg = 200.0
 
         temp0_std = np.std(
             temperature[
@@ -209,8 +209,16 @@ if __name__ == "__main__":
             f"  {abs(temp0_std - temp1_std) / temp0_std = :.3f},"
             f" {temp1_std = :.3g}"
         )
+        if temp1_std < 1.0e-14:
+            print(
+                f"Steady state (stable) detected at t = {t_last}\n"
+                "Terminate simulation."
+            )
 
-        if abs(temp0_std - temp1_std) / temp0_std < 0.2 and temp1_std > 0.01:
+            os.kill(pid, signal.SIGTERM)
+            break
+        
+        if abs(temp0_std - temp1_std) / temp0_std < 0.2 and temp1_std > 0.002:
             print(
                 f"Saturation of the instability detected at t = {t_last}\n"
                 "Terminate simulation."
