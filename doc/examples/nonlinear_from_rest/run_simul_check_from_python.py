@@ -90,7 +90,7 @@ def main(args):
     order = params.oper.elem.order = args.order
     params.oper.elem.order_out = order
 
-    params.output.sub_directory = f"cbox/{dim}D/NL_sim/asp_{args.aspect_ratio_y:.3f}"
+    params.output.sub_directory = f"cbox_check/{dim}D/NL_sim/asp_{args.aspect_ratio_y:.3f}"
     params.short_name_type_run = f"asp{args.aspect_ratio_y:.3f}_Ra{args.Rayleigh:.3e}"
 
     params.nek.general.end_time = args.end_time
