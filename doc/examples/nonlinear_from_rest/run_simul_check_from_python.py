@@ -50,9 +50,7 @@ parser.add_argument(
     "-a_z", "--aspect-ratio-z", type=float, default=1.0, help="Z aspect ratio"
 )
 
-parser.add_argument(
-    "-Pr", "--Prandtl", type=float, default=0.71, help="Prandtl number"
-)
+parser.add_argument("-Pr", "--Prandtl", type=float, default=0.71, help="Prandtl number")
 
 parser.add_argument(
     "-Ra", "--Rayleigh", type=float, default=1.89e08, help="Rayleigh number"
@@ -92,12 +90,8 @@ def main(args):
     order = params.oper.elem.order = args.order
     params.oper.elem.order_out = order
 
-    params.output.sub_directory = (
-        f"cbox/{dim}D/NL_sim/asp_{args.aspect_ratio_y:.2f}"
-    )
-    params.short_name_type_run = (
-        f"Ra{args.Rayleigh:.3e}_{nx*order}x{ny*order}"
-    )
+    params.output.sub_directory = f"cbox_check/{dim}D/NL_sim/asp_{args.aspect_ratio_y:.3f}"
+    params.short_name_type_run = f"asp{args.aspect_ratio_y:.3f}_Ra{args.Rayleigh:.3e}"
 
     params.nek.general.end_time = args.end_time
     params.nek.general.stop_at = "endTime"
@@ -187,18 +181,17 @@ if __name__ == "__main__":
             f"history_points loaded in {perf_counter() - t0:.2f} s"
         )
 
-        if t_last < 300:
+        if t_last < 800:
             continue
 
         temperature = df.temperature
         times = df.time
 
-        duration_avg = 50.0
+        duration_avg = 200.0
 
         temp0_std = np.std(
             temperature[
-                (t_last - 2 * duration_avg < times)
-                & (times < t_last - duration_avg)
+                (t_last - 2 * duration_avg < times) & (times < t_last - duration_avg)
             ]
         )
         temp1_std = np.std(
@@ -206,11 +199,18 @@ if __name__ == "__main__":
         )
 
         print(
-            f"  {abs(temp0_std - temp1_std) / temp0_std = :.3f},"
-            f" {temp1_std = :.3g}"
+            f"  {abs(temp0_std - temp1_std) / temp0_std = :.3f}, {temp1_std = :.3g}"
         )
+        if temp1_std < 1.0e-14:
+            print(
+                f"Steady state (stable) detected at t = {t_last}\n"
+                "Terminate simulation."
+            )
 
-        if abs(temp0_std - temp1_std) / temp0_std < 0.2 and temp1_std > 0.01:
+            os.kill(pid, signal.SIGTERM)
+            break
+
+        if abs(temp0_std - temp1_std) / temp0_std < 0.2 and temp1_std > 0.0004:
             print(
                 f"Saturation of the instability detected at t = {t_last}\n"
                 "Terminate simulation."

@@ -1,14 +1,14 @@
 from time import sleep
 
-from fluiddyn.clusters.legi import Calcul8 as Cluster
+import numpy as np
 
-aspect_ratios = [0.875, 1.0]
-nb_elements = 16
+from fluiddyn.clusters.legi import Calcul8 as Cluster
+from critical_Ra import Ra_c as Ra_c_tests
+
+nx = 16
 order = 10
 end_time = 4000
 nb_procs = 10
-
-Ra_c_tests = {0.875: 2.855e8, 1.0: 1.875e8}
 
 cluster = Cluster()
 
@@ -23,23 +23,31 @@ cluster.commands_setting_env = [
 ]
 
 
-for aspect_ratio in aspect_ratios:
+for aspect_ratio, Ra_c_test in Ra_c_tests.items():
 
-    nb_elements_y = int(nb_elements * aspect_ratio)
-    if nb_elements * aspect_ratio - nb_elements_y:
-        raise ValueError
+    ny = int(nx * aspect_ratio)
+    if nx * aspect_ratio - ny:
+        continue
 
-    Ra_c_test = Ra_c_tests[aspect_ratio]
+    Ra_numbers = np.logspace(np.log10(Ra_c_test), np.log10(1.04 * Ra_c_test), 4)
 
-    cluster.submit_script(
-        f"run_simul_check_from_python.py -R {Ra_c_test} -nx {nb_elements} "
-        f"--order {order} --end-time {end_time} -np {nb_procs} "
-        f"-a_y {aspect_ratio}",
-        name_run=f"asp_{aspect_ratio:.2f}_Ra_{Ra_c_test:.3e}_msh_"
-        f"{nb_elements*order}_{int(nb_elements*aspect_ratio)*order}",
-        nb_cores_per_node=nb_procs,
-        omp_num_threads=1,
-        ask=False,
-    )
+    for Ra in Ra_numbers:
 
-    sleep(2)
+        command = (
+            f"run_simul_check_from_python.py -R {Ra} -nx {nx} "
+            f"--order {order} --end-time {end_time} -np {nb_procs} "
+            f"-a_y {aspect_ratio}"
+        )
+
+        print(command)
+
+        cluster.submit_script(
+            command,
+            name_run=f"asp_{aspect_ratio:.3f}_Ra_{Ra:.3e}_msh_"
+            f"{nx*order}_{round(nx*aspect_ratio)*order}",
+            nb_cores_per_node=nb_procs,
+            omp_num_threads=1,
+            ask=False,
+        )
+
+        sleep(2)
