@@ -84,7 +84,7 @@ def main(args):
     dim = params.oper.dim = args.dim
 
     nx = params.oper.nx = args.nx
-    ny = params.oper.ny = int(nx * args.aspect_ratio_y)
+    params.oper.ny = int(nx * args.aspect_ratio_y)
     # nz = params.oper.nz = args.nz
 
     order = params.oper.elem.order = args.order
@@ -127,6 +127,9 @@ def main(args):
     params.oper.max.hist = len(coords) + 1
 
     sim = Simul(params)
+    # the target "compile" is blocking
+    sim.make.exec("compile")
+    # non-blocking
     sim.make.exec("run", resources={"nproc": args.nb_mpi_procs})
 
     return params, sim
@@ -142,7 +145,7 @@ if __name__ == "__main__":
     while not pid_file.exists():
         sleep(1)
         n += 1
-        if n > 20:
+        if n > 30:
             raise RuntimeError(f"{pid_file} does not exist.")
 
     with open(pid_file) as file:
