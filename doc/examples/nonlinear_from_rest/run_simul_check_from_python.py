@@ -1,24 +1,5 @@
 """
 
-One has to change the environment variable:
-
-```
-export MPIEXEC="mpirun --oversubscribe --report-pid PID.txt"
-```
-
-However, this has no impact for snek (see
-https://snek5000.readthedocs.io/en/latest/configuring.html#overriding-configuration-with-environment-variable)
-so one needs to create a config file `$HOME/.config/snek5000.yml` (copy the
-default config file) and modify it as follow:
-
-```
-MPIEXEC_FLAGS: "--oversubscribe --report-pid PID.txt"
-```
-
-TODO: We should be able to set sensitivity to environment variables from the
-launching script. Or to directly set environment variables from the function
-`sim.make.exec`.
-
 Example of commands:
 
 ```
@@ -50,7 +31,9 @@ parser.add_argument(
     "-a_z", "--aspect-ratio-z", type=float, default=1.0, help="Z aspect ratio"
 )
 
-parser.add_argument("-Pr", "--Prandtl", type=float, default=0.71, help="Prandtl number")
+parser.add_argument(
+    "-Pr", "--Prandtl", type=float, default=0.71, help="Prandtl number"
+)
 
 parser.add_argument(
     "-Ra", "--Rayleigh", type=float, default=1.89e08, help="Rayleigh number"
@@ -90,8 +73,12 @@ def main(args):
     order = params.oper.elem.order = args.order
     params.oper.elem.order_out = order
 
-    params.output.sub_directory = f"cbox_check/{dim}D/NL_sim/asp_{args.aspect_ratio_y:.3f}"
-    params.short_name_type_run = f"asp{args.aspect_ratio_y:.3f}_Ra{args.Rayleigh:.3e}"
+    params.output.sub_directory = (
+        f"cbox_check/{dim}D/NL_sim/asp_{args.aspect_ratio_y:.3f}"
+    )
+    params.short_name_type_run = (
+        f"asp{args.aspect_ratio_y:.3f}_Ra{args.Rayleigh:.3e}"
+    )
 
     params.nek.general.end_time = args.end_time
     params.nek.general.stop_at = "endTime"
@@ -127,11 +114,11 @@ def main(args):
     params.oper.max.hist = len(coords) + 1
 
     sim = Simul(params)
-    # the target "compile" is blocking
-    sim.make.exec("compile")
-    # non-blocking
-    sim.make.exec("run", resources={"nproc": args.nb_mpi_procs})
+    sim.output.write_snakemake_config(
+        custom_env_vars={"MPIEXEC_FLAGS": "--report-pid PID.txt"}
+    )
 
+    sim.make.exec("run", resources={"nproc": args.nb_mpi_procs})
     return params, sim
 
 
@@ -145,7 +132,7 @@ if __name__ == "__main__":
     while not pid_file.exists():
         sleep(1)
         n += 1
-        if n > 30:
+        if n > 60:
             raise RuntimeError(f"{pid_file} does not exist.")
 
     with open(pid_file) as file:
@@ -194,7 +181,8 @@ if __name__ == "__main__":
 
         temp0_std = np.std(
             temperature[
-                (t_last - 2 * duration_avg < times) & (times < t_last - duration_avg)
+                (t_last - 2 * duration_avg < times)
+                & (times < t_last - duration_avg)
             ]
         )
         temp1_std = np.std(
