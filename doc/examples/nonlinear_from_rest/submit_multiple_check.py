@@ -7,7 +7,9 @@ from critical_Ra import Ra_c as Ra_c_tests
 
 nx = 16
 order = 10
-end_time = 4000
+# end_time = 4000
+num_steps = 4000000
+dt_max = 0.005
 nb_procs = 10
 
 cluster = Cluster()
@@ -30,13 +32,13 @@ for aspect_ratio, Ra_c_test in Ra_c_tests.items():
         continue
 
     Ra_numbers = np.logspace(np.log10(Ra_c_test), np.log10(1.04 * Ra_c_test), 4)
-
+    # Ra_numbers = Ra_numbers[:2]
     for Ra in Ra_numbers:
 
         command = (
             f"run_simul_check_from_python.py -R {Ra} -nx {nx} "
-            f"--order {order} --end-time {end_time} -np {nb_procs} "
-            f"-a_y {aspect_ratio}"
+            f"--order {order} --dt-max {dt_max} --num-steps {num_steps} "
+            f"-np {nb_procs} -a_y {aspect_ratio}"
         )
 
         print(command)
@@ -50,4 +52,4 @@ for aspect_ratio, Ra_c_test in Ra_c_tests.items():
             ask=False,
         )
 
-        sleep(2)
+        # sleep(2)

@@ -27,9 +27,7 @@ parser.add_argument(
     "-a_z", "--aspect-ratio-z", type=float, default=1.0, help="Z aspect ratio"
 )
 
-parser.add_argument(
-    "-Pr", "--Prandtl", type=float, default=0.71, help="Prandtl number"
-)
+parser.add_argument("-Pr", "--Prandtl", type=float, default=0.71, help="Prandtl number")
 
 parser.add_argument(
     "-Ra", "--Rayleigh", type=float, default=1.0e08, help="Rayleigh number"
@@ -43,7 +41,11 @@ parser.add_argument("--dim", type=int, default=2, help="2d or 3d")
 parser.add_argument(
     "--num-steps", type=int, default=2000000, help="number of time steps"
 )
-parser.add_argument("--dt", type=float, default=0.005, help="time step")
+parser.add_argument("--dt-max", type=float, default=0.1, help="Maximum dt")
+
+parser.add_argument(
+    "-np", "--nb-mpi-procs", type=int, default=4, help="Number of MPI processes"
+)
 
 
 def main(args):
@@ -68,14 +70,14 @@ def main(args):
     params.oper.elem.order_out = order
 
     params.output.sub_directory = (
-        f"cbox/{dim}D/NL_sim/asp_{args.aspect_ratio_y:.2f}"
-        f"/msh_{nx*order}_{ny*order}/Ra_{args.Rayleigh:.3e}"
+        f"cbox_without_stop/{dim}D/NL_sim/asp_{args.aspect_ratio_y:.3f}"
     )
+    params.short_name_type_run = f"asp{args.aspect_ratio_y:.3f}_Ra{args.Rayleigh:.3e}"
 
     params.nek.general.num_steps = args.num_steps
     params.nek.general.write_interval = 1000
 
-    params.nek.general.dt = args.dt
+    params.nek.general.dt = args.dt_max
     params.nek.general.time_stepper = "BDF3"
 
     params.output.phys_fields.write_interval_pert_field = 1000
@@ -99,7 +101,7 @@ def main(args):
     params.oper.max.hist = len(coords) + 1
 
     sim = Simul(params)
-    sim.make.exec("run_fg")
+    sim.make.exec("run", resources={"nproc": args.nb_mpi_procs})
 
     return params, sim
 

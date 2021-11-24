@@ -45,6 +45,9 @@ parser.add_argument("--order", type=int, default=10, help="order")
 parser.add_argument("--dim", type=int, default=2, help="2d or 3d")
 
 parser.add_argument("--end-time", type=float, default=4000, help="End time")
+parser.add_argument(
+    "--num-steps", type=int, default=2000000, help="number of time steps"
+)
 parser.add_argument("--dt-max", type=float, default=0.1, help="Maximum dt")
 
 parser.add_argument(
@@ -74,27 +77,34 @@ def main(args):
     params.oper.elem.order_out = order
 
     params.output.sub_directory = (
-        f"cbox_check/{dim}D/NL_sim/asp_{args.aspect_ratio_y:.3f}"
+        f"cbox_check_time_dt/{dim}D/NL_sim/asp_{args.aspect_ratio_y:.3f}"
     )
     params.short_name_type_run = (
         f"asp{args.aspect_ratio_y:.3f}_Ra{args.Rayleigh:.3e}"
     )
-
-    params.nek.general.end_time = args.end_time
-    params.nek.general.stop_at = "endTime"
-
-    params.nek.general.write_control = "runTime"
-    params.nek.general.write_interval = 20.0
+    
+    
+    params.nek.general.num_steps = args.num_steps
+    params.nek.general.write_interval = 10000
 
     params.nek.general.dt = args.dt_max
-
-    params.nek.general.variable_dt = True
-    params.nek.general.target_cfl = 2.0
     params.nek.general.time_stepper = "BDF3"
-    params.nek.general.extrapolation = "OIFS"
+
+    # params.nek.general.end_time = args.end_time
+    # params.nek.general.stop_at = "endTime"
+
+    # params.nek.general.write_control = "runTime"
+    # params.nek.general.write_interval = 20.0
+
+    # params.nek.general.dt = args.dt_max
+
+    # params.nek.general.variable_dt = True
+    # params.nek.general.target_cfl = 2.0
+    # params.nek.general.time_stepper = "BDF3"
+    # params.nek.general.extrapolation = "OIFS"
 
     params.output.phys_fields.write_interval_pert_field = 1000
-    params.output.history_points.write_interval = 10
+    params.output.history_points.write_interval = 100
 
     # creation of the coordinates of the points saved by history points
     n1d = 5
@@ -163,7 +173,7 @@ if __name__ == "__main__":
         # and https://github.com/exabl/snek5000/tree/faster-history-points-load
         t0 = perf_counter()
         coords, df = sim.output.history_points.load_1point(
-            index_point=5, key="temperature"
+            index_point=18, key="temperature"
         )
         t_last = df.time.max()
         print(
@@ -201,7 +211,7 @@ if __name__ == "__main__":
             os.kill(pid, signal.SIGTERM)
             break
 
-        if abs(temp0_std - temp1_std) / temp0_std < 0.2 and temp1_std > 0.0004:
+        if abs(temp0_std - temp1_std) / temp0_std < 0.2 and temp1_std > 0.0002:
             print(
                 f"Saturation of the instability detected at t = {t_last}\n"
                 "Terminate simulation."
