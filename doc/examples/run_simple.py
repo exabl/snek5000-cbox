@@ -23,13 +23,17 @@ params.oper.dim = 2
 
 nb_elements = nx = ny = 12
 params.oper.nx = nb_elements
-params.oper.ny = nb_elements
+params.oper.ny = int(nb_elements * aspect_ratio)
 params.oper.nz = nb_elements
 
 Lx = params.oper.Lx = 1.0
 Ly = params.oper.Ly = Lx * aspect_ratio
 
 order = params.oper.elem.order = params.oper.elem.order_out = 10
+
+# params.oper.stretched_mesh = 1.0 means stretched mesh, otherwise it is regular.
+params.oper.stretched_mesh = 1.0
+params.oper.mesh_stretch_factor = 0.1
 
 params.short_name_type_run = f"Ra{params.rayleigh:.3e}_{nx*order}x{ny*order}"
 

@@ -48,6 +48,12 @@ class SimulCbox(SimulKTH):
         params.oper.Ly = 1
         params.oper.Lz = 1
 
+        params.oper._set_attribs({"stretched_mesh": 1.0})
+        params.oper._record_nek_user_params({"stretched_mesh": 4})
+
+        params.oper._set_attribs({"mesh_stretch_factor": 0.1})
+        params.oper._record_nek_user_params({"mesh_stretch_factor": 5})
+
         params.oper.boundary = ["W", "W", "W", "W"]
         params.oper.boundary_scalars = ["t", "t", "I", "I"]
 
