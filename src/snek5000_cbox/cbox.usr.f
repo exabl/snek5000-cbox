@@ -190,35 +190,37 @@
       include 'SOLN'
 
       integer i, ntot
-      real sf, xx, yy, zz,twopi
+      real sfx, sfy, sfz, xx, yy, zz,twopi
       real xmax, ymax, zmax
-      real mesh
 
-      mesh = UPARAM(4)
+      sfx = UPARAM(4)
 
-      if (mesh .EQ. 1.0) then
+      if (sfx .NE. 0.0) then
          ntot = nx1*ny1*nz1*nelt
 
          xmax = glmax(xm1,ntot)
          ymax = glmax(ym1,ntot)
          if (if3d) then
-         zmax = glmax(zm1,ntot)
+            zmax = glmax(zm1,ntot)
          endif
 
          twopi=8*atan(1.)
 
-         !stretch factor
-         sf   = UPARAM(5)
+         !stretch factors
+         sfy = sfx*ymax
+         if (if3d) then
+            sfz = sfx*zmax
+         endif   
             
          do i=1,ntot
             xx = xm1(i,1,1,1)
             yy = ym1(i,1,1,1)
-            xm1(i,1,1,1) = xx - (sf * (sin(twopi*xx/xmax)))
-            ym1(i,1,1,1) = yy - (sf * (sin(twopi*yy/ymax)))
+            xm1(i,1,1,1) = xx - (sfx * (sin(twopi*xx/xmax)))
+            ym1(i,1,1,1) = yy - (sfy * (sin(twopi*yy/ymax)))
             
             if (if3d) then
                   zz = zm1(i,1,1,1)
-                  zm1(i,1,1,1) = zz - (sf * (sin(twopi*zz/zmax)))
+                  zm1(i,1,1,1) = zz - (sfz * (sin(twopi*zz/zmax)))
             endif   
          enddo
       endif      

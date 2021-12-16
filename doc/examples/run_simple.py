@@ -31,9 +31,7 @@ Ly = params.oper.Ly = Lx * aspect_ratio
 
 order = params.oper.elem.order = params.oper.elem.order_out = 10
 
-# params.oper.stretched_mesh = 1.0 means stretched mesh, otherwise it is regular.
-params.oper.stretched_mesh = 1.0
-params.oper.mesh_stretch_factor = 0.1
+params.oper.mesh_stretch_factor = 0.1  # zero means regular
 
 params.short_name_type_run = f"Ra{params.rayleigh:.3e}_{nx*order}x{ny*order}"
 
