@@ -9,6 +9,7 @@ nx = 16
 order = 10
 end_time = 4000
 nb_procs = 10
+stretch_factor = 0.1
 
 cluster = Cluster()
 
@@ -36,7 +37,7 @@ for aspect_ratio, Ra_c_test in Ra_c_tests.items():
         command = (
             f"run_simul_check_from_python.py -R {Ra} -nx {nx} "
             f"--order {order} --end-time {end_time} -np {nb_procs} "
-            f"-a_y {aspect_ratio}"
+            f"-a_y {aspect_ratio} --stretch-factor {stretch_factor}"
         )
 
         print(command)

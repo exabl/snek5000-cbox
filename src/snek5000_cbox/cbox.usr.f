@@ -185,7 +185,46 @@
 !-----------------------------------------------------------------------
       subroutine usrdat2
       include 'SIZE'
+      include 'GEOM'            ! {x,y,z}m1
+      include 'INPUT'           ! param
+      include 'SOLN'
 
+      integer i, ntot
+      real stretch_x, stretch_y, stretch_z, xx, yy, zz, twopi
+      real xmax, ymax, zmax
+
+      stretch_x = UPARAM(4)
+
+      if (stretch_x .NE. 0.0) then
+         ntot = nx1*ny1*nz1*nelt
+
+         xmax = glmax(xm1,ntot)
+         ymax = glmax(ym1,ntot)
+         if (if3d) then
+            zmax = glmax(zm1,ntot)
+         endif
+
+         twopi=8*atan(1.)
+
+         !stretch factors
+         stretch_y = stretch_x*ymax
+         if (if3d) then
+            stretch_z = stretch_x*zmax
+         endif   
+            
+         do i=1,ntot
+            xx = xm1(i,1,1,1)
+            yy = ym1(i,1,1,1)
+            xm1(i,1,1,1) = xx - (stretch_x * (sin(twopi*xx/xmax)))
+            ym1(i,1,1,1) = yy - (stretch_y * (sin(twopi*yy/ymax)))
+            
+            if (if3d) then
+                  zz = zm1(i,1,1,1)
+                  zm1(i,1,1,1) = zz - (stretch_z * (sin(twopi*zz/zmax)))
+            endif   
+         enddo
+      endif      
+      
       return
       end
 !-----------------------------------------------------------------------
