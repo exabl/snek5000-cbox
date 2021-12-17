@@ -27,7 +27,9 @@ parser.add_argument(
     "-a_z", "--aspect-ratio-z", type=float, default=1.0, help="Z aspect ratio"
 )
 
-parser.add_argument("-Pr", "--Prandtl", type=float, default=0.71, help="Prandtl number")
+parser.add_argument(
+    "-Pr", "--Prandtl", type=float, default=0.71, help="Prandtl number"
+)
 
 parser.add_argument(
     "-Ra", "--Rayleigh", type=float, default=1.0e08, help="Rayleigh number"
@@ -59,7 +61,7 @@ def main(args):
     dim = params.oper.dim = args.dim
 
     nx = params.oper.nx = args.nx
-    ny = params.oper.ny = int(nx*args.aspect_ratio_y)
+    ny = params.oper.ny = int(nx * args.aspect_ratio_y)
     # nz = params.oper.nz = args.nz
 
     order = params.oper.elem.order = args.order
@@ -97,7 +99,7 @@ def main(args):
     params.oper.max.hist = len(coords) + 1
 
     sim = Simul(params)
-    sim.make.exec(["run_fg"])
+    sim.make.exec("run_fg")
 
     return params, sim
 

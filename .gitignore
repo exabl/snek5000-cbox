@@ -127,3 +127,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+**/OAR*.std*
+**/oar_launcher*
+**/.nfs*
