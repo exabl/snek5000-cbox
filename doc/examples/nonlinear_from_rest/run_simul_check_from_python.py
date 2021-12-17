@@ -31,9 +31,7 @@ parser.add_argument(
     "-a_z", "--aspect-ratio-z", type=float, default=1.0, help="Z aspect ratio"
 )
 
-parser.add_argument(
-    "-Pr", "--Prandtl", type=float, default=0.71, help="Prandtl number"
-)
+parser.add_argument("-Pr", "--Prandtl", type=float, default=0.71, help="Prandtl number")
 
 parser.add_argument(
     "-Ra", "--Rayleigh", type=float, default=1.89e08, help="Rayleigh number"
@@ -43,6 +41,7 @@ parser.add_argument("-nx", type=int, default=12, help="number of x elements")
 parser.add_argument("-nz", type=int, default=12, help="number of z elements")
 parser.add_argument("--order", type=int, default=10, help="order")
 parser.add_argument("--dim", type=int, default=2, help="2d or 3d")
+parser.add_argument("--stretch-factor", type=float, default=0.0, help="stretch factor")
 
 parser.add_argument("--end-time", type=float, default=4000, help="End time")
 parser.add_argument("--dt-max", type=float, default=0.1, help="Maximum dt")
@@ -63,6 +62,8 @@ def main(args):
     Ly = params.oper.Ly = Lx * args.aspect_ratio_y
     params.oper.Lz = Lx * args.aspect_ratio_z
 
+    params.oper.mesh_stretch_factor = args.stretch_factor
+
     params.oper.nproc_min = 2
     dim = params.oper.dim = args.dim
 
@@ -76,9 +77,7 @@ def main(args):
     params.output.sub_directory = (
         f"cbox_check/{dim}D/NL_sim/asp_{args.aspect_ratio_y:.3f}"
     )
-    params.short_name_type_run = (
-        f"asp{args.aspect_ratio_y:.3f}_Ra{args.Rayleigh:.3e}"
-    )
+    params.short_name_type_run = f"asp{args.aspect_ratio_y:.3f}_Ra{args.Rayleigh:.3e}"
 
     params.nek.general.end_time = args.end_time
     params.nek.general.stop_at = "endTime"
@@ -181,17 +180,14 @@ if __name__ == "__main__":
 
         temp0_std = np.std(
             temperature[
-                (t_last - 2 * duration_avg < times)
-                & (times < t_last - duration_avg)
+                (t_last - 2 * duration_avg < times) & (times < t_last - duration_avg)
             ]
         )
         temp1_std = np.std(
             temperature[(t_last - duration_avg < times) & (times < t_last)]
         )
 
-        print(
-            f"  {abs(temp0_std - temp1_std) / temp0_std = :.3f}, {temp1_std = :.3g}"
-        )
+        print(f"  {abs(temp0_std - temp1_std) / temp0_std = :.3f}, {temp1_std = :.3g}")
         if temp1_std < 1.0e-14:
             print(
                 f"Steady state (stable) detected at t = {t_last}\n"

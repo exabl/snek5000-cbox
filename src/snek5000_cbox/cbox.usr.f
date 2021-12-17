@@ -190,12 +190,12 @@
       include 'SOLN'
 
       integer i, ntot
-      real sfx, sfy, sfz, xx, yy, zz,twopi
+      real stretch_x, stretch_y, stretch_z, xx, yy, zz, twopi
       real xmax, ymax, zmax
 
-      sfx = UPARAM(4)
+      stretch_x = UPARAM(4)
 
-      if (sfx .NE. 0.0) then
+      if (stretch_x .NE. 0.0) then
          ntot = nx1*ny1*nz1*nelt
 
          xmax = glmax(xm1,ntot)
@@ -207,20 +207,20 @@
          twopi=8*atan(1.)
 
          !stretch factors
-         sfy = sfx*ymax
+         stretch_y = stretch_x*ymax
          if (if3d) then
-            sfz = sfx*zmax
+            stretch_z = stretch_x*zmax
          endif   
             
          do i=1,ntot
             xx = xm1(i,1,1,1)
             yy = ym1(i,1,1,1)
-            xm1(i,1,1,1) = xx - (sfx * (sin(twopi*xx/xmax)))
-            ym1(i,1,1,1) = yy - (sfy * (sin(twopi*yy/ymax)))
+            xm1(i,1,1,1) = xx - (stretch_x * (sin(twopi*xx/xmax)))
+            ym1(i,1,1,1) = yy - (stretch_y * (sin(twopi*yy/ymax)))
             
             if (if3d) then
                   zz = zm1(i,1,1,1)
-                  zm1(i,1,1,1) = zz - (sfz * (sin(twopi*zz/zmax)))
+                  zm1(i,1,1,1) = zz - (stretch_z * (sin(twopi*zz/zmax)))
             endif   
          enddo
       endif      

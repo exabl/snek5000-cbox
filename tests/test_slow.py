@@ -32,6 +32,8 @@ def test_simple_simul():
     Lx = params.oper.Lx = 1.0
     Ly = params.oper.Ly = Lx * aspect_ratio
 
+    params.oper.mesh_stretch_factor = 0.1
+    
     params.oper.elem.order = 7
 
     # creation of the coordinates of the points saved by history points

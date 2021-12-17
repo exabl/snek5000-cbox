@@ -48,9 +48,6 @@ class SimulCbox(SimulKTH):
         params.oper.Ly = 1
         params.oper.Lz = 1
 
-        params.oper._set_attribs({"mesh_stretch_factor": 0.0})
-        params.oper._record_nek_user_params({"mesh_stretch_factor": 4})
-
         params.oper.boundary = ["W", "W", "W", "W"]
         params.oper.boundary_scalars = ["t", "t", "I", "I"]
 
@@ -63,6 +60,25 @@ class SimulCbox(SimulKTH):
 
         params.oper.elem.order = 9
         params.oper.elem.order_out = 9
+
+        params.oper._set_attribs({"mesh_stretch_factor": 0.0})
+        params.oper._record_nek_user_params({"mesh_stretch_factor": 4})
+        params.oper._set_doc(
+            params.oper._doc
+            + """
+User parameter for mesh stretching in .usr file (subroutine usrdat2):
+
+- ``mesh_stretch_factor``: float
+  
+  Mesh stretch factor (default = 0.0, meaning no stretching). 
+  The locations of the grid points are changed in the 3 directions (x, y, z)
+  as follow: ``x_i  = x_i - stretch_factor_x*(sin(2pi*x_i/L_x))``.
+  The stretching factors in different directions are computed such that
+  elements at the corners are of aspect ratio 1. Typical reasonable values 
+  could be between 0.05 and 0.1. 0.15 corresponds to a very strongly stretched 
+  mesh.
+"""
+        )
 
         # params.nek.general.time_stepper = "BDF3"
 
