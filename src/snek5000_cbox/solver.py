@@ -53,10 +53,15 @@ class SimulCbox(SimulKTH):
 
         params.nek.temperature.rho_cp = 1.0
         params.nek.temperature.conductivity = 1.0
-        params.nek.temperature.residual_tol = 1e-8
+        params.nek.temperature.residual_tol = 1e-14
+        params.nek.velocity.residual_tol = 1e-14
+        params.nek.pressure.residual_tol = 1e-14
 
         params.nek.problemtype.variable_properties = True
         params.nek.problemtype.stress_formulation = True
+        params.nek.problemtype._set_attribs(
+            {"solveBaseFlow": "no", "numberOfPerturbations": 1}
+        )
 
         params.oper.elem.order = 9
         params.oper.elem.order_out = 9

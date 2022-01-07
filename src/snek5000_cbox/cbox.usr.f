@@ -91,31 +91,28 @@
       nit_pert = UPARAM(3)
 
       if (ISTEP.eq.0) then
-         TIME = 0
+            TIME = 0
 !     start framework
-         call frame_start
-         if (IFPERT) then
-            call perturb_fields(ix,iy,iz,ieg)
-         endif
+            call frame_start
 
       ! decide the non dimensionalization of the equations
-         Pr_ = abs(UPARAM(1))
-         Ra_ = abs(UPARAM(2))
+            Pr_ = abs(UPARAM(1))
+            Ra_ = abs(UPARAM(2))
 
       ! set fluid properties
-         if (IFADJ) then
+            if (IFADJ) then
             CPFLD(1,1)=Pr_/sqrt(Ra_)
             CPFLD(1,2)=1.0
 
             CPFLD(2,1)=1.0/sqrt(Ra_)
             CPFLD(2,2)=1.0
-         else
+            else
             CPFLD(1,1)=1.0/sqrt(Ra_)
             CPFLD(1,2)=1.0/Pr_
 
             CPFLD(2,1)=1.0/sqrt(Ra_)
             CPFLD(2,2)=1.0
-         endif
+            endif
       endif
 
 !     monitor simulation
@@ -124,20 +121,20 @@
       call chkpt_main
 !     finalise framework
       if (istep.eq.nsteps.or.lastep.eq.1) then
-         call frame_end
+            call frame_end
       endif
 
       ! perturbation field
       if (IFPERT) then
-         if (mod(ISTEP,nit_pert).eq.0) then
+            if (mod(ISTEP,nit_pert).eq.0) then
       !       write perturbation field
             call outpost2(VXP,VYP,VZP,PRP,TP,1,'prt')
-         endif
+            endif
       endif
 
       ! history points
       if (mod(ISTEP,nit_hist).eq.0) then
-          call hpts()
+            call hpts()
       endif
 
       return
@@ -145,34 +142,68 @@
 !-----------------------------------------------------------------------
       subroutine userbc (ix,iy,iz,iside,ieg)
       include 'SIZE'
-      include 'TSTEP'
-      include 'INPUT'
       include 'NEKUSE'
-      common /rayleigh_r/ rapr,ta2pr
-
-      ux=0.
-      uy=0.
-      uz=0.
-
-      if (x.eq.0) then
-         temp=-0.5000
-      elseif (x .eq. 1.0) then
-         temp=0.5000
+      include 'SOLN'            ! JP
+      
+      if (JP.eq.0) then
+!     base flow
+            ux=0.0
+            uy=0.0
+            if (if3d) then
+            uz=0.0
+            endif
+            if (x.eq.0) then
+            temp=-0.5000
+            elseif (x.eq.1.0) then
+            temp=0.5000           
+            endif
+      else
+!     perturbation
+            ux=0.0
+            uy=0.0
+            if (if3d) then
+            uz=0.0
+            endif
+            temp=0.0
       endif
-
+      
       return
       end
 !-----------------------------------------------------------------------
       subroutine useric (ix,iy,iz,ieg)
       include 'SIZE'
-      include 'TOTAL'
       include 'NEKUSE'
+      include 'SOLN'            ! JP
+      include 'INPUT'
 
-      temp = 0
-      ux=0.0
-      uy=0.0
-      uz=0.0
+!     argument list
+      integer ix,iy,iz,ieg
+      real amp, ran
 
+      if (JP.eq.0) then
+            ux=0.0
+            uy=0.0
+            uz=0.0
+            temp=0
+      else
+!     perturbation; white noise
+
+      rand = 2.e4*(ieg+x*sin(y)) + 1.e3*ix*iy + 1.e5*ix 
+      rand = 1.e3*sin(rand)
+      rand = 1.e3*sin(rand)
+      rand = cos(rand)
+      amp = .01
+
+      ux   = amp*rand*sin(x)*cos(y)
+      ux   = amp*(2*ux - 1)
+      uy   = amp*rand*-cos(x)*sin(y)
+      uy   = amp*(4*uy - 2)
+      uz   = amp*rand*-cos(x)*cos(y)
+
+      temp = amp*rand*cos(x)*cos(y)
+      temp   = amp*(temp - 0.5)
+      endif
+      
       return
       end
 !-----------------------------------------------------------------------
@@ -196,23 +227,23 @@
       stretch_x = UPARAM(4)
 
       if (stretch_x .NE. 0.0) then
-         ntot = nx1*ny1*nz1*nelt
+            ntot = nx1*ny1*nz1*nelt
 
-         xmax = glmax(xm1,ntot)
-         ymax = glmax(ym1,ntot)
-         if (if3d) then
+            xmax = glmax(xm1,ntot)
+            ymax = glmax(ym1,ntot)
+            if (if3d) then
             zmax = glmax(zm1,ntot)
-         endif
+            endif
 
-         twopi=8*atan(1.)
+            twopi=8*atan(1.)
 
-         !stretch factors
-         stretch_y = stretch_x*ymax
-         if (if3d) then
+            !stretch factors
+            stretch_y = stretch_x*ymax
+            if (if3d) then
             stretch_z = stretch_x*zmax
-         endif   
+            endif   
             
-         do i=1,ntot
+            do i=1,ntot
             xx = xm1(i,1,1,1)
             yy = ym1(i,1,1,1)
             xm1(i,1,1,1) = xx - (stretch_x * (sin(twopi*xx/xmax)))
@@ -222,40 +253,13 @@
                   zz = zm1(i,1,1,1)
                   zm1(i,1,1,1) = zz - (stretch_z * (sin(twopi*zz/zmax)))
             endif   
-         enddo
+            enddo
       endif      
       
       return
       end
 !-----------------------------------------------------------------------
       subroutine usrdat3
-
-      return
-      end
-!-----------------------------------------------------------------------
-      subroutine perturb_fields (ix,iy,iz,ieg)
-
-      include 'SIZE'
-      include 'NEKUSE'          ! UX, UY, UZ, TEMP, Z
-      include 'SOLN'            ! V[XYZ], T, V[XYZ]P, TP, PRP
-
-      ! velocity random distribution
-
-      call random_number(VXP)
-      VXP  = 0.00000001*(2*VXP - 1)
-
-      call random_number(VYP)
-      VYP  = 0.00000001*(4*VYP - 2)
-
-      UZP = 0.0
-
-      ! temperature random distribution
-      call random_number(TP)
-      TP= 0.00000001*(TP - 0.5)
-
-      ! pressure random distribution
-      !call random_number(PRP)
-      !PRP= 0.000001*(0.5*PRP - 0.25)
 
       return
       end
@@ -290,3 +294,7 @@
       
       return
       end subroutine
+!-----------------------------------------------------------------------
+
+      
+      
