@@ -86,21 +86,22 @@
 
       integer n, nit_pert, nit_hist
       real Pr_,Ra_
+      real vtmp(lx1*ly1*lz1*lelt,ldim),ttmp(lx1*ly1*lz1*lelt)
 
       nit_hist = UPARAM(10)
       nit_pert = UPARAM(3)
 
       if (ISTEP.eq.0) then
-            TIME = 0
+         TIME = 0
 !     start framework
-            call frame_start
+         call frame_start
 
       ! decide the non dimensionalization of the equations
-            Pr_ = abs(UPARAM(1))
-            Ra_ = abs(UPARAM(2))
+         Pr_ = abs(UPARAM(1))
+         Ra_ = abs(UPARAM(2))
 
       ! set fluid properties
-            if (IFADJ) then
+         if (IFADJ) then
             CPFLD(1,1)=Pr_/sqrt(Ra_)
             CPFLD(1,2)=1.0
 
@@ -113,28 +114,44 @@
             CPFLD(2,1)=1.0/sqrt(Ra_)
             CPFLD(2,2)=1.0
             endif
-      endif
+         endif
 
 !     monitor simulation
-      call frame_monitor
+         call frame_monitor
 !     save/load files for full-restart
-      call chkpt_main
+         call chkpt_main
 !     finalise framework
-      if (istep.eq.nsteps.or.lastep.eq.1) then
+         if (istep.eq.nsteps.or.lastep.eq.1) then
             call frame_end
-      endif
+         endif
 
       ! perturbation field
-      if (IFPERT) then
+         if (IFPERT) then
             if (mod(ISTEP,nit_pert).eq.0) then
-      !       write perturbation field
-            call outpost2(VXP,VYP,VZP,PRP,TP,1,'prt')
+               !write perturbation field
+               !call outpost2(VXP,VYP,VZP,PRP,TP,1,'prt')
+               call out_pert()
             endif
-      endif
-
-      ! history points
-      if (mod(ISTEP,nit_hist).eq.0) then
+         endif
+   
+         ! history points
+         if (mod(ISTEP,nit_hist).eq.0) then
+            if (.not. ifpert) then
+               call hpts()
+            else
+   
+            call opcopy(vtmp(1,1),vtmp(1,2),vtmp(1,ndim),vx,vy,vz)
+            n = NX1*NY1*NZ1*NELV
+            call copy(ttmp,T,n)
+            call opcopy(vx, vy, vz, vxp, vyp, vzp)
+            call copy(T,TP,n)
+   
             call hpts()
+   
+            call opcopy(vx,vy,vz, vtmp(1,1),vtmp(1,2),vtmp(1,ndim))
+            call copy(T,ttmp,n)
+   
+            endif
       endif
 
       return
@@ -180,28 +197,39 @@
       integer ix,iy,iz,ieg
       real amp, ran
 
+      amp = .0001
+
       if (JP.eq.0) then
-            ux=0.0
-            uy=0.0
-            uz=0.0
-            temp=0
+         ux=0.0
+         uy=0.0
+         uz=0.0
+         temp=0
       else
 !     perturbation; white noise
 
-      rand = 2.e4*(ieg+x*sin(y)) + 1.e3*ix*iy + 1.e5*ix 
-      rand = 1.e3*sin(rand)
-      rand = 1.e3*sin(rand)
-      rand = cos(rand)
-      amp = .01
+!      rand = 2.e4*(ieg+x*sin(y)) + 1.e3*ix*iy + 1.e5*ix 
+!      rand = 1.e3*sin(rand)
+!      rand = 1.e3*sin(rand)
+!      rand = cos(rand)
 
-      ux   = amp*rand*sin(x)*cos(y)
-      ux   = amp*(2*ux - 1)
-      uy   = amp*rand*-cos(x)*sin(y)
-      uy   = amp*(4*uy - 2)
-      uz   = amp*rand*-cos(x)*cos(y)
+!      ux   = amp*rand*sin(x)*cos(y)
+!      ux   = amp*(2*ux - 1)
+!      uy   = amp*rand*-cos(x)*sin(y)
+!      uy   = amp*(4*uy - 2)
+!      uz   = amp*rand*-cos(x)*cos(y)
 
-      temp = amp*rand*cos(x)*cos(y)
-      temp   = amp*(temp - 0.5)
+!      temp = amp*rand*cos(x)*cos(y)
+!      temp   = amp*(temp - 0.5)
+
+          call random_number(ux)
+          ux  = amp*(2*ux - 1)
+          call random_number(uy)
+          uy  = amp*(4*uy - 2)
+          uz = 0.0
+      
+          call random_number(temp)
+          temp= amp*(temp - 0.5)
+
       endif
       
       return
@@ -227,31 +255,31 @@
       stretch_x = UPARAM(4)
 
       if (stretch_x .NE. 0.0) then
-            ntot = nx1*ny1*nz1*nelt
+         ntot = nx1*ny1*nz1*nelt
 
-            xmax = glmax(xm1,ntot)
-            ymax = glmax(ym1,ntot)
-            if (if3d) then
+         xmax = glmax(xm1,ntot)
+         ymax = glmax(ym1,ntot)
+         if (if3d) then
             zmax = glmax(zm1,ntot)
-            endif
+         endif
 
-            twopi=8*atan(1.)
+         twopi=8*atan(1.)
 
-            !stretch factors
-            stretch_y = stretch_x*ymax
-            if (if3d) then
+         !stretch factors
+         stretch_y = stretch_x*ymax
+         if (if3d) then
             stretch_z = stretch_x*zmax
-            endif   
+         endif   
             
-            do i=1,ntot
+         do i=1,ntot
             xx = xm1(i,1,1,1)
             yy = ym1(i,1,1,1)
             xm1(i,1,1,1) = xx - (stretch_x * (sin(twopi*xx/xmax)))
             ym1(i,1,1,1) = yy - (stretch_y * (sin(twopi*yy/ymax)))
             
             if (if3d) then
-                  zz = zm1(i,1,1,1)
-                  zm1(i,1,1,1) = zz - (stretch_z * (sin(twopi*zz/zmax)))
+               zz = zm1(i,1,1,1)
+               zm1(i,1,1,1) = zz - (stretch_z * (sin(twopi*zz/zmax)))
             endif   
             enddo
       endif      
