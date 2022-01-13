@@ -87,6 +87,7 @@
       integer n, nit_pert, nit_hist
       real Pr_,Ra_
       real vtmp(lx1*ly1*lz1*lelt,ldim),ttmp(lx1*ly1*lz1*lelt)
+      common /SCRUZ/ vtmp, ttmp
 
       nit_hist = UPARAM(10)
       nit_pert = UPARAM(3)
