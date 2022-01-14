@@ -24,7 +24,7 @@ params.output.sub_directory = "examples_cbox/simple"
 params.oper.nproc_min = 2
 params.oper.dim = 2
 
-nb_elements = nx = ny = 8
+nb_elements = nx = ny = 12
 params.oper.nx = nb_elements
 params.oper.ny = int(nb_elements * aspect_ratio)
 params.oper.nz = nb_elements
