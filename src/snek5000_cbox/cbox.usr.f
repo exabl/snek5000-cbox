@@ -18,11 +18,11 @@
       ! direct problem
 
       if (IFIELD.eq.1) then     !     momentum equations
-            UTRANS = 1./Pr_
-            UDIFF  = 1./sqrt(Ra_)
+         UTRANS = 1./Pr_
+         UDIFF  = 1./sqrt(Ra_)
       elseif (IFIELD.eq.2) then !     temperature equation
-            UTRANS = 1.0
-            UDIFF  = 1./sqrt(Ra_)
+             UTRANS = 1.0
+             UDIFF  = 1./sqrt(Ra_)
       endif
 
       return
@@ -48,10 +48,10 @@
 
       ! forcing, put boussinesq
       if (IFPERT) then
-      ip=ix+NX1*(iy-1+NY1*(iz-1+NZ1*(iel-1)))
-      rtmp = TP(ip,1,1)/VTRANS(ix,iy,iz,iel,1)
+         ip=ix+NX1*(iy-1+NY1*(iz-1+NZ1*(iel-1)))
+         rtmp = TP(ip,1,1)/VTRANS(ix,iy,iz,iel,1)
       else
-      rtmp = T(ix,iy,iz,iel,1)/VTRANS(ix,iy,iz,iel,1)
+          rtmp = T(ix,iy,iz,iel,1)/VTRANS(ix,iy,iz,iel,1)
       endif
 
 
@@ -94,7 +94,7 @@
 
       if (ISTEP.eq.0) then
          TIME = 0
-!     start framework
+      ! start framework
          call frame_start
 
       ! decide the non dimensionalization of the equations
@@ -109,19 +109,18 @@
             CPFLD(2,1)=1.0/sqrt(Ra_)
             CPFLD(2,2)=1.0
             else
-            CPFLD(1,1)=1.0/sqrt(Ra_)
-            CPFLD(1,2)=1.0/Pr_
+                 CPFLD(1,1)=1.0/sqrt(Ra_)
+                 CPFLD(1,2)=1.0/Pr_
 
-            CPFLD(2,1)=1.0/sqrt(Ra_)
-            CPFLD(2,2)=1.0
+                 CPFLD(2,1)=1.0/sqrt(Ra_)
+                 CPFLD(2,2)=1.0
             endif
          endif
 
-!     monitor simulation
+      ! monitor simulation
          call frame_monitor
-!     save/load files for full-restart
          call chkpt_main
-!     finalise framework
+      ! finalise framework
          if (istep.eq.nsteps.or.lastep.eq.1) then
             call frame_end
          endif
@@ -130,7 +129,6 @@
          if (IFPERT) then
             if (mod(ISTEP,nit_pert).eq.0) then
                !write perturbation field
-               !call outpost2(VXP,VYP,VZP,PRP,TP,1,'prt')
                call out_pert()
             endif
          endif
@@ -141,16 +139,16 @@
                call hpts()
             else
    
-            call opcopy(vtmp(1,1),vtmp(1,2),vtmp(1,ndim),vx,vy,vz)
-            n = NX1*NY1*NZ1*NELV
-            call copy(ttmp,T,n)
-            call opcopy(vx, vy, vz, vxp, vyp, vzp)
-            call copy(T,TP,n)
+                 call opcopy(vtmp(1,1),vtmp(1,2),vtmp(1,ndim),vx,vy,vz)
+                 n = NX1*NY1*NZ1*NELV
+                 call copy(ttmp,T,n)
+                 call opcopy(vx, vy, vz, vxp, vyp, vzp)
+                 call copy(T,TP,n)
    
-            call hpts()
+                 call hpts()
    
-            call opcopy(vx,vy,vz, vtmp(1,1),vtmp(1,2),vtmp(1,ndim))
-            call copy(T,ttmp,n)
+                 call opcopy(vx,vy,vz, vtmp(1,1),vtmp(1,2),vtmp(1,ndim))
+                 call copy(T,ttmp,n)
    
             endif
       endif
@@ -168,19 +166,19 @@
             ux=0.0
             uy=0.0
             if (if3d) then
-            uz=0.0
+               uz=0.0
             endif
             if (x.eq.0) then
-            temp=-0.5000
+               temp=-0.5000
             elseif (x.eq.1.0) then
-            temp=0.5000           
+                   temp=0.5000           
             endif
       else
 !     perturbation
             ux=0.0
             uy=0.0
             if (if3d) then
-            uz=0.0
+               uz=0.0
             endif
             temp=0.0
       endif
@@ -206,30 +204,16 @@
          uz=0.0
          temp=0
       else
-!     perturbation; white noise
+!     perturbation
 
-!      rand = 2.e4*(ieg+x*sin(y)) + 1.e3*ix*iy + 1.e5*ix 
-!      rand = 1.e3*sin(rand)
-!      rand = 1.e3*sin(rand)
-!      rand = cos(rand)
-
-!      ux   = amp*rand*sin(x)*cos(y)
-!      ux   = amp*(2*ux - 1)
-!      uy   = amp*rand*-cos(x)*sin(y)
-!      uy   = amp*(4*uy - 2)
-!      uz   = amp*rand*-cos(x)*cos(y)
-
-!      temp = amp*rand*cos(x)*cos(y)
-!      temp   = amp*(temp - 0.5)
-
-          call random_number(ux)
-          ux  = amp*(2*ux - 1)
-          call random_number(uy)
-          uy  = amp*(4*uy - 2)
-          uz = 0.0
+           call random_number(ux)
+           ux  = amp*(2*ux - 1)
+           call random_number(uy)
+           uy  = amp*(4*uy - 2)
+           uz = 0.0
       
-          call random_number(temp)
-          temp= amp*(temp - 0.5)
+           call random_number(temp)
+           temp= amp*(temp - 0.5)
 
       endif
       
@@ -323,7 +307,4 @@
       
       return
       end subroutine
-!-----------------------------------------------------------------------
 
-      
-      
