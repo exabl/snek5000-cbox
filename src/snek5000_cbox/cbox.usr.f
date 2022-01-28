@@ -132,24 +132,24 @@
                call out_pert()
             endif
          endif
-   
+
          ! history points
          if (mod(ISTEP,nit_hist).eq.0) then
             if (.not. ifpert) then
                call hpts()
             else
-   
+
                  call opcopy(vtmp(1,1),vtmp(1,2),vtmp(1,ndim),vx,vy,vz)
                  n = NX1*NY1*NZ1*NELV
                  call copy(ttmp,T,n)
                  call opcopy(vx, vy, vz, vxp, vyp, vzp)
                  call copy(T,TP,n)
-   
+
                  call hpts()
-   
+
                  call opcopy(vx,vy,vz, vtmp(1,1),vtmp(1,2),vtmp(1,ndim))
                  call copy(T,ttmp,n)
-   
+
             endif
       endif
 
@@ -160,7 +160,8 @@
       include 'SIZE'
       include 'NEKUSE'
       include 'SOLN'            ! JP
-      
+      include 'INPUT'           ! IF3D
+
       if (JP.eq.0) then
 !     base flow
             ux=0.0
@@ -171,7 +172,7 @@
             if (x.eq.0) then
                temp=-0.5000
             elseif (x.eq.1.0) then
-                   temp=0.5000           
+                   temp=0.5000
             endif
       else
 !     perturbation
@@ -182,7 +183,7 @@
             endif
             temp=0.0
       endif
-      
+
       return
       end
 !-----------------------------------------------------------------------
@@ -211,12 +212,12 @@
            call random_number(uy)
            uy  = amp*(4*uy - 2)
            uz = 0.0
-      
+
            call random_number(temp)
            temp= amp*(temp - 0.5)
 
       endif
-      
+
       return
       end
 !-----------------------------------------------------------------------
@@ -254,21 +255,21 @@
          stretch_y = stretch_x*ymax
          if (if3d) then
             stretch_z = stretch_x*zmax
-         endif   
-            
+         endif
+
          do i=1,ntot
             xx = xm1(i,1,1,1)
             yy = ym1(i,1,1,1)
             xm1(i,1,1,1) = xx - (stretch_x * (sin(twopi*xx/xmax)))
             ym1(i,1,1,1) = yy - (stretch_y * (sin(twopi*yy/ymax)))
-            
+
             if (if3d) then
                zz = zm1(i,1,1,1)
                zm1(i,1,1,1) = zz - (stretch_z * (sin(twopi*zz/zmax)))
-            endif   
+            endif
             enddo
-      endif      
-      
+      endif
+
       return
       end
 !-----------------------------------------------------------------------
@@ -304,7 +305,6 @@
       implicit none
       include 'SIZE'
       include 'FRAMELP'
-      
+
       return
       end subroutine
-
