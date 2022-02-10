@@ -17,14 +17,14 @@ aspect_ratio = 1.0
 params.prandtl = 0.71
 
 # for aspect ratio 1, Ra_c = 1.825e08
-params.rayleigh = 1.830e08
+params.rayleigh = 1.810e08
 
 params.output.sub_directory = "examples_cbox/simple"
 
 params.oper.nproc_min = 2
 params.oper.dim = 2
 
-nb_elements = nx = ny = 12
+nb_elements = nx = ny = 8
 params.oper.nx = nb_elements
 params.oper.ny = int(nb_elements * aspect_ratio)
 params.oper.nz = nb_elements
@@ -58,7 +58,7 @@ params.oper.max.hist = len(coords) + 1
 params.nek.general.dt = 0.005
 params.nek.general.time_stepper = "BDF3"
 
-params.nek.general.end_time = 1000
+params.nek.general.end_time = 700
 params.nek.general.stop_at = "endTime"
 
 params.nek.general.write_control = "runTime"
@@ -76,13 +76,15 @@ params = load_params(sim.path_run)
 
 params.nek.general.start_from = "base_flow.restart"
 
-params.rayleigh = 1.835e08
+params.rayleigh = 1.845e08
+params.nek.general.end_time = 400
 params.nek.general.write_interval = params.nek.general.end_time
-params.output.phys_fields.write_interval_pert_field = 100
+params.output.phys_fields.write_interval_pert_field = 70
 params.nek.problemtype.equation = "incompLinNS"
 params.oper.elem.staggered = "auto"
+params.short_name_type_run = f"lin_Ra{params.rayleigh:.3e}_{nx*order}x{ny*order}"
 params.NEW_DIR_RESULTS = True
-restart_file = params.output.path_session + "/cbox0.f00100"
+restart_file = params.output.path_session + "/cbox0.f00050"
 params.nek.general.extrapolation = "standard"
 
 sim = Simul(params)
