@@ -203,7 +203,8 @@
          ux=0.0
          uy=0.0
          uz=0.0
-         temp=0
+         call random_number(temp)
+         temp= amp*(temp - 0.5)
       else
 !     perturbation
 
