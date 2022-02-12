@@ -9,7 +9,7 @@ from snek5000 import load
 from snek5000 import load_params
 
 
-@pytest.mark.linear
+@pytest.mark.slow
 def test_simple_simul():
 
     params = Simul.create_default_params()
