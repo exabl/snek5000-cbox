@@ -197,7 +197,7 @@
       integer ix,iy,iz,ieg
       real amp, ran
 
-      amp = .0001
+      amp = .000001
 
       if (JP.eq.0) then
          ux=0.0
