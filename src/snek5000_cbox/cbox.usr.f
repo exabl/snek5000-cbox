@@ -9,7 +9,7 @@
       integer ix, iy, iz, ieg
 
       ! local variables
-      real Pr_,Ra_
+      real Pr_, Ra_
 
       ! decide the non dimensionalization of the equations
       Pr_ = abs(UPARAM(1))
@@ -18,7 +18,7 @@
       ! direct problem
 
       if (IFIELD.eq.1) then     !     momentum equations
-         UTRANS = 1./Pr_
+         UTRANS = Pr_
          UDIFF  = 1./sqrt(Ra_)
       elseif (IFIELD.eq.2) then !     temperature equation
              UTRANS = 1.0
@@ -42,6 +42,9 @@
       ! local variable
       integer iel
       real rtmp
+      real Pr_
+      
+      Pr_ = abs(UPARAM(1))
 
       ! local element number
       iel=GLLEL(ieg)
@@ -49,9 +52,9 @@
       ! forcing, put boussinesq
       if (IFPERT) then
          ip=ix+NX1*(iy-1+NY1*(iz-1+NZ1*(iel-1)))
-         rtmp = TP(ip,1,1)/VTRANS(ix,iy,iz,iel,1)
+         rtmp = TP(ip,1,1)*Pr_
       else
-          rtmp = T(ix,iy,iz,iel,1)/VTRANS(ix,iy,iz,iel,1)
+          rtmp = T(ix,iy,iz,iel,1)*Pr_
       endif
 
 
@@ -85,7 +88,7 @@
       ! local variables
 
       integer n, nit_pert, nit_hist
-      real Pr_,Ra_
+
       real vtmp(lx1*ly1*lz1*lelt,ldim),ttmp(lx1*ly1*lz1*lelt)
       common /SCRUZ/ vtmp, ttmp
 
@@ -96,26 +99,7 @@
          TIME = 0
       ! start framework
          call frame_start
-
-      ! decide the non dimensionalization of the equations
-         Pr_ = abs(UPARAM(1))
-         Ra_ = abs(UPARAM(2))
-
-      ! set fluid properties
-         if (IFADJ) then
-            CPFLD(1,1)=Pr_/sqrt(Ra_)
-            CPFLD(1,2)=1.0
-
-            CPFLD(2,1)=1.0/sqrt(Ra_)
-            CPFLD(2,2)=1.0
-            else
-                 CPFLD(1,1)=1.0/sqrt(Ra_)
-                 CPFLD(1,2)=1.0/Pr_
-
-                 CPFLD(2,1)=1.0/sqrt(Ra_)
-                 CPFLD(2,2)=1.0
-            endif
-         endif
+      endif
 
       ! monitor simulation
          call frame_monitor
@@ -151,7 +135,7 @@
                  call copy(T,ttmp,n)
 
             endif
-      endif
+         endif
 
       return
       end
@@ -172,7 +156,7 @@
             if (x.eq.0) then
                temp=-0.5000
             elseif (x.eq.1.0) then
-                   temp=0.5000
+                   temp=0.5000      
             endif
       else
 !     perturbation
@@ -197,14 +181,13 @@
       integer ix,iy,iz,ieg
       real amp, ran
 
-      amp = .000001
+      amp = .00000001
 
       if (JP.eq.0) then
          ux=0.0
          uy=0.0
          uz=0.0
-         call random_number(temp)
-         temp= amp*(temp - 0.5)
+         temp=0.0
       else
 !     perturbation
 
@@ -269,8 +252,11 @@
                zm1(i,1,1,1) = zz - (stretch_z * (sin(twopi*zz/zmax)))
             endif
             enddo
+      call gen_re2(0)      
       endif
-
+      
+      !call gen_re2(1)
+      !call gen_re2(2)
       return
       end
 !-----------------------------------------------------------------------
