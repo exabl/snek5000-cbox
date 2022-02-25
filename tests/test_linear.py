@@ -5,8 +5,6 @@ import pytest
 import numpy as np
 
 from snek5000_cbox.solver import Simul
-from snek5000 import load
-from snek5000 import load_params
 
 
 @pytest.mark.slow
@@ -75,12 +73,6 @@ def test_simple_simul():
 
     sim.make.exec("run_fg", resources={"nproc": 2})
     
-    coords, df = sim.output.history_points.load()
-
-    sim = load(sim.path_run)
-    coords, df = sim.output.history_points.load()
-
-    assert coords.ndim == 2 and coords.shape == (n1d ** 2, 2)
 
     # if everything is fine, we can cleanup the directory of the simulation
     rmtree(sim.path_run, ignore_errors=True)
