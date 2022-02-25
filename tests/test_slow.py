@@ -85,7 +85,7 @@ def test_simple_simul():
     # the temperature values at the end are > 0.15 and < 0.4
     temperature_last = df[df.time == t_max].temperature
     assert temperature_last.abs().max() < 0.4
-    assert temperature_last.abs().min() > 0.15
+    assert temperature_last.abs().min() > 0.10
 
     # if everything is fine, we can cleanup the directory of the simulation
     rmtree(sim.path_run, ignore_errors=True)
