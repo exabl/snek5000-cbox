@@ -64,7 +64,7 @@ def test_simple_simul():
     params.oper.elem.staggered = "auto"
     params.nek.general.extrapolation = "standard"
 
-    restart_file = "../doc/examples/base_flow.restart"
+    restart_file = "./doc/examples/base_flow.restart"
     params.nek.general.start_from = "base_flow.restart"
 
     sim = Simul(params)
