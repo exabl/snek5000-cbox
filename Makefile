@@ -5,7 +5,7 @@ test:
 	pytest
 
 testslow:
-	pytest --runslow
+	pytest --runslow --durations=10
 
 coverage_html:
 	coverage html
@@ -13,4 +13,4 @@ coverage_html:
 	@echo "file://${PWD}/.coverage/html/index.html"
 
 black:
-	black src tests
+	black src tests doc

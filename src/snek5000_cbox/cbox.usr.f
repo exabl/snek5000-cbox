@@ -21,8 +21,8 @@
          UTRANS = Pr_
          UDIFF  = 1./sqrt(Ra_)
       elseif (IFIELD.eq.2) then !     temperature equation
-             UTRANS = 1.0
-             UDIFF  = 1./sqrt(Ra_)
+         UTRANS = 1.0
+         UDIFF  = 1./sqrt(Ra_)
       endif
 
       return
@@ -43,7 +43,7 @@
       integer iel
       real rtmp
       real Pr_
-      
+
       Pr_ = abs(UPARAM(1))
 
       ! local element number
@@ -54,7 +54,7 @@
          ip=ix+NX1*(iy-1+NY1*(iz-1+NZ1*(iel-1)))
          rtmp = TP(ip,1,1)*Pr_
       else
-          rtmp = T(ix,iy,iz,iel,1)*Pr_
+         rtmp = T(ix,iy,iz,iel,1)*Pr_
       endif
 
 
@@ -123,16 +123,16 @@
                call hpts()
             else
 
-                 call opcopy(vtmp(1,1),vtmp(1,2),vtmp(1,ndim),vx,vy,vz)
-                 n = NX1*NY1*NZ1*NELV
-                 call copy(ttmp,T,n)
-                 call opcopy(vx, vy, vz, vxp, vyp, vzp)
-                 call copy(T,TP,n)
+               call opcopy(vtmp(1,1),vtmp(1,2),vtmp(1,ndim),vx,vy,vz)
+               n = NX1*NY1*NZ1*NELV
+               call copy(ttmp,T,n)
+               call opcopy(vx, vy, vz, vxp, vyp, vzp)
+               call copy(T,TP,n)
 
-                 call hpts()
+               call hpts()
 
-                 call opcopy(vx,vy,vz, vtmp(1,1),vtmp(1,2),vtmp(1,ndim))
-                 call copy(T,ttmp,n)
+               call opcopy(vx,vy,vz, vtmp(1,1),vtmp(1,2),vtmp(1,ndim))
+               call copy(T,ttmp,n)
 
             endif
          endif
@@ -156,7 +156,7 @@
             if (x.eq.0) then
                temp=-0.5000
             elseif (x.eq.1.0) then
-                   temp=0.5000      
+               temp=0.5000
             endif
       else
 !     perturbation
@@ -191,14 +191,14 @@
       else
 !     perturbation
 
-           call random_number(ux)
-           ux  = amp*(2*ux - 1)
-           call random_number(uy)
-           uy  = amp*(4*uy - 2)
-           uz = 0.0
+         call random_number(ux)
+         ux  = amp*(2*ux - 1)
+         call random_number(uy)
+         uy  = amp*(4*uy - 2)
+         uz = 0.0
 
-           call random_number(temp)
-           temp= amp*(temp - 0.5)
+         call random_number(temp)
+         temp= amp*(temp - 0.5)
 
       endif
 
@@ -252,9 +252,9 @@
                zm1(i,1,1,1) = zz - (stretch_z * (sin(twopi*zz/zmax)))
             endif
             enddo
-      call gen_re2(0)      
+      call gen_re2(0)
       endif
-      
+
       !call gen_re2(1)
       !call gen_re2(2)
       return

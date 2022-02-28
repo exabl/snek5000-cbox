@@ -25,7 +25,7 @@ cluster.commands_setting_env = [
 if aspect_ratio in better_Ra_c_numbers:
     Ra_c_guessed = better_Ra_c_numbers[aspect_ratio]
 else:
-    Ra_c_guessed = 1.93e8 * aspect_ratio ** -3.15
+    Ra_c_guessed = 1.93e8 * aspect_ratio**-3.15
 
 Ra_numbs = np.logspace(np.log10(0.99 * Ra_c_guessed), np.log10(1.02 * Ra_c_guessed), 5)
 

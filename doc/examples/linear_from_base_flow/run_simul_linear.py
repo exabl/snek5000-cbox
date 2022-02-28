@@ -41,15 +41,15 @@ def main(args):
     params.output.phys_fields.write_interval_pert_field = 500
     params.nek.problemtype.equation = "incompLinNS"
     params.oper.elem.staggered = "auto"
-    
+
     dim = params.oper.dim
     Ly = params.oper.Ly
     prandtl = params.prandtl
-    
-    params.output.sub_directory = f"cbox_stretched/{dim}D/lin_sim/Pr_{prandtl:.2f}/asp_{Ly:.3f}"
-    params.short_name_type_run = (
-        f"asp{Ly:.3f}_Pr{prandtl:.2f}_Ra{args.Rayleigh:.3e}"
+
+    params.output.sub_directory = (
+        f"cbox_stretched/{dim}D/lin_sim/Pr_{prandtl:.2f}/asp_{Ly:.3f}"
     )
+    params.short_name_type_run = f"asp{Ly:.3f}_Pr{prandtl:.2f}_Ra{args.Rayleigh:.3e}"
 
     params.NEW_DIR_RESULTS = True
     restart_file = params.output.path_session + "/cbox0.f00298"
@@ -66,5 +66,3 @@ def main(args):
 if __name__ == "__main__":
     args = parser.parse_args()
     params, sim = main(args)
-
-    

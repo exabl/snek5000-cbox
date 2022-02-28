@@ -32,7 +32,7 @@ def test_simple_simul():
     Ly = params.oper.Ly = Lx * aspect_ratio
 
     params.oper.mesh_stretch_factor = 0.08
-    
+
     params.oper.elem.order = params.oper.elem.order_out = 10
 
     # creation of the coordinates of the points saved by history points
@@ -72,7 +72,6 @@ def test_simple_simul():
     copyfile(restart_file, sim.params.output.path_session / "base_flow.restart")
 
     sim.make.exec("run_fg", resources={"nproc": 2})
-    
 
     # if everything is fine, we can cleanup the directory of the simulation
     rmtree(sim.path_run, ignore_errors=True)

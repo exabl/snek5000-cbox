@@ -27,9 +27,7 @@ parser.add_argument(
     "-a_z", "--aspect-ratio-z", type=float, default=1.0, help="Z aspect ratio"
 )
 
-parser.add_argument(
-    "-Pr", "--Prandtl", type=float, default=0.71, help="Prandtl number"
-)
+parser.add_argument("-Pr", "--Prandtl", type=float, default=0.71, help="Prandtl number")
 
 parser.add_argument(
     "-Ra", "--Rayleigh", type=float, default=1.0e08, help="Rayleigh number"
