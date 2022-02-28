@@ -17,8 +17,14 @@
       ! set the coefficients
       ! direct problem
 
+
       if (IFIELD.eq.1) then     !     momentum equations
-         UTRANS = Pr_
+         ! TODO: understand that!
+         if (IFPERT) then
+            UTRANS = Pr_
+         else
+            UTRANS = 1./Pr_
+         endif
          UDIFF  = 1./sqrt(Ra_)
       elseif (IFIELD.eq.2) then !     temperature equation
          UTRANS = 1.0
@@ -252,11 +258,8 @@
                zm1(i,1,1,1) = zz - (stretch_z * (sin(twopi*zz/zmax)))
             endif
             enddo
-      call gen_re2(0)
       endif
 
-      !call gen_re2(1)
-      !call gen_re2(2)
       return
       end
 !-----------------------------------------------------------------------
