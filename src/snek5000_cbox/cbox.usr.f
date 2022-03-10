@@ -5,25 +5,8 @@
       include 'INPUT'           ! UPARAM
       include 'TSTEP'           ! TSTEP
 
-      ! argument list
-      integer ix, iy, iz, ieg
-
-      ! local variables
-      real Pr_,Ra_
-
-      ! decide the non dimensionalization of the equations
-      Pr_ = abs(UPARAM(1))
-      Ra_ = abs(UPARAM(2))
-      ! set the coefficients
-      ! direct problem
-
-      if (IFIELD.eq.1) then     !     momentum equations
-            UTRANS = 1./Pr_
-            UDIFF  = 1./sqrt(Ra_)
-      elseif (IFIELD.eq.2) then !     temperature equation
-            UTRANS = 1.0
-            UDIFF  = 1./sqrt(Ra_)
-      endif
+      udiff =0.
+      utrans=0.
 
       return
       end
@@ -42,18 +25,44 @@
       ! local variable
       integer iel
       real rtmp
+      real Pr_, Ra_
+      real delta_T_lateral, delta_T_vertical
+
+      Pr_ = abs(UPARAM(1))
+      Ra_ = abs(UPARAM(2))
+      delta_T_lateral = UPARAM(5)
+      delta_T_vertical = UPARAM(6)
 
       ! local element number
       iel=GLLEL(ieg)
 
       ! forcing, put boussinesq
+      if (delta_T_lateral.ne.0 .and. delta_T_vertical.eq.0) then
       if (IFPERT) then
       ip=ix+NX1*(iy-1+NY1*(iz-1+NZ1*(iel-1)))
-      rtmp = TP(ip,1,1)/VTRANS(ix,iy,iz,iel,1)
+      rtmp = TP(ip,1,1)*Pr_
       else
-      rtmp = T(ix,iy,iz,iel,1)/VTRANS(ix,iy,iz,iel,1)
+      rtmp = T(ix,iy,iz,iel,1)*Pr_
       endif
+      
 
+      elseif (delta_T_vertical.ne.0 .and. delta_T_lateral.eq.0) then
+      if (IFPERT) then
+      ip=ix+NX1*(iy-1+NY1*(iz-1+NZ1*(iel-1)))
+      rtmp = TP(ip,1,1)*Pr_*Ra_
+      else
+      rtmp = T(ix,iy,iz,iel,1)*Pr_*Ra_
+      endif
+      
+
+      elseif (delta_T_lateral.ne.0 .and. delta_T_vertical.ne.0) then
+      if (IFPERT) then
+      ip=ix+NX1*(iy-1+NY1*(iz-1+NZ1*(iel-1)))
+      rtmp = TP(ip,1,1)*Pr_
+      else
+      rtmp = T(ix,iy,iz,iel,1)*Pr_
+      endif
+      endif
 
       FFX = 0
       FFY = rtmp
@@ -85,79 +94,109 @@
       ! local variables
 
       integer n, nit_pert, nit_hist
-      real Pr_,Ra_
+      
+      real vtmp(lx1*ly1*lz1*lelt,ldim),ttmp(lx1*ly1*lz1*lelt)
+      common /SCRUZ/ vtmp, ttmp
 
       nit_hist = UPARAM(10)
       nit_pert = UPARAM(3)
 
       if (ISTEP.eq.0) then
          TIME = 0
-!     start framework
+      ! start framework
          call frame_start
-         if (IFPERT) then
-            call perturb_fields(ix,iy,iz,ieg)
-         endif
-
-      ! decide the non dimensionalization of the equations
-         Pr_ = abs(UPARAM(1))
-         Ra_ = abs(UPARAM(2))
-
-      ! set fluid properties
-         if (IFADJ) then
-            CPFLD(1,1)=Pr_/sqrt(Ra_)
-            CPFLD(1,2)=1.0
-
-            CPFLD(2,1)=1.0/sqrt(Ra_)
-            CPFLD(2,2)=1.0
-         else
-            CPFLD(1,1)=1.0/sqrt(Ra_)
-            CPFLD(1,2)=1.0/Pr_
-
-            CPFLD(2,1)=1.0/sqrt(Ra_)
-            CPFLD(2,2)=1.0
-         endif
       endif
 
-!     monitor simulation
-      call frame_monitor
-!     save/load files for full-restart
-      call chkpt_main
-!     finalise framework
-      if (istep.eq.nsteps.or.lastep.eq.1) then
-         call frame_end
-      endif
+      ! monitor simulation
+         call frame_monitor
+         call chkpt_main
+      ! finalise framework
+         if (istep.eq.nsteps.or.lastep.eq.1) then
+            call frame_end
+         endif
 
       ! perturbation field
-      if (IFPERT) then
-         if (mod(ISTEP,nit_pert).eq.0) then
-      !       write perturbation field
-            call outpost2(VXP,VYP,VZP,PRP,TP,1,'prt')
+         if (IFPERT) then
+            if (mod(ISTEP,nit_pert).eq.0) then
+               !write perturbation field
+               call out_pert()
+            endif
          endif
-      endif
 
-      ! history points
-      if (mod(ISTEP,nit_hist).eq.0) then
-          call hpts()
-      endif
+         ! history points
+         if (mod(ISTEP,nit_hist).eq.0) then
+            if (.not. ifpert) then
+               call hpts()
+            else
+
+                 call opcopy(vtmp(1,1),vtmp(1,2),vtmp(1,ndim),vx,vy,vz)
+                 n = NX1*NY1*NZ1*NELV
+                 call copy(ttmp,T,n)
+                 call opcopy(vx, vy, vz, vxp, vyp, vzp)
+                 call copy(T,TP,n)
+
+                 call hpts()
+
+                 call opcopy(vx,vy,vz, vtmp(1,1),vtmp(1,2),vtmp(1,ndim))
+                 call copy(T,ttmp,n)
+
+            endif
+         endif
 
       return
       end
 !-----------------------------------------------------------------------
       subroutine userbc (ix,iy,iz,iside,ieg)
       include 'SIZE'
-      include 'TSTEP'
       include 'INPUT'
+      include 'SOLN'            ! JP
       include 'NEKUSE'
-      common /rayleigh_r/ rapr,ta2pr
+      
+      real delta_T_lateral, delta_T_vertical
 
+      delta_T_lateral = UPARAM(5)
+      delta_T_vertical = UPARAM(6)
+      
+      !base flow
+      if (JP.eq.0) then
       ux=0.
       uy=0.
       uz=0.
 
+      if (delta_T_lateral.ne.0 .and. delta_T_vertical.eq.0) then      
       if (x.eq.0) then
-         temp=-0.5000
+         temp=-delta_T_lateral/2.
       elseif (x .eq. 1.0) then
-         temp=0.5000
+         temp=delta_T_lateral/2.
+      endif
+      
+
+      elseif (delta_T_vertical.ne.0 .and. delta_T_lateral.eq.0) then      
+      if (y.eq.0) then
+         temp=delta_T_vertical/2.
+      elseif (y .eq. 1.0) then
+         temp=-delta_T_vertical/2.
+      endif
+      
+
+      elseif (delta_T_lateral.ne.0 .and. delta_T_vertical.ne.0) then
+      if (x.eq.0) then
+         temp=-delta_T_lateral/2.
+      elseif (x .eq. 1.0) then
+         temp=delta_T_lateral/2.      
+      elseif(y.eq.0) then
+         temp=delta_T_vertical/2.
+      elseif (y .eq. 1.0) then
+         temp=-delta_T_vertical/2.
+      endif
+      endif
+
+      else
+      !perturbation
+      ux=0.0
+      uy=0.0
+      uz=0.0
+      temp=0.0
       endif
 
       return
@@ -165,13 +204,40 @@
 !-----------------------------------------------------------------------
       subroutine useric (ix,iy,iz,ieg)
       include 'SIZE'
-      include 'TOTAL'
       include 'NEKUSE'
+      include 'SOLN'            ! JP
+      include 'INPUT'
 
-      temp = 0
+      real delta_T_lateral, delta_T_vertical, amplitude
+
+      delta_T_lateral = UPARAM(5)
+      delta_T_vertical = UPARAM(6)
+      amplitude = UPARAM(7)
+
+      if (JP.eq.0) then
       ux=0.0
       uy=0.0
       uz=0.0
+      temp = 0.
+      !call random_number(temp)
+      !temp= amplitude*(temp - 0.5)
+      else
+!     perturbation
+      call random_number(ux)
+      ux  = amplitude*(2*ux - 1)
+      ux  = amplitude*ux
+      call random_number(uy)
+      uy  = amplitude*(4*uy - 2)
+      uy  = amplitude*uy
+      !ux = 0.0
+      !uy = 0.0 
+      uz = 0.0
+
+      call random_number(temp)
+      temp= amplitude*(temp - 0.5)
+      !temp  = amplitude*temp
+      !temp = amplitude
+      endif
 
       return
       end
@@ -229,33 +295,6 @@
       end
 !-----------------------------------------------------------------------
       subroutine usrdat3
-
-      return
-      end
-!-----------------------------------------------------------------------
-      subroutine perturb_fields (ix,iy,iz,ieg)
-
-      include 'SIZE'
-      include 'NEKUSE'          ! UX, UY, UZ, TEMP, Z
-      include 'SOLN'            ! V[XYZ], T, V[XYZ]P, TP, PRP
-
-      ! velocity random distribution
-
-      call random_number(VXP)
-      VXP  = 0.00000001*(2*VXP - 1)
-
-      call random_number(VYP)
-      VYP  = 0.00000001*(4*VYP - 2)
-
-      UZP = 0.0
-
-      ! temperature random distribution
-      call random_number(TP)
-      TP= 0.00000001*(TP - 0.5)
-
-      ! pressure random distribution
-      !call random_number(PRP)
-      !PRP= 0.000001*(0.5*PRP - 0.25)
 
       return
       end

@@ -34,7 +34,9 @@ def test_simple_simul():
 
     params.oper.mesh_stretch_factor = 0.1
     
-    params.oper.elem.order = 7
+    params.oper.elem.order = params.oper.elem.order_out = 7
+
+    params.oper.delta_T_lateral = 1.0
 
     # creation of the coordinates of the points saved by history points
     n1d = 4
@@ -57,7 +59,7 @@ def test_simple_simul():
     params.nek.general.write_interval = 500
 
     params.nek.general.variable_dt = False
-    params.nek.general.dt = 0.05
+    params.nek.general.dt = -0.05
     params.nek.general.time_stepper = "BDF3"
     params.nek.general.extrapolation = "OIFS"
 
@@ -76,7 +78,7 @@ def test_simple_simul():
     times = df[df.index_points == 0].time
     t_max = times.max()
 
-    assert t_max == num_steps * params.nek.general.dt
+    assert t_max == num_steps * abs(params.nek.general.dt)
     assert (
         len(times) == num_steps / params.output.history_points.write_interval + 1
     )
