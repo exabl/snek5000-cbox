@@ -31,6 +31,8 @@ def test_simple_simul():
 
     params.oper.elem.order = params.oper.elem.order_out = 7
 
+    params.oper.delta_T_lateral = 1.0
+
     # creation of the coordinates of the points saved by history points
     n1d = 4
     small = Lx / 10
@@ -65,3 +67,42 @@ def test_simple_simul():
 
     # if everything is fine, we can cleanup the directory of the simulation
     rmtree(sim.path_run, ignore_errors=True)
+
+
+def test_init_vert():
+
+    params = Simul.create_default_params()
+
+    params.oper.dim = 3
+    params.oper.delta_T_lateral = 1.0
+
+    Simul(params)
+
+
+def test_init_RB():
+
+    params = Simul.create_default_params()
+
+    params.oper.dim = 2
+    params.oper.delta_T_vertical = 1.0
+
+    Simul(params)
+
+    params.oper.dim = 3
+
+    Simul(params)
+
+
+def test_init_mix():
+
+    params = Simul.create_default_params()
+
+    params.oper.dim = 2
+    params.oper.delta_T_lateral = 1.0
+    params.oper.delta_T_vertical = 1.0
+
+    Simul(params)
+
+    params.oper.dim = 3
+
+    Simul(params)

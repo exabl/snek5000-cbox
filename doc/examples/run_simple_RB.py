@@ -13,8 +13,8 @@ params = Simul.create_default_params()
 aspect_ratio = 9.0
 params.prandtl = 1.0
 
-# for aspect ratio 1, Ra_c = 1.825e08
-params.rayleigh = 3000
+# for aspect ratio 9 (x/y), Ra_c = 1707.56
+params.rayleigh = 1800
 
 params.output.sub_directory = "examples_cbox/simple"
 
@@ -22,7 +22,7 @@ params.oper.dim = 2
 
 params.oper.delta_T_vertical = 1.0
 
-nb_elements = ny = 2
+nb_elements = ny = 1
 params.oper.ny = nb_elements
 params.oper.nx = int(nb_elements * aspect_ratio)
 params.oper.nz = int(nb_elements * aspect_ratio)

@@ -127,13 +127,13 @@ User parameter for noise amplitude in .usr file (subroutine useric):
         if params.oper.delta_T_lateral == 1.0 and params.oper.delta_T_vertical == 0.0:
             if params.oper.dim == 2:
 
-                params.oper.boundary = ["W"] * 4
-                params.oper.boundary_scalars = ["t"] * 2 + ["I"] * 2
+                params.oper.boundary = list("WWWW")
+                params.oper.boundary_scalars = list("ttII")
 
             else:
 
-                params.oper.boundary = ["W"] * 6
-                params.oper.boundary_scalars = ["t"] * 2 + ["I"] * 4
+                params.oper.boundary = list("WWWWWW")
+                params.oper.boundary_scalars = list("ttIIII")
 
             params.nek.velocity.viscosity = params.prandtl / params.rayleigh ** (1 / 2)
             params.nek.temperature.conductivity = 1.0 / params.rayleigh ** (1 / 2)
@@ -141,13 +141,13 @@ User parameter for noise amplitude in .usr file (subroutine useric):
         elif params.oper.delta_T_lateral == 0.0 and params.oper.delta_T_vertical == 1.0:
             if params.oper.dim == 2:
 
-                params.oper.boundary = ["P"] * 2 + ["W"] * 2
-                params.oper.boundary_scalars = ["P"] * 2 + ["t"] * 2
+                params.oper.boundary = list("PPWW")
+                params.oper.boundary_scalars = list("PPtt")
 
             else:
 
-                params.oper.boundary = ["P"] * 2 + ["W"] * 2 + ["P"] * 2
-                params.oper.boundary_scalars = ["P"] * 2 + ["t"] * 2 + ["P"] * 2
+                params.oper.boundary = list("PPWWPP")
+                params.oper.boundary_scalars = list("PPttPP")
 
             params.nek.velocity.viscosity = params.prandtl
             params.nek.temperature.conductivity = 1.0
@@ -155,13 +155,13 @@ User parameter for noise amplitude in .usr file (subroutine useric):
         elif params.oper.delta_T_lateral == 1.0 and params.oper.delta_T_vertical == 1.0:
             if params.oper.dim == 2:
 
-                params.oper.boundary = ["W"] * 4
-                params.oper.boundary_scalars = ["t"] * 2 + ["t"] * 2
+                params.oper.boundary = list("WWWW")
+                params.oper.boundary_scalars = list("tttt")
 
             else:
 
-                params.oper.boundary = ["W"] * 6
-                params.oper.boundary_scalars = ["t"] * 4 + ["I"] * 2
+                params.oper.boundary = list("WWWWWW")
+                params.oper.boundary_scalars = list("ttttII")
 
             params.nek.velocity.viscosity = params.prandtl / params.rayleigh ** (1 / 2)
             params.nek.temperature.conductivity = 1.0 / params.rayleigh ** (1 / 2)
