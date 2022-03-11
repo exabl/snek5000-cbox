@@ -38,7 +38,6 @@
       else
       rtmp = T(ix,iy,iz,iel,1)*Pr_
       endif
-      
 
       FFX = 0
       FFY = rtmp
@@ -124,15 +123,23 @@
 !-----------------------------------------------------------------------
       subroutine userbc (ix,iy,iz,iside,ieg)
       include 'SIZE'
+      include 'GEOM'            ! {x,y,z}m1
       include 'INPUT'
       include 'SOLN'            ! JP
       include 'NEKUSE'
       
+      integer ntot
       real delta_T_lateral, delta_T_vertical
+      real xmax, ymax
 
       delta_T_lateral = UPARAM(5)
       delta_T_vertical = UPARAM(6)
       
+      ntot = nx1*ny1*nz1*nelt
+
+      xmax = glmax(xm1,ntot)
+      ymax = glmax(ym1,ntot)
+
       !base flow
       if (JP.eq.0) then
       ux=0.
@@ -142,27 +149,25 @@
       if (delta_T_lateral.ne.0 .and. delta_T_vertical.eq.0) then      
       if (x.eq.0) then
       temp=-delta_T_lateral/2.
-      elseif (x .eq. 1.0) then
+      elseif (x .eq. xmax) then
       temp=delta_T_lateral/2.
       endif
-      
 
       elseif (delta_T_vertical.ne.0 .and. delta_T_lateral.eq.0) then      
       if (y.eq.0) then
       temp=delta_T_vertical/2.
-      elseif (y .eq. 1.0) then
+      elseif (y .eq. ymax) then
       temp=-delta_T_vertical/2.
       endif
       
-
       elseif (delta_T_lateral.ne.0 .and. delta_T_vertical.ne.0) then
       if (x.eq.0) then
       temp=-delta_T_lateral/2.
-      elseif (x .eq. 1.0) then
+      elseif (x .eq. xmax) then
       temp=delta_T_lateral/2.      
       elseif(y.eq.0) then
       temp=delta_T_vertical/2.
-      elseif (y .eq. 1.0) then
+      elseif (y .eq. ymax) then
       temp=-delta_T_vertical/2.
       endif
       endif

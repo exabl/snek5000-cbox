@@ -69,12 +69,16 @@ def test_simple_simul():
     rmtree(sim.path_run, ignore_errors=True)
 
 
-def test_init_vert():
+def test_init_vertical():
 
     params = Simul.create_default_params()
 
     params.oper.dim = 3
     params.oper.delta_T_lateral = 1.0
+    
+    Simul(params)
+
+    params.oper.z_periodicity = True
 
     Simul(params)
 
@@ -88,9 +92,23 @@ def test_init_RB():
 
     Simul(params)
 
+    params.oper.x_periodicity = True
+
+    Simul(params)
+
+    params.oper.x_periodicity = False
     params.oper.dim = 3
 
     Simul(params)
+
+    params.oper.z_periodicity = True
+
+    Simul(params)
+
+    params.oper.x_periodicity = True
+
+    Simul(params)
+
 
 
 def test_init_mix():
@@ -104,5 +122,9 @@ def test_init_mix():
     Simul(params)
 
     params.oper.dim = 3
+
+    Simul(params)
+
+    params.oper.z_periodicity = True
 
     Simul(params)

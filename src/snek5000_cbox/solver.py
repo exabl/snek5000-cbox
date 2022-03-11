@@ -113,6 +113,32 @@ User parameter for noise amplitude in .usr file (subroutine useric):
 """
         )
 
+        params.oper._set_attribs({"x_periodicity": False})
+        params.oper._set_doc(
+            params.oper._doc
+            + """
+
+- ``x_periodicity``: logical
+  
+  Periodic boundary condition in x direction (default = False, meaning 
+  we have wall). 
+  
+"""
+        )
+
+        params.oper._set_attribs({"z_periodicity": False})
+        params.oper._set_doc(
+            params.oper._doc
+            + """
+
+- ``z_periodicity``: logical
+  
+  Periodic boundary condition in x direction (default = False, meaning 
+  we have wall). 
+  
+"""
+        )
+
         params.output.phys_fields._set_attribs(
             {"write_interval_pert_field": 1000},
         )
@@ -131,22 +157,41 @@ User parameter for noise amplitude in .usr file (subroutine useric):
                 params.oper.boundary_scalars = list("ttII")
 
             else:
+                if params.oper.z_periodicity:
 
-                params.oper.boundary = list("WWWWWW")
-                params.oper.boundary_scalars = list("ttIIII")
+                    params.oper.boundary = list("WWWWPP")
+                    params.oper.boundary_scalars = list("ttIIPP")
 
+                else:
+                    params.oper.boundary = list("WWWWII")
+                    params.oper.boundary_scalars = list("ttIIII")
 
         elif params.oper.delta_T_lateral == 0.0 and params.oper.delta_T_vertical == 1.0:
             if params.oper.dim == 2:
+                if params.oper.x_periodicity:
 
-                params.oper.boundary = list("WWWW")
-                params.oper.boundary_scalars = list("IItt")
+                    params.oper.boundary = list("PPWW")
+                    params.oper.boundary_scalars = list("PPtt")
+
+                else:
+
+                    params.oper.boundary = list("WWWW")
+                    params.oper.boundary_scalars = list("IItt")
 
             else:
+                if params.oper.x_periodicity and params.oper.z_periodicity:
 
-                params.oper.boundary = list("WWWWWW")
-                params.oper.boundary_scalars = list("IIttII")
+                    params.oper.boundary = list("PPWWPP")
+                    params.oper.boundary_scalars = list("PPttPP")
 
+                elif params.oper.z_periodicity:
+
+                    params.oper.boundary = list("WWWWPP")
+                    params.oper.boundary_scalars = list("IIttPP")
+
+                else:
+                    params.oper.boundary = list("WWWWWW")
+                    params.oper.boundary_scalars = list("IIttII")
 
         elif params.oper.delta_T_lateral == 1.0 and params.oper.delta_T_vertical == 1.0:
             if params.oper.dim == 2:
@@ -155,9 +200,15 @@ User parameter for noise amplitude in .usr file (subroutine useric):
                 params.oper.boundary_scalars = list("tttt")
 
             else:
+                if params.oper.z_periodicity:
 
-                params.oper.boundary = list("WWWWWW")
-                params.oper.boundary_scalars = list("ttttII")
+                    params.oper.boundary = list("WWWWPP")
+                    params.oper.boundary_scalars = list("ttttPP")
+
+                else:
+
+                    params.oper.boundary = list("WWWWWW")
+                    params.oper.boundary_scalars = list("ttttII")
 
         params.nek.velocity.viscosity = params.prandtl / params.rayleigh ** (1 / 2)
         params.nek.temperature.conductivity = 1.0 / params.rayleigh ** (1 / 2)
