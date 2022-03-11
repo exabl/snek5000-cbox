@@ -126,6 +126,19 @@ User parameter for noise amplitude in .usr file (subroutine useric):
 """
         )
 
+        params.oper._set_attribs({"y_periodicity": False})
+        params.oper._set_doc(
+            params.oper._doc
+            + """
+
+- ``x_periodicity``: logical
+  
+  Periodic boundary condition in y direction (default = False, meaning 
+  we have wall). 
+  
+"""
+        )
+
         params.oper._set_attribs({"z_periodicity": False})
         params.oper._set_doc(
             params.oper._doc
@@ -133,7 +146,7 @@ User parameter for noise amplitude in .usr file (subroutine useric):
 
 - ``z_periodicity``: logical
   
-  Periodic boundary condition in x direction (default = False, meaning 
+  Periodic boundary condition in z direction (default = False, meaning 
   we have wall). 
   
 """
@@ -152,17 +165,29 @@ User parameter for noise amplitude in .usr file (subroutine useric):
 
         if params.oper.delta_T_lateral == 1.0 and params.oper.delta_T_vertical == 0.0:
             if params.oper.dim == 2:
+                if params.oper.y_periodicity:
 
-                params.oper.boundary = list("WWWW")
-                params.oper.boundary_scalars = list("ttII")
+                    params.oper.boundary = list("WWPP")
+                    params.oper.boundary_scalars = list("ttPP")
+
+                else:
+
+                    params.oper.boundary = list("WWWW")
+                    params.oper.boundary_scalars = list("ttII")
 
             else:
-                if params.oper.z_periodicity:
+                if params.oper.y_periodicity and params.oper.z_periodicity:
+
+                    params.oper.boundary = list("WWPPPP")
+                    params.oper.boundary_scalars = list("ttPPPP")
+
+                elif params.oper.z_periodicity:
 
                     params.oper.boundary = list("WWWWPP")
                     params.oper.boundary_scalars = list("ttIIPP")
 
                 else:
+
                     params.oper.boundary = list("WWWWII")
                     params.oper.boundary_scalars = list("ttIIII")
 

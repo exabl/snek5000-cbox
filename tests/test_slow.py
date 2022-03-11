@@ -33,7 +33,7 @@ def test_simple_simul():
     Ly = params.oper.Ly = Lx * aspect_ratio
 
     params.oper.mesh_stretch_factor = 0.1
-    
+
     params.oper.elem.order = params.oper.elem.order_out = 7
 
     params.oper.delta_T_lateral = 1.0
@@ -55,12 +55,12 @@ def test_simple_simul():
     params.output.history_points.coords = coords
     params.oper.max.hist = len(coords) + 1
 
-    num_steps = params.nek.general.num_steps = 5000
+    num_steps = params.nek.general.num_steps = 6000
     params.nek.general.write_interval = 500
 
     params.nek.general.variable_dt = False
     # Negative dt means fixed dt
-    dt = params.nek.general.dt = 0.05
+    dt = params.nek.general.dt = 0.03
     params.nek.general.time_stepper = "BDF3"
     params.nek.general.extrapolation = "OIFS"
 
@@ -80,15 +80,13 @@ def test_simple_simul():
     t_max = times.max()
 
     assert t_max == num_steps * dt
-    assert (
-        len(times) == num_steps / params.output.history_points.write_interval + 1
-    )
+    assert len(times) == num_steps / params.output.history_points.write_interval + 1
 
     # check a physical result: since there is no probe close to the center,
-    # the temperature values at the end are > 0.15 and < 0.4
+    # the temperature values at the end are > 0.1 and < 0.4
     temperature_last = df[df.time == t_max].temperature
     assert temperature_last.abs().max() < 0.4
-    assert temperature_last.abs().min() > 0.15
+    assert temperature_last.abs().min() > 0.1
 
     # if everything is fine, we can cleanup the directory of the simulation
     rmtree(sim.path_run, ignore_errors=True)

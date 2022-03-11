@@ -202,24 +202,21 @@
       !temp = 0.
       call random_number(temp)
       temp= amplitude*(temp)
-      !if (delta_T_vertical.ne.0 .and. delta_T_lateral.eq.0) then
-      !temp=temp + y - 0.5
-      !endif
+      if (delta_T_vertical.ne.0 .and. delta_T_lateral.eq.0) then
+      temp=temp + y - 0.5
+      elseif (delta_T_lateral.ne.0 .and. delta_T_vertical.eq.0) then
+      temp=temp + x - 0.5
+      endif
 
       else
 !     perturbation
-      !call random_number(ux)
-      !ux  = amplitude*(2*ux - 1)
-      !ux  = amplitude*ux
-      !call random_number(uy)
-      !uy  = amplitude*(4*uy - 2)
-      !uy  = amplitude*uy
+
       ux = 0.
       uy = 0. 
       uz = 0.
 
       call random_number(temp)
-      temp= amplitude*(temp - delta_T_lateral/2.)
+      temp= amplitude*(temp)
       endif
 
       return

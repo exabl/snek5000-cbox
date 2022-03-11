@@ -73,12 +73,25 @@ def test_init_vertical():
 
     params = Simul.create_default_params()
 
-    params.oper.dim = 3
+    params.oper.dim = 2
     params.oper.delta_T_lateral = 1.0
-    
+
+    Simul(params)
+
+    params.oper.y_periodicity = True
+
+    Simul(params)
+
+    params.oper.y_periodicity = False
+    params.oper.dim = 3
+
     Simul(params)
 
     params.oper.z_periodicity = True
+
+    Simul(params)
+
+    params.oper.y_periodicity = True
 
     Simul(params)
 
@@ -108,7 +121,6 @@ def test_init_RB():
     params.oper.x_periodicity = True
 
     Simul(params)
-
 
 
 def test_init_mix():

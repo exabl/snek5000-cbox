@@ -17,7 +17,7 @@ def test_simple_simul():
     params.prandtl = 0.71
 
     # for aspect ratio 1, Ra_c = ?
-    params.rayleigh = 1.e4
+    params.rayleigh = 1.0e4
 
     params.output.sub_directory = "tests_snek_cbox"
 
@@ -33,7 +33,7 @@ def test_simple_simul():
     Ly = params.oper.Ly = Lx * aspect_ratio
 
     params.oper.mesh_stretch_factor = 0.0
-    
+
     params.oper.elem.order = params.oper.elem.order_out = 7
 
     params.oper.delta_T_vertical = 1.0
@@ -79,9 +79,7 @@ def test_simple_simul():
     t_max = times.max()
 
     assert t_max == num_steps * dt
-    assert (
-        len(times) == num_steps / params.output.history_points.write_interval + 1
-    )
+    assert len(times) == num_steps / params.output.history_points.write_interval + 1
 
     # check a physical result: since there is no probe close to the center,
     temperature_last = df[df.time == t_max].temperature
@@ -90,4 +88,3 @@ def test_simple_simul():
 
     # if everything is fine, we can cleanup the directory of the simulation
     rmtree(sim.path_run, ignore_errors=True)
-
