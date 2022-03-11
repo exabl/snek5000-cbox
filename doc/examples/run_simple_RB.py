@@ -10,11 +10,11 @@ from snek5000_cbox.solver import Simul
 
 params = Simul.create_default_params()
 
-aspect_ratio = 9.0
-params.prandtl = 1.0
+aspect_ratio = 1.0
+params.prandtl = 0.71
 
-# for aspect ratio 9 (x/y), Ra_c = 1707.56
-params.rayleigh = 1800
+# for aspect ratio 1, Ra_c = ?
+params.rayleigh = 1e5
 
 params.output.sub_directory = "examples_cbox/simple"
 
@@ -22,23 +22,21 @@ params.oper.dim = 2
 
 params.oper.delta_T_vertical = 1.0
 
-nb_elements = ny = 1
-params.oper.ny = nb_elements
-params.oper.nx = int(nb_elements * aspect_ratio)
+nb_elements = nx = ny = 8
+params.oper.nx = nb_elements
+params.oper.ny = int(nb_elements * aspect_ratio)
 params.oper.nz = int(nb_elements * aspect_ratio)
 
-Ly = params.oper.Ly = 1.0
-Lx = params.oper.Lx = Ly * aspect_ratio
-Lz = params.oper.Lz = Ly * aspect_ratio
+Lx = params.oper.Lx = 1.0
+Ly = params.oper.Ly = Lx * aspect_ratio
+Lz = params.oper.Lz = Lx * aspect_ratio
 
 
 order = params.oper.elem.order = params.oper.elem.order_out = 10
 
 params.oper.mesh_stretch_factor = 0.0  # zero means regular
 
-params.short_name_type_run = (
-    f"Ra{params.rayleigh:.3e}_{ny*aspect_ratio*order}x{ny*order}"
-)
+params.short_name_type_run = f"Ra{params.rayleigh:.3e}_{nx*order}x{ny*order}"
 
 # creation of the coordinates of the points saved by history points
 n1d = 5
@@ -72,9 +70,8 @@ params.nek.general.stop_at = "endTime"
 params.nek.general.write_control = "runTime"
 params.nek.general.write_interval = 10.0
 
-# params.nek.general.variable_dt = True
-# params.nek.general.target_cfl = 2.0
-params.nek.general.dt = 0.005
+params.nek.general.variable_dt = True
+params.nek.general.target_cfl = 2.0
 params.nek.general.time_stepper = "BDF3"
 params.nek.general.extrapolation = "OIFS"
 

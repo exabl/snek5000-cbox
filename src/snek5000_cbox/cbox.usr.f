@@ -15,9 +15,8 @@
       include 'SIZE'
       include 'NEKUSE'          ! FF[XYZ]
       include 'PARALLEL'        ! GLLEL
-      include 'SOLN'            ! VTRANS,TP
+      include 'SOLN'            ! TP
       include 'INPUT'           ! IF3D
-      include 'ADJOINT'         ! IFADJ, G_ADJ
 
       ! argument list
       integer ix,iy,iz,ieg
@@ -25,19 +24,14 @@
       ! local variable
       integer iel
       real rtmp
-      real Pr_, Ra_
-      real delta_T_lateral, delta_T_vertical
+      real Pr_
 
       Pr_ = abs(UPARAM(1))
-      Ra_ = abs(UPARAM(2))
-      delta_T_lateral = UPARAM(5)
-      delta_T_vertical = UPARAM(6)
 
       ! local element number
       iel=GLLEL(ieg)
 
       ! forcing, put boussinesq
-      if (delta_T_lateral.ne.0 .and. delta_T_vertical.eq.0) then
       if (IFPERT) then
       ip=ix+NX1*(iy-1+NY1*(iz-1+NZ1*(iel-1)))
       rtmp = TP(ip,1,1)*Pr_
@@ -45,24 +39,6 @@
       rtmp = T(ix,iy,iz,iel,1)*Pr_
       endif
       
-
-      elseif (delta_T_vertical.ne.0 .and. delta_T_lateral.eq.0) then
-      if (IFPERT) then
-      ip=ix+NX1*(iy-1+NY1*(iz-1+NZ1*(iel-1)))
-      rtmp = TP(ip,1,1)*Pr_*Ra_
-      else
-      rtmp = T(ix,iy,iz,iel,1)*Pr_*Ra_
-      endif
-      
-
-      elseif (delta_T_lateral.ne.0 .and. delta_T_vertical.ne.0) then
-      if (IFPERT) then
-      ip=ix+NX1*(iy-1+NY1*(iz-1+NZ1*(iel-1)))
-      rtmp = TP(ip,1,1)*Pr_
-      else
-      rtmp = T(ix,iy,iz,iel,1)*Pr_
-      endif
-      endif
 
       FFX = 0
       FFY = rtmp
@@ -220,10 +196,10 @@
       uz=0.
       !temp = 0.
       call random_number(temp)
-      temp= amplitude*(temp - delta_T_lateral/2.)
-      if (delta_T_vertical.ne.0 .and. delta_T_lateral.eq.0) then
-      temp=temp + y
-      endif
+      temp= amplitude*(temp)
+      !if (delta_T_vertical.ne.0 .and. delta_T_lateral.eq.0) then
+      !temp=temp + y - 0.5
+      !endif
 
       else
 !     perturbation

@@ -135,22 +135,18 @@ User parameter for noise amplitude in .usr file (subroutine useric):
                 params.oper.boundary = list("WWWWWW")
                 params.oper.boundary_scalars = list("ttIIII")
 
-            params.nek.velocity.viscosity = params.prandtl / params.rayleigh ** (1 / 2)
-            params.nek.temperature.conductivity = 1.0 / params.rayleigh ** (1 / 2)
 
         elif params.oper.delta_T_lateral == 0.0 and params.oper.delta_T_vertical == 1.0:
             if params.oper.dim == 2:
 
-                params.oper.boundary = list("PPWW")
-                params.oper.boundary_scalars = list("PPtt")
+                params.oper.boundary = list("WWWW")
+                params.oper.boundary_scalars = list("IItt")
 
             else:
 
-                params.oper.boundary = list("PPWWPP")
-                params.oper.boundary_scalars = list("PPttPP")
+                params.oper.boundary = list("WWWWWW")
+                params.oper.boundary_scalars = list("IIttII")
 
-            params.nek.velocity.viscosity = params.prandtl
-            params.nek.temperature.conductivity = 1.0
 
         elif params.oper.delta_T_lateral == 1.0 and params.oper.delta_T_vertical == 1.0:
             if params.oper.dim == 2:
@@ -163,8 +159,8 @@ User parameter for noise amplitude in .usr file (subroutine useric):
                 params.oper.boundary = list("WWWWWW")
                 params.oper.boundary_scalars = list("ttttII")
 
-            params.nek.velocity.viscosity = params.prandtl / params.rayleigh ** (1 / 2)
-            params.nek.temperature.conductivity = 1.0 / params.rayleigh ** (1 / 2)
+        params.nek.velocity.viscosity = params.prandtl / params.rayleigh ** (1 / 2)
+        params.nek.temperature.conductivity = 1.0 / params.rayleigh ** (1 / 2)
 
         super().__init__(params)
 
