@@ -1,15 +1,15 @@
 import numpy as np
 
-from fluiddyn.clusters.legi import Calcul8 as Cluster
+from fluiddyn.clusters.legi import Calcul2 as Cluster
 from critical_Ra import Ra_c as Ra_c_tests
 
 prandtl = 0.71
 
 dt_max = 0.005
-end_time = 4000
+end_time = 2000
 nb_procs = 10
 
-nx = 16
+nx = 12
 order = 10
 stretch_factor = 0.0
 dim = 2
@@ -29,7 +29,7 @@ cluster.commands_setting_env = [
     "source /etc/profile",
     "source $PROJET_DIR/Software/miniconda3/etc/profile.d/conda.sh",
     "conda activate",
-    "export NEK_SOURCE_ROOT=$HOME/Dev/snek5000-old/lib/Nek5000",
+    "export NEK_SOURCE_ROOT=$HOME/Dev/snek5000/lib/Nek5000",
     "export PATH=$PATH:$NEK_SOURCE_ROOT/bin",
     "export FLUIDSIM_PATH=$PROJET_DIR/numerical/",
 ]
@@ -43,6 +43,8 @@ for aspect_ratio, Ra_c_test in Ra_c_tests.items():
 
     Ra_numbers = np.logspace(np.log10(Ra_c_test), np.log10(1.04 * Ra_c_test), 4)
 
+    # Ra_numbers = [1710]
+    # aspect_ratio = 1.0
     for Ra in Ra_numbers:
 
         command = (
@@ -56,10 +58,23 @@ for aspect_ratio, Ra_c_test in Ra_c_tests.items():
 
         print(command)
 
+        name_run = f"_asp_{aspect_ratio:.3f}_Ra_{Ra:.3e}_Pr_{prandtl:.2f}_msh_{nx*order}x{round(nx*aspect_ratio)*order}"
+
+        if delta_T_lateral == 1.0 and delta_T_vertical == 0.0:
+
+            name_run = "VC" + name_run
+
+        elif delta_T_lateral == 0.0 and delta_T_vertical == 1.0:
+
+            name_run = "RB" + name_run
+
+        elif delta_T_lateral == 1.0 and delta_T_vertical == 1.0:
+
+            name_run = "MC" + name_run
+
         cluster.submit_script(
             command,
-            name_run=f"asp_{aspect_ratio:.3f}_Ra_{Ra:.3e}_msh_"
-            f"{nx*order}_{round(nx*aspect_ratio)*order}",
+            name_run=name_run,
             nb_cores_per_node=nb_procs,
             omp_num_threads=1,
             ask=False,
