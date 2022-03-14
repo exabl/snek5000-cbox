@@ -1,39 +1,34 @@
 !-----------------------------------------------------------------------
       subroutine uservp (ix,iy,iz,ieg)
       include 'SIZE'
-      include 'NEKUSE'          ! UDIFF, UTRANS
-      include 'INPUT'           ! UPARAM
-      include 'TSTEP'           ! TSTEP
+      include 'NEKUSE'          
+      include 'INPUT'           
+      include 'TSTEP'           
 
-      udiff =0.
-      utrans=0.
+      udiff = 0.
+      utrans = 0.
 
       return
       end
 !-----------------------------------------------------------------------
       subroutine userf  (ix,iy,iz,ieg)
       include 'SIZE'
-      include 'NEKUSE'          ! FF[XYZ]
-      include 'PARALLEL'        ! GLLEL
-      include 'SOLN'            ! TP
-      include 'INPUT'           ! IF3D
+      include 'NEKUSE'          
+      include 'PARALLEL'        
+      include 'SOLN'            
+      include 'INPUT'           
 
-      ! argument list
-      integer ix,iy,iz,ieg
-
-      ! local variable
-      integer iel
-      real rtmp
-      real Pr_
+      integer ix, iy, iz, ieg, iel
+      real rtmp, Pr_
 
       Pr_ = abs(UPARAM(1))
 
       ! local element number
-      iel=GLLEL(ieg)
+      iel = GLLEL(ieg)
 
       ! forcing, put boussinesq
       if (IFPERT) then
-      ip=ix+NX1*(iy-1+NY1*(iz-1+NZ1*(iel-1)))
+      ip = ix + NX1*(iy-1+NY1*(iz-1+NZ1*(iel-1)))
       rtmp = TP(ip,1,1)*Pr_
       else
       rtmp = T(ix,iy,iz,iel,1)*Pr_
@@ -51,22 +46,18 @@
       include 'TOTAL'
       include 'NEKUSE'
 
-      qvol   = 0.0
-      source = 0.0
+      qvol   = 0.
+      source = 0.
 
       return
       end
 !-----------------------------------------------------------------------
       subroutine userchk
 
-      include 'SIZE'            ! NX1, NY1, NZ1, NELV, NIO
-      include 'INPUT'           ! UPARAM, CPFLD
-      include 'TSTEP'           ! ISTEP, IOSTEP, TIME, LASTEP
-      include 'SOLN'            ! V[XYZ], T, V[XYZ]P, TP, PRP
-      include 'MASS'            ! BM1
-      include 'ADJOINT'         ! IFADJ, G_ADJ, BETA_B, DTD[XYZ]
-
-      ! local variables
+      include 'SIZE'            
+      include 'INPUT'           
+      include 'TSTEP'           
+      include 'SOLN'            
 
       integer n, nit_pert, nit_hist
       
@@ -123,9 +114,9 @@
 !-----------------------------------------------------------------------
       subroutine userbc (ix,iy,iz,iside,ieg)
       include 'SIZE'
-      include 'GEOM'            ! {x,y,z}m1
+      include 'GEOM'            
       include 'INPUT'
-      include 'SOLN'            ! JP
+      include 'SOLN'            
       include 'NEKUSE'
       
       integer ntot
@@ -142,42 +133,42 @@
 
       !base flow
       if (JP.eq.0) then
-      ux=0.
-      uy=0.
-      uz=0.
+      ux = 0.
+      uy = 0.
+      uz = 0.
 
       if (delta_T_lateral.ne.0 .and. delta_T_vertical.eq.0) then      
       if (x.eq.0) then
-      temp=-delta_T_lateral/2.
+      temp = -delta_T_lateral/2.
       elseif (x .eq. xmax) then
-      temp=delta_T_lateral/2.
+      temp = delta_T_lateral/2.
       endif
 
       elseif (delta_T_vertical.ne.0 .and. delta_T_lateral.eq.0) then      
       if (y.eq.0) then
-      temp=delta_T_vertical/2.
+      temp = delta_T_vertical/2.
       elseif (y .eq. ymax) then
-      temp=-delta_T_vertical/2.
+      temp = -delta_T_vertical/2.
       endif
       
       elseif (delta_T_lateral.ne.0 .and. delta_T_vertical.ne.0) then
       if (x.eq.0) then
-      temp=-delta_T_lateral/2.
+      temp = -delta_T_lateral/2.
       elseif (x .eq. xmax) then
-      temp=delta_T_lateral/2.      
+      temp = delta_T_lateral/2.      
       elseif(y.eq.0) then
-      temp=delta_T_vertical/2.
+      temp = delta_T_vertical/2.
       elseif (y .eq. ymax) then
-      temp=-delta_T_vertical/2.
+      temp = -delta_T_vertical/2.
       endif
       endif
 
-      else
       !perturbation
-      ux=0.0
-      uy=0.0
-      uz=0.0
-      temp=0.0
+      else
+      ux = 0.
+      uy = 0.
+      uz = 0.
+      temp = 0.
       endif
 
       return
@@ -186,37 +177,46 @@
       subroutine useric (ix,iy,iz,ieg)
       include 'SIZE'
       include 'NEKUSE'
-      include 'SOLN'            ! JP
+      include 'SOLN'            
+      include 'GEOM'            
       include 'INPUT'
 
+      integer ntot
       real delta_T_lateral, delta_T_vertical, amplitude
+      real xmax, ymax
 
       delta_T_lateral = UPARAM(5)
       delta_T_vertical = UPARAM(6)
       amplitude = UPARAM(7)
 
+      ntot = nx1*ny1*nz1*nelt
+
+      xmax = glmax(xm1,ntot)
+      ymax = glmax(ym1,ntot)
+
+      !base flow
       if (JP.eq.0) then
-      ux=0.
-      uy=0.
-      uz=0.
+      ux = 0.
+      uy = 0.
+      uz = 0.
       !temp = 0.
       call random_number(temp)
-      temp= amplitude*(temp)
+      temp = amplitude * temp
       if (delta_T_vertical.ne.0 .and. delta_T_lateral.eq.0) then
-      temp=temp + y - 0.5
+      temp = temp + delta_T_vertical * (y/ymax - 0.5)
       elseif (delta_T_lateral.ne.0 .and. delta_T_vertical.eq.0) then
-      temp=temp + x - 0.5
+      temp = temp + delta_T_lateral * (x/xmax - 0.5)
       endif
 
+      !perturbation
       else
-!     perturbation
 
       ux = 0.
       uy = 0. 
       uz = 0.
 
       call random_number(temp)
-      temp= amplitude*(temp)
+      temp = amplitude * temp
       endif
 
       return
@@ -231,8 +231,8 @@
 !-----------------------------------------------------------------------
       subroutine usrdat2
       include 'SIZE'
-      include 'GEOM'            ! {x,y,z}m1
-      include 'INPUT'           ! param
+      include 'GEOM'           
+      include 'INPUT'           
       include 'SOLN'
 
       integer i, ntot
@@ -250,7 +250,7 @@
       zmax = glmax(zm1,ntot)
       endif
 
-      twopi=8*atan(1.)
+      twopi = 8 * atan(1.)
 
       !stretch factors
       stretch_y = stretch_x*ymax
@@ -284,7 +284,7 @@
       include 'SIZE'
       include 'FRAMELP'
 
-!     register modules
+      !register modules
       call io_register
       call chkpt_register
 
@@ -296,7 +296,7 @@
       include 'SIZE'
       include 'FRAMELP'
 
-!     initialise modules
+      !initialise modules
       call chkpt_init
 
       return

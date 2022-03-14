@@ -39,9 +39,41 @@ parser.add_argument(
 
 parser.add_argument("-nx", type=int, default=12, help="number of x elements")
 parser.add_argument("-nz", type=int, default=12, help="number of z elements")
-parser.add_argument("--order", type=int, default=10, help="order")
+parser.add_argument("--order", type=int, default=10, help=" polynomial order")
 parser.add_argument("--dim", type=int, default=2, help="2d or 3d")
 parser.add_argument("--stretch-factor", type=float, default=0.0, help="stretch factor")
+
+parser.add_argument(
+    "--x-periodicity",
+    type=bool,
+    default=False,
+    help="periodic boundary condition in x direction",
+)
+parser.add_argument(
+    "--y-periodicity",
+    type=bool,
+    default=False,
+    help="periodic boundary condition in y direction",
+)
+parser.add_argument(
+    "--z-periodicity",
+    type=bool,
+    default=False,
+    help="periodic boundary condition in z direction",
+)
+
+parser.add_argument(
+    "--delta-T-lateral",
+    type=float,
+    default=0.0,
+    help="lateral temperature difference",
+)
+parser.add_argument(
+    "--delta-T-vertical",
+    type=float,
+    default=0.0,
+    help="vertical temperature difference",
+)
 
 parser.add_argument("--end-time", type=float, default=4000, help="End time")
 parser.add_argument("--dt-max", type=float, default=0.1, help="Maximum dt")
@@ -61,6 +93,13 @@ def main(args):
     Lx = params.oper.Lx = 1.0
     Ly = params.oper.Ly = Lx * args.aspect_ratio_y
     params.oper.Lz = Lx * args.aspect_ratio_z
+
+    params.oper.x_periodicity = args.x_periodicity
+    params.oper.y_periodicity = args.y_periodicity
+    params.oper.z_periodicity = args.z_periodicity
+
+    params.oper.delta_T_lateral = args.delta_T_lateral
+    params.oper.delta_T_vertical = args.delta_T_vertical
 
     params.oper.mesh_stretch_factor = args.stretch_factor
 

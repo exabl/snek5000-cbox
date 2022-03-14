@@ -118,7 +118,7 @@ User parameter for noise amplitude in .usr file (subroutine useric):
             params.oper._doc
             + """
 
-- ``x_periodicity``: logical
+- ``x_periodicity``: boolean
   
   Periodic boundary condition in x direction (default = False, meaning 
   we have wall). 
@@ -131,7 +131,7 @@ User parameter for noise amplitude in .usr file (subroutine useric):
             params.oper._doc
             + """
 
-- ``x_periodicity``: logical
+- ``y_periodicity``: boolean
   
   Periodic boundary condition in y direction (default = False, meaning 
   we have wall). 
@@ -144,7 +144,7 @@ User parameter for noise amplitude in .usr file (subroutine useric):
             params.oper._doc
             + """
 
-- ``z_periodicity``: logical
+- ``z_periodicity``: boolean
   
   Periodic boundary condition in z direction (default = False, meaning 
   we have wall). 
@@ -188,7 +188,7 @@ User parameter for noise amplitude in .usr file (subroutine useric):
 
                 else:
 
-                    params.oper.boundary = list("WWWWII")
+                    params.oper.boundary = list("WWWWWW")
                     params.oper.boundary_scalars = list("ttIIII")
 
         elif params.oper.delta_T_lateral == 0.0 and params.oper.delta_T_vertical == 1.0:

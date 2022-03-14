@@ -1,15 +1,26 @@
-from time import sleep
-
 import numpy as np
 
 from fluiddyn.clusters.legi import Calcul8 as Cluster
 from critical_Ra import Ra_c as Ra_c_tests
 
-nx = 16
-order = 10
+prandtl = 0.71
+
+dt_max = 0.005
 end_time = 4000
 nb_procs = 10
-stretch_factor = 0.1
+
+nx = 16
+order = 10
+stretch_factor = 0.0
+dim = 2
+
+delta_T_lateral = 1.0
+delta_T_vertical = 0.0
+
+x_periodicity = False
+y_periodicity = False
+z_periodicity = False
+
 
 cluster = Cluster()
 
@@ -18,7 +29,7 @@ cluster.commands_setting_env = [
     "source /etc/profile",
     "source $PROJET_DIR/Software/miniconda3/etc/profile.d/conda.sh",
     "conda activate",
-    "export NEK_SOURCE_ROOT=$HOME/Documents/Nek5000",
+    "export NEK_SOURCE_ROOT=$HOME/Dev/snek5000-old/lib/Nek5000",
     "export PATH=$PATH:$NEK_SOURCE_ROOT/bin",
     "export FLUIDSIM_PATH=$PROJET_DIR/numerical/",
 ]
@@ -35,9 +46,12 @@ for aspect_ratio, Ra_c_test in Ra_c_tests.items():
     for Ra in Ra_numbers:
 
         command = (
-            f"run_simul_check_from_python.py -R {Ra} -nx {nx} "
-            f"--order {order} --end-time {end_time} -np {nb_procs} "
-            f"-a_y {aspect_ratio} --stretch-factor {stretch_factor}"
+            f"run_simul_check_from_python.py -R {Ra} -Pr {prandtl} -nx {nx} "
+            f"--order {order} --dt-max {dt_max} --end-time {end_time} -np {nb_procs} "
+            f"-a_y {aspect_ratio} --stretch-factor {stretch_factor} "
+            f"--x-periodicity {x_periodicity} --y-periodicity {y_periodicity} "
+            f"--z-periodicity {z_periodicity} "
+            f"--delta-T-lateral {delta_T_lateral} --delta-T-vertical {delta_T_vertical}"
         )
 
         print(command)
@@ -50,5 +64,3 @@ for aspect_ratio, Ra_c_test in Ra_c_tests.items():
             omp_num_threads=1,
             ask=False,
         )
-
-        sleep(2)
