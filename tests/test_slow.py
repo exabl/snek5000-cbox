@@ -13,7 +13,7 @@ def test_simple_simul():
 
     params = Simul.create_default_params()
 
-    aspect_ratio = 1.0
+    aspect_ratio = params.oper.aspect_ratio = 1.0
     params.prandtl = 0.71
 
     # for aspect ratio 1, Ra_c = 1.825E08

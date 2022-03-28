@@ -112,6 +112,20 @@ User parameter for noise amplitude in .usr file (subroutine useric):
   
 """
         )
+        
+        params.oper._set_attribs({"aspect_ratio": 1.0})
+        params.oper._record_nek_user_params({"aspect_ratio": 8})
+        params.oper._set_doc(
+            params.oper._doc
+            + """
+User parameter for the aspect ratio in .usr file (subroutine useric, userbc):
+
+- ``aspect_ratio``: float
+  
+  aspect_ratio to set initial and boundary conditions (default = 1.0). 
+  
+"""
+        )
 
         params.oper._set_attribs({"x_periodicity": False})
         params.oper._set_doc(
