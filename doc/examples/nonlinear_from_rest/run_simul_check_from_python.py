@@ -111,7 +111,7 @@ def main(args):
     order = params.oper.elem.order = args.order
     params.oper.elem.order_out = order
 
-    params.output.sub_directory = f"check_cbox_RB/{dim}D/NL_sim/Pr_{args.Prandtl:.2f}/asp_{args.aspect_ratio_y:.3f}"
+    params.output.sub_directory = f"check_cbox/{dim}D/NL_sim/Pr_{args.Prandtl:.2f}/asp_{args.aspect_ratio_y:.3f}"
     params.short_name_type_run = (
         f"asp{args.aspect_ratio_y:.3f}_Ra{args.Rayleigh:.3e}_Pr{args.Prandtl:.2f}"
     )
@@ -169,7 +169,7 @@ if __name__ == "__main__":
     while not pid_file.exists():
         sleep(1)
         n += 1
-        if n > 120:
+        if n > 60:
             raise RuntimeError(f"{pid_file} does not exist.")
 
     with open(pid_file) as file:

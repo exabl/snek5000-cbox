@@ -3,10 +3,10 @@ import numpy as np
 from fluiddyn.clusters.legi import Calcul8 as Cluster
 from critical_Ra import Ra_c as Ra_c_tests
 
-prandtl = 1.0
+prandtl = 0.71
 
 dt_max = 0.005
-end_time = 2000
+end_time = 3000
 nb_procs = 10
 
 nx = 8
@@ -43,8 +43,6 @@ for aspect_ratio, Ra_c_test in Ra_c_tests.items():
 
     Ra_numbers = np.logspace(np.log10(Ra_c_test), np.log10(1.04 * Ra_c_test), 4)
 
-    # Ra_numbers = [1e8]
-    # aspect_ratio = 1.0
     for Ra in Ra_numbers:
 
         command = (
