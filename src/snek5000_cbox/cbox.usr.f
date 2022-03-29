@@ -161,6 +161,10 @@
                  temp = delta_T_vertical/2.
              elseif (y.eq.ymax) then
                  temp = -delta_T_vertical/2.
+             elseif (x.eq.0.and.y.eq.0) then
+                 temp = 0.
+             elseif (x.eq.xmax.and.y.eq.ymax) then
+                 temp = 0.        
              endif
          endif
 

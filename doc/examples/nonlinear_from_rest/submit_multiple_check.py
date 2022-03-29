@@ -15,7 +15,7 @@ stretch_factor = 0.0
 dim = 2
 
 delta_T_lateral = 1.0
-delta_T_vertical = 0.0
+delta_T_vertical = 1.0
 
 x_periodicity = False
 y_periodicity = False
@@ -42,6 +42,7 @@ for aspect_ratio, Ra_c_test in Ra_c_tests.items():
         continue
 
     Ra_numbers = np.logspace(np.log10(Ra_c_test), np.log10(1.04 * Ra_c_test), 4)
+
 
     for Ra in Ra_numbers:
 
