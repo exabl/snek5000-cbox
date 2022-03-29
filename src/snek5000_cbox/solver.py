@@ -1,3 +1,4 @@
+from pytest import param
 from snek5000.info import InfoSolverMake
 
 from snek5000.solvers.kth import SimulKTH
@@ -42,24 +43,14 @@ class SimulCbox(SimulKTH):
         """
         params = super().create_default_params()
 
-        params.oper.dim = 2
+        params.oper.nproc_min = 2
 
-        params.oper.Lx = 1
-        params.oper.Ly = 1
-        params.oper.Lz = 1
-
-        params.oper.boundary = ["W", "W", "W", "W"]
-        params.oper.boundary_scalars = ["t", "t", "I", "I"]
-
+        params.nek.velocity.density = 1.0
         params.nek.temperature.rho_cp = 1.0
-        params.nek.temperature.conductivity = 1.0
-        params.nek.temperature.residual_tol = 1e-8
 
-        params.nek.problemtype.variable_properties = True
-        params.nek.problemtype.stress_formulation = True
-
-        params.oper.elem.order = 9
-        params.oper.elem.order_out = 9
+        params.nek.temperature.residual_tol = 1e-14
+        params.nek.velocity.residual_tol = 1e-14
+        params.nek.pressure.residual_tol = 1e-14
 
         params.oper._set_attribs({"mesh_stretch_factor": 0.0})
         params.oper._record_nek_user_params({"mesh_stretch_factor": 4})
@@ -80,7 +71,100 @@ User parameter for mesh stretching in .usr file (subroutine usrdat2):
 """
         )
 
-        # params.nek.general.time_stepper = "BDF3"
+        params.oper._set_attribs({"delta_T_lateral": 0.0})
+        params.oper._record_nek_user_params({"delta_T_lateral": 5})
+        params.oper._set_doc(
+            params.oper._doc
+            + """
+User parameter for lateral temperature difference in .usr file (subroutine userbc):
+
+- ``delta_T_lateral``: float
+  
+  Lateral temperature difference (default = 0.0, meaning no temperature difference). 
+  
+"""
+        )
+
+        params.oper._set_attribs({"delta_T_vertical": 0.0})
+        params.oper._record_nek_user_params({"delta_T_vertical": 6})
+        params.oper._set_doc(
+            params.oper._doc
+            + """
+User parameter for vertical temperature difference in .usr file (subroutine userbc):
+
+- ``delta_T_lateral``: float
+  
+  Vertical temperature difference (default = 0.0, meaning no temperature difference). 
+  
+"""
+        )
+
+        params.oper._set_attribs({"noise_amplitude": 1e-7})
+        params.oper._record_nek_user_params({"noise_amplitude": 7})
+        params.oper._set_doc(
+            params.oper._doc
+            + """
+User parameter for noise amplitude in .usr file (subroutine useric):
+
+- ``noise_amplitude``: float
+  
+  Noise amplitude for initial condition(default = 1e7). 
+  
+"""
+        )
+        
+        params.oper._set_attribs({"aspect_ratio": 1.0})
+        params.oper._record_nek_user_params({"aspect_ratio": 8})
+        params.oper._set_doc(
+            params.oper._doc
+            + """
+User parameter for the aspect ratio in .usr file (subroutine useric, userbc):
+
+- ``aspect_ratio``: float
+  
+  aspect_ratio to set initial and boundary conditions (default = 1.0). 
+  
+"""
+        )
+
+        params.oper._set_attribs({"x_periodicity": False})
+        params.oper._set_doc(
+            params.oper._doc
+            + """
+
+- ``x_periodicity``: boolean
+  
+  Periodic boundary condition in x direction (default = False, meaning 
+  we have wall). 
+  
+"""
+        )
+
+        params.oper._set_attribs({"y_periodicity": False})
+        params.oper._set_doc(
+            params.oper._doc
+            + """
+
+- ``y_periodicity``: boolean
+  
+  Periodic boundary condition in y direction (default = False, meaning 
+  we have wall). 
+  
+"""
+        )
+
+        params.oper._set_attribs({"z_periodicity": False})
+        params.oper._set_doc(
+            params.oper._doc
+            + """
+
+- ``z_periodicity``: boolean
+  
+  Periodic boundary condition in z direction (default = False, meaning 
+  we have wall). 
+  
+"""
+        )
 
         params.output.phys_fields._set_attribs(
             {"write_interval_pert_field": 1000},
@@ -90,6 +174,85 @@ User parameter for mesh stretching in .usr file (subroutine usrdat2):
         )
 
         return params
+
+    def __init__(self, params):
+
+        if params.oper.delta_T_lateral == 1.0 and params.oper.delta_T_vertical == 0.0:
+            if params.oper.dim == 2:
+                if params.oper.y_periodicity:
+
+                    params.oper.boundary = list("WWPP")
+                    params.oper.boundary_scalars = list("ttPP")
+
+                else:
+
+                    params.oper.boundary = list("WWWW")
+                    params.oper.boundary_scalars = list("ttII")
+
+            else:
+                if params.oper.y_periodicity and params.oper.z_periodicity:
+
+                    params.oper.boundary = list("WWPPPP")
+                    params.oper.boundary_scalars = list("ttPPPP")
+
+                elif params.oper.z_periodicity:
+
+                    params.oper.boundary = list("WWWWPP")
+                    params.oper.boundary_scalars = list("ttIIPP")
+
+                else:
+
+                    params.oper.boundary = list("WWWWWW")
+                    params.oper.boundary_scalars = list("ttIIII")
+
+        elif params.oper.delta_T_lateral == 0.0 and params.oper.delta_T_vertical == 1.0:
+            if params.oper.dim == 2:
+                if params.oper.x_periodicity:
+
+                    params.oper.boundary = list("PPWW")
+                    params.oper.boundary_scalars = list("PPtt")
+
+                else:
+
+                    params.oper.boundary = list("WWWW")
+                    params.oper.boundary_scalars = list("IItt")
+
+            else:
+                if params.oper.x_periodicity and params.oper.z_periodicity:
+
+                    params.oper.boundary = list("PPWWPP")
+                    params.oper.boundary_scalars = list("PPttPP")
+
+                elif params.oper.z_periodicity:
+
+                    params.oper.boundary = list("WWWWPP")
+                    params.oper.boundary_scalars = list("IIttPP")
+
+                else:
+                    params.oper.boundary = list("WWWWWW")
+                    params.oper.boundary_scalars = list("IIttII")
+
+        elif params.oper.delta_T_lateral == 1.0 and params.oper.delta_T_vertical == 1.0:
+            if params.oper.dim == 2:
+
+                params.oper.boundary = list("WWWW")
+                params.oper.boundary_scalars = list("tttt")
+
+            else:
+                if params.oper.z_periodicity:
+
+                    params.oper.boundary = list("WWWWPP")
+                    params.oper.boundary_scalars = list("ttttPP")
+
+                else:
+
+                    params.oper.boundary = list("WWWWWW")
+                    params.oper.boundary_scalars = list("ttttII")
+
+        params.nek.velocity.viscosity = params.prandtl / params.rayleigh ** (1 / 2)
+        params.nek.temperature.conductivity = 1.0 / params.rayleigh ** (1 / 2)
+
+        super().__init__(params)
 
 
 Simul = SimulCbox

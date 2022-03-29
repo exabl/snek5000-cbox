@@ -1,3 +1,6 @@
+import os
+from contextlib import contextmanager
+
 import pytest
 
 
@@ -20,3 +23,50 @@ def pytest_collection_modifyitems(config, items):
     for item in items:
         if "slow" in item.keywords:
             item.add_marker(skip_slow)
+
+@contextmanager
+def unset_snek_debug():
+    old_snek_debug = os.environ.pop("SNEK_DEBUG", None)
+    try:
+        yield
+    finally:
+        if old_snek_debug is not None:
+            os.environ["SNEK_DEBUG"] = old_snek_debug            
+            
+@pytest.fixture(scope="module")
+def sim_cbox_executed():
+    from snek5000_cbox.solver import Simul
+
+    params = Simul.create_default_params()
+    params.output.sub_directory = "test_snek5000"
+
+    params.nek.general.stop_at = "numSteps"
+    params.nek.general.dt = 1e-3
+    params.nek.general.num_steps = 12
+    params.nek.general.write_interval = 3
+    
+    params.oper.delta_T_lateral = 1.0
+    params.oper.nproc_min = 2
+    params.oper.nproc_max = 12
+    params.oper.dim = 2
+    params.oper.nx = params.oper.ny = 8
+
+    coords = [(0.5, 0.5)]
+    params.output.history_points.write_interval = 2
+    params.output.history_points.coords = coords
+    params.oper.max.hist = len(coords) + 1
+
+    sim = Simul(params)
+    sim.output.write_snakemake_config(custom_env_vars={"FOO": 1})
+
+    with unset_snek_debug():
+        if not sim.make.exec("compile"):
+            build_log = Path(sim.output.path_run) / "build.log"
+            log_matches(build_log, levels=["Error"])
+            raise RuntimeError("cbox compilation failed")
+
+    if not sim.make.exec("run_fg", resources={"nproc": 2}):
+        with open(Path(sim.output.path_run) / "cbox.log") as file:
+            print(file.read())
+        raise RuntimeError("cbox simulation failed")
+    return sim
