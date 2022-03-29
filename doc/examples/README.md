@@ -8,7 +8,7 @@ params.oper.delta_T_lateral = 1.0
 ```
 In this case, it is possible to have different configuration based on the dimension of the problem and boundary conditions:
 
-##2D
+###2D
 
 To activate 2D configuration one needs to assign:
 ```python
@@ -28,7 +28,7 @@ One should assign:
 params.oper.y_periodicity = True
 ```
 
-##3D
+###3D
 
 To activate 3D configuration one needs to assign:
 ```python
@@ -70,7 +70,7 @@ params.oper.delta_T_vertical = 1.0
 
 In this case, it is possible to have different configuration based on the dimension of the problem and boundary conditions:
 
-##2D
+###2D
 
 To activate 2D configuration one needs to assign:
 ```python
@@ -90,7 +90,7 @@ One should assign:
 params.oper.x_periodicity = True
 ```
 
-##3D
+###3D
 
 To activate 3D configuration one needs to assign:
 ```python
@@ -131,13 +131,13 @@ params.oper.delta_T_vertical = 1.0
 ```
 In this case, it is possible to have different configuration based on the dimension of the problem and boundary conditions:
 
-##2D
+###2D
 
 To activate 2D configuration one needs to assign:
 ```python
 params.oper.dim = 2
 ```
-##3D
+###3D
 
 To activate 3D configuration one needs to assign:
 ```python
