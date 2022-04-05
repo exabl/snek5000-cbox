@@ -45,12 +45,15 @@ class SimulCbox(SimulKTH):
 
         params.oper.nproc_min = 2
 
+        params.oper.Ly = 1.0
+
         params.nek.velocity.density = 1.0
         params.nek.temperature.rho_cp = 1.0
 
-        params.nek.temperature.residual_tol = 1e-14
-        params.nek.velocity.residual_tol = 1e-14
-        params.nek.pressure.residual_tol = 1e-14
+        params.nek.temperature.residual_tol = 1e-8
+        params.nek.temperature.absolute_tol = 1e-8
+        params.nek.velocity.residual_tol = 1e-8
+        params.nek.pressure.residual_tol = 1e-8
 
         params.oper._set_attribs({"mesh_stretch_factor": 0.0})
         params.oper._record_nek_user_params({"mesh_stretch_factor": 4})
@@ -99,7 +102,7 @@ User parameter for vertical temperature difference in .usr file (subroutine user
 """
         )
 
-        params.oper._set_attribs({"noise_amplitude": 1e-7})
+        params.oper._set_attribs({"noise_amplitude": 1e-5})
         params.oper._record_nek_user_params({"noise_amplitude": 7})
         params.oper._set_doc(
             params.oper._doc
@@ -112,7 +115,7 @@ User parameter for noise amplitude in .usr file (subroutine useric):
   
 """
         )
-        
+
         params.oper._set_attribs({"aspect_ratio": 1.0})
         params.oper._record_nek_user_params({"aspect_ratio": 8})
         params.oper._set_doc(

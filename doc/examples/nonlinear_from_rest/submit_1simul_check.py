@@ -18,13 +18,12 @@ cluster = Cluster()
 cluster.commands_setting_env = [
     "PROJET_DIR=/fsnet/project/meige/2020/20CONVECTION",
     "source /etc/profile",
-    "source $PROJET_DIR/Software/miniconda3/etc/profile.d/conda.sh",
-    "conda activate",
-    "export NEK_SOURCE_ROOT=$HOME/Documents/Nek5000",
+    "source $PROJET_DIR/miniconda3/etc/profile.d/conda.sh",
+    "conda activate env-snek",
+    "export NEK_SOURCE_ROOT=$HOME/Dev/snek5000/lib/Nek5000",
     "export PATH=$PATH:$NEK_SOURCE_ROOT/bin",
     "export FLUIDSIM_PATH=$PROJET_DIR/numerical/",
 ]
-
 
 ny = int(nx * aspect_ratio)
 if nx * aspect_ratio - ny:

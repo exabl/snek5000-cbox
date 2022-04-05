@@ -22,14 +22,14 @@ params.oper.dim = 2
 
 params.oper.delta_T_lateral = 1.0
 
-nb_elements = nx = ny = 12
-params.oper.nx = nb_elements
-params.oper.ny = int(nb_elements * aspect_ratio)
-params.oper.nz = int(nb_elements * aspect_ratio)
+nb_elements = ny = 12
+params.oper.ny = nb_elements
+nx = params.oper.nx = int(nb_elements / aspect_ratio)
+params.oper.nz = int(nb_elements / aspect_ratio)
 
-Lx = params.oper.Lx = 1.0
-Ly = params.oper.Ly = Lx * aspect_ratio
-Lz = params.oper.Lz = Lx * aspect_ratio
+Ly = params.oper.Ly
+Lx = params.oper.Lx = Ly / aspect_ratio
+Lz = params.oper.Lz = Ly / aspect_ratio
 
 
 order = params.oper.elem.order = params.oper.elem.order_out = 10

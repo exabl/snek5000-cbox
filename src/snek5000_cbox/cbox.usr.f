@@ -64,8 +64,8 @@
 
       integer n, nit_pert, nit_hist
       
-      real vtmp(lx1*ly1*lz1*lelt,ldim),ttmp(lx1*ly1*lz1*lelt)
-      common /SCRUZ/ vtmp, ttmp
+      common /SCRUZ/ vtmp(lx1*ly1*lz1*lelt,ldim),ttmp(lx1*ly1*lz1*lelt)
+      real vtmp, ttmp
 
       nit_hist = UPARAM(10)
       nit_pert = UPARAM(3)
@@ -130,8 +130,8 @@
       delta_T_vertical = UPARAM(6)
       aspect_ratio = UPARAM(8)
         
-      xmax = 1.
-      ymax = aspect_ratio*xmax
+      ymax = 1.
+      xmax = ymax/aspect_ratio
       ! base flow
       if (JP.eq.0) then
          ux = 0.
@@ -187,30 +187,32 @@
       include 'INPUT'
 
       real delta_T_lateral, delta_T_vertical, amplitude, aspect_ratio
-      real xmax, ymax
+      real xmax, ymax, ran
 
       delta_T_lateral = UPARAM(5)
       delta_T_vertical = UPARAM(6)
       amplitude = UPARAM(7)
       aspect_ratio = UPARAM(8)
         
-      xmax = 1.
-      ymax = aspect_ratio*xmax
+      ymax = 1.
+      xmax = ymax/aspect_ratio
 
       ! base flow
       if (JP.eq.0) then
+    
          ux = 0.0
          uy = 0.0
          uz = 0.0
-         !temp = 0.
+         
          call random_number(temp)
          temp = amplitude * temp
-         if (delta_T_vertical.ne.0.and.delta_T_lateral.eq.0) then
-             temp = temp + delta_T_vertical * (y/ymax - 0.5)
-         elseif (delta_T_lateral.ne.0.and.delta_T_vertical.eq.0) then
-             temp = temp + delta_T_lateral * (x/xmax - 0.5)
-         endif
 
+         if (delta_T_vertical.ne.0.and.delta_T_lateral.eq.0) then
+             temp = delta_T_vertical * (0.5- y/ymax) + temp 
+         elseif (delta_T_lateral.ne.0.and.delta_T_vertical.eq.0) then
+             temp = -delta_T_lateral * (x/xmax - 0.5) + temp
+         endif
+         
       ! perturbation
       else
 
