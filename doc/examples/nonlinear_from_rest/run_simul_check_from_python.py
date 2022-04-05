@@ -3,7 +3,7 @@
 Example of commands:
 
 ```
-python run_simul_check_from_python.py -nx 12 --order 10 -Ra 1.89e08 -np 4
+python run_simul_check_from_python.py --delta-T-lateral 1.0 -nx 12 --order 10 -Ra 1.89e08 -np 4
 ```
 
 """
@@ -37,42 +37,43 @@ parser.add_argument(
     "-Ra", "--Rayleigh", type=float, default=1.89e08, help="Rayleigh number"
 )
 
-parser.add_argument("-nx", type=int, default=12, help="number of x elements")
-parser.add_argument("-nz", type=int, default=12, help="number of z elements")
-parser.add_argument("--order", type=int, default=10, help=" polynomial order")
-parser.add_argument("--dim", type=int, default=2, help="2d or 3d")
-parser.add_argument("--stretch-factor", type=float, default=0.0, help="stretch factor")
+parser.add_argument("-ny", type=int, default=12, help="Number of y elements")
+parser.add_argument("-nz", type=int, default=12, help="Number of z elements")
+parser.add_argument("--order", type=int, default=10, help=" Polynomial order")
+parser.add_argument("--dim", type=int, default=2, help="2D or 3D")
+parser.add_argument("--stretch-factor", type=float, default=0.0, help="Stretch factor")
 
 parser.add_argument(
     "--x-periodicity",
-    action='store_true',
-    help="periodic boundary condition in x direction",
+    action="store_true",
+    help="Periodic boundary condition in x direction",
 )
 parser.add_argument(
     "--y-periodicity",
-    action='store_true',
-    help="periodic boundary condition in y direction",
+    action="store_true",
+    help="Periodic boundary condition in y direction",
 )
 parser.add_argument(
     "--z-periodicity",
-    action='store_true',
-    help="periodic boundary condition in z direction",
+    action="store_true",
+    help="Periodic boundary condition in z direction",
 )
 
 parser.add_argument(
     "--delta-T-lateral",
     type=float,
     default=0.0,
-    help="lateral temperature difference",
+    help="Lateral temperature difference",
 )
 parser.add_argument(
     "--delta-T-vertical",
     type=float,
     default=0.0,
-    help="vertical temperature difference",
+    help="Vertical temperature difference",
 )
 
 parser.add_argument("--end-time", type=float, default=4000, help="End time")
+parser.add_argument("--num-steps", type=int, default=4000, help="Number of time steps")
 parser.add_argument("--dt-max", type=float, default=0.1, help="Maximum dt")
 
 parser.add_argument(
@@ -87,9 +88,9 @@ def main(args):
     params.prandtl = args.Prandtl
     params.rayleigh = args.Rayleigh
 
-    Lx = params.oper.Lx = 1.0
-    Ly = params.oper.Ly = Lx * args.aspect_ratio_y
-    params.oper.Lz = Lx * args.aspect_ratio_z
+    Ly = params.oper.Ly
+    Lx = params.oper.Lx = Ly / args.aspect_ratio_y
+    Lz = params.oper.Lz = Ly / args.aspect_ratio_z
 
     params.oper.x_periodicity = args.x_periodicity
     params.oper.y_periodicity = args.y_periodicity
@@ -104,14 +105,16 @@ def main(args):
     params.oper.nproc_min = 2
     dim = params.oper.dim = args.dim
 
-    nx = params.oper.nx = args.nx
-    params.oper.ny = int(nx * args.aspect_ratio_y)
-    # nz = params.oper.nz = args.nz
+    ny = params.oper.ny = args.ny
+    nx = params.oper.nx = int(ny / args.aspect_ratio_y)
+    # nz = params.oper.nz = int(ny / args.aspect_ratio_z)
 
     order = params.oper.elem.order = args.order
     params.oper.elem.order_out = order
 
-    params.output.sub_directory = f"check_cbox/{dim}D/NL_sim/Pr_{args.Prandtl:.2f}/asp_{args.aspect_ratio_y:.3f}"
+    params.output.sub_directory = (
+        f"check_cbox/{dim}D/NL_sim/Pr_{args.Prandtl:.2f}/asp_{args.aspect_ratio_y:.3f}"
+    )
     params.short_name_type_run = (
         f"asp{args.aspect_ratio_y:.3f}_Ra{args.Rayleigh:.3e}_Pr{args.Prandtl:.2f}"
     )
@@ -146,6 +149,14 @@ def main(args):
     ys[-1] = Ly - small
 
     coords = [(x, y) for x in xs for y in ys]
+
+    if params.oper.dim == 3:
+
+        zs = np.linspace(0, Lz, n1d)
+        zs[0] = small
+        zs[-1] = Lz - small
+
+        coords = [(x, y, z) for x in xs for y in ys for z in zs]
 
     params.output.history_points.coords = coords
     params.oper.max.hist = len(coords) + 1

@@ -1,12 +1,9 @@
 """
 
-Example of calls:
+Example of commands:
 
 ```
-python run_simul.py
-
-python run_simul.py -Ra 1.4e08
-
+python run_simul.py --delta-T-lateral 1.0 -ny 12 --order 10 -Ra 1.89e08 -np 4
 ```
 
 """
@@ -27,23 +24,54 @@ parser.add_argument(
     "-a_z", "--aspect-ratio-z", type=float, default=1.0, help="Z aspect ratio"
 )
 
+parser.add_argument("-Pr", "--Prandtl", type=float, default=0.71, help="Prandtl number")
+
 parser.add_argument(
-    "-Pr", "--Prandtl", type=float, default=0.71, help="Prandtl number"
+    "-Ra", "--Rayleigh", type=float, default=1.89e08, help="Rayleigh number"
+)
+
+parser.add_argument("-ny", type=int, default=12, help="Number of y elements")
+parser.add_argument("-nz", type=int, default=12, help="Number of z elements")
+parser.add_argument("--order", type=int, default=10, help=" Polynomial order")
+parser.add_argument("--dim", type=int, default=2, help="2D or 3D")
+parser.add_argument("--stretch-factor", type=float, default=0.0, help="Stretch factor")
+
+parser.add_argument(
+    "--x-periodicity",
+    action="store_true",
+    help="Periodic boundary condition in x direction",
+)
+parser.add_argument(
+    "--y-periodicity",
+    action="store_true",
+    help="Periodic boundary condition in y direction",
+)
+parser.add_argument(
+    "--z-periodicity",
+    action="store_true",
+    help="Periodic boundary condition in z direction",
 )
 
 parser.add_argument(
-    "-Ra", "--Rayleigh", type=float, default=1.0e08, help="Rayleigh number"
+    "--delta-T-lateral",
+    type=float,
+    default=0.0,
+    help="Lateral temperature difference",
+)
+parser.add_argument(
+    "--delta-T-vertical",
+    type=float,
+    default=0.0,
+    help="Vertical temperature difference",
 )
 
-parser.add_argument("-nx", type=int, default=8, help="number of x elements")
-parser.add_argument("-nz", type=int, default=8, help="number of z elements")
-parser.add_argument("--order", type=int, default=9, help="order")
-parser.add_argument("--dim", type=int, default=2, help="2d or 3d")
+parser.add_argument("--end-time", type=float, default=4000, help="End time")
+parser.add_argument("--num-steps", type=int, default=4000, help="Number of time steps")
+parser.add_argument("--dt-max", type=float, default=0.1, help="Maximum dt")
 
 parser.add_argument(
-    "--num-steps", type=int, default=2000000, help="number of time steps"
+    "-np", "--nb-mpi-procs", type=int, default=4, help="Number of MPI processes"
 )
-parser.add_argument("--dt", type=float, default=0.005, help="time step")
 
 
 def main(args):
@@ -53,33 +81,52 @@ def main(args):
     params.prandtl = args.Prandtl
     params.rayleigh = args.Rayleigh
 
-    Lx = params.oper.Lx = 1.0
-    Ly = params.oper.Ly = Lx * args.aspect_ratio_y
-    params.oper.Lz = Lx * args.aspect_ratio_z
+    Ly = params.oper.Ly
+    Lx = params.oper.Lx = Ly / args.aspect_ratio_y
+    Lz = params.oper.Lz = Ly / args.aspect_ratio_z
+
+    params.oper.x_periodicity = args.x_periodicity
+    params.oper.y_periodicity = args.y_periodicity
+    params.oper.z_periodicity = args.z_periodicity
+
+    params.oper.delta_T_lateral = args.delta_T_lateral
+    params.oper.delta_T_vertical = args.delta_T_vertical
+
+    params.oper.mesh_stretch_factor = args.stretch_factor
+    params.oper.aspect_ratio = args.aspect_ratio_y
 
     params.oper.nproc_min = 2
     dim = params.oper.dim = args.dim
 
-    nx = params.oper.nx = args.nx
-    ny = params.oper.ny = int(nx * args.aspect_ratio_y)
-    # nz = params.oper.nz = args.nz
+    ny = params.oper.ny = args.ny
+    nx = params.oper.nx = int(ny / args.aspect_ratio_y)
+    # nz = params.oper.nz = int(ny / args.aspect_ratio_z)
 
     order = params.oper.elem.order = args.order
     params.oper.elem.order_out = order
 
     params.output.sub_directory = (
-        f"cbox/{dim}D/NL_sim/asp_{args.aspect_ratio_y:.2f}"
-        f"/msh_{nx*order}_{ny*order}/Ra_{args.Rayleigh:.3e}"
+        f"test_cbox/{dim}D/NL_sim/Pr_{args.Prandtl:.2f}/asp_{args.aspect_ratio_y:.3f}"
+    )
+    params.short_name_type_run = (
+        f"asp{args.aspect_ratio_y:.3f}_Ra{args.Rayleigh:.3e}_Pr{args.Prandtl:.2f}"
     )
 
-    params.nek.general.num_steps = args.num_steps
-    params.nek.general.write_interval = 1000
-
-    params.nek.general.dt = args.dt
+    params.nek.general.dt = -args.dt_max
     params.nek.general.time_stepper = "BDF3"
 
+    # params.nek.general.end_time = args.end_time
+    # params.nek.general.stop_at = "endTime"
+
+    params.nek.general.write_control = "runTime"
+    params.nek.general.write_interval = 20.0
+
+    params.nek.general.num_steps = 225000
+    params.nek.general.target_cfl = 2.0
+    params.nek.general.extrapolation = "OIFS"
+
     params.output.phys_fields.write_interval_pert_field = 1000
-    params.output.history_points.write_interval = 100
+    params.output.history_points.write_interval = 10
 
     # creation of the coordinates of the points saved by history points
     n1d = 5
@@ -95,12 +142,24 @@ def main(args):
 
     coords = [(x, y) for x in xs for y in ys]
 
+    if params.oper.dim == 3:
+
+        zs = np.linspace(0, Lz, n1d)
+        zs[0] = small
+        zs[-1] = Lz - small
+
+        coords = [(x, y, z) for x in xs for y in ys for z in zs]
+
     params.output.history_points.coords = coords
     params.oper.max.hist = len(coords) + 1
 
     sim = Simul(params)
-    sim.make.exec("run_fg")
 
+    # sim.output.write_snakemake_config(
+    #     custom_env_vars={"MPIEXEC_FLAGS": "--report-pid PID.txt"}
+    # )
+
+    sim.make.exec("run_fg", resources={"nproc": args.nb_mpi_procs})
     return params, sim
 
 
