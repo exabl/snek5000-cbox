@@ -55,11 +55,11 @@ elif z_periodicity:
 
 print(command)
 
-name_run = f"_asp_{aspect_ratio:.3f}_Ra_{Ra_c_test:.3e}_Pr_{prandtl:.2f}_msh_{round(nx/aspect_ratio)*order}x{ny*order}"
+name_run = f"_asp{aspect_ratio:.3f}_Ra{Ra_c_test:.3e}_Pr{prandtl:.2f}_msh{round(nx/aspect_ratio)*order}x{ny*order}"
 
 if delta_T_side == 1.0 and delta_T_vert == 0.0:
 
-    name_run = "VC" + name_run
+    name_run = "SW" + name_run
 
 elif delta_T_side == 0.0 and delta_T_vert == 1.0:
 

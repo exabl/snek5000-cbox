@@ -3,7 +3,7 @@
 Example of commands:
 
 ```
-python run_simul.py --delta-T-lateral 1.0 -ny 12 --order 10 -Ra 1.89e08 -np 4
+python run_simul.py --Ra-side 1e5 -ny 12 --order 10 -Ra 1.89e08 -np 4
 ```
 
 """
@@ -27,7 +27,10 @@ parser.add_argument(
 parser.add_argument("-Pr", "--Prandtl", type=float, default=0.71, help="Prandtl number")
 
 parser.add_argument(
-    "-Ra", "--Rayleigh", type=float, default=1.89e08, help="Rayleigh number"
+    "--Ra-side", type=float, default=0.0, help="Sidewall Rayleigh number"
+)
+parser.add_argument(
+    "--Ra-vert", type=float, default=0.0, help="Vertical Rayleigh number"
 )
 
 parser.add_argument("-ny", type=int, default=12, help="Number of y elements")
@@ -50,19 +53,6 @@ parser.add_argument(
     "--z-periodicity",
     action="store_true",
     help="Periodic boundary condition in z direction",
-)
-
-parser.add_argument(
-    "--delta-T-lateral",
-    type=float,
-    default=0.0,
-    help="Lateral temperature difference",
-)
-parser.add_argument(
-    "--delta-T-vertical",
-    type=float,
-    default=0.0,
-    help="Vertical temperature difference",
 )
 
 parser.add_argument("--end-time", type=float, default=4000, help="End time")

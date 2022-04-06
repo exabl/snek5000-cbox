@@ -13,11 +13,9 @@ num_steps = 4000000
 dt = 0.05
 nb_procs = 10
 
-delta_T_side = 1.0
-delta_T_vert = 0.0
+Ra_vert = 1000
 
-x_periodicity = False
-y_periodicity = False
+x_periodicity = True
 z_periodicity = False
 
 better_Ra_c_numbers = {1.0: 1.825e8}
@@ -37,7 +35,7 @@ cluster.commands_setting_env = [
 if aspect_ratio in better_Ra_c_numbers:
     Ra_c_guessed = better_Ra_c_numbers[aspect_ratio]
 else:
-    Ra_c_guessed = 1.93e8 * aspect_ratio**-3.15
+    Ra_c_guessed = 1.93e8 * aspect_ratio ** -3.15
 
 Ra_numbs = np.logspace(np.log10(0.99 * Ra_c_guessed), np.log10(1.02 * Ra_c_guessed), 5)
 
@@ -47,37 +45,23 @@ nx = int(ny / aspect_ratio)
 if ny / aspect_ratio - nx:
     raise ValueError
 
-for Ra_num in Ra_numbs:
+for Ra_vert_num in Ra_numbs:
 
     command = (
-        f"run_simul.py -R {Ra_num} -Pr {prandtl} -ny {ny} "
+        f"run_simul.py -Pr {prandtl} -ny {ny} "
         f"--order {order} --dt-max {dt} --num-steps {num_steps} -np {nb_procs} "
         f"-a_y {aspect_ratio} --stretch-factor {stretch_factor} "
-        f"--delta-T-lateral {delta_T_side} --delta-T-vertical {delta_T_vert}"
+        f"--Ra-vert {Ra_vert_num}"
     )
 
     if x_periodicity:
         command += " --x-periodicity"
-    elif y_periodicity:
-        command += " --y-periodicity"
     elif z_periodicity:
         command += " --z-periodicity"
 
     print(command)
 
-    name_run = f"_asp_{aspect_ratio:.3f}_Ra_{Ra_num:.3e}_Pr_{prandtl:.2f}_msh_{round(nx/aspect_ratio)*order}x{ny*order}"
-
-    if delta_T_side == 1.0 and delta_T_vert == 0.0:
-
-        name_run = "VC" + name_run
-
-    elif delta_T_side == 0.0 and delta_T_vert == 1.0:
-
-        name_run = "RB" + name_run
-
-    elif delta_T_side == 1.0 and delta_T_vert == 1.0:
-
-        name_run = "MC" + name_run
+    name_run = f"RB_asp{aspect_ratio:.3f}_Ra{Ra_vert_num:.3e}_Pr{prandtl:.2f}_msh{round(nx/aspect_ratio)*order}x{ny*order}"
 
     cluster.submit_script(
         command,

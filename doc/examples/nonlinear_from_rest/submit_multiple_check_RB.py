@@ -58,7 +58,7 @@ for aspect_ratio, Ra_c_test in Ra_c_tests.items():
 
         print(command)
 
-        name_run = f"RB_asp_{aspect_ratio:.3f}_Ra_{Ra_vert_num:.3e}_Pr_{prandtl:.2f}_msh_{round(nx/aspect_ratio)*order}x{ny*order}"
+        name_run = f"RB_asp{aspect_ratio:.3f}_Ra{Ra_vert_num:.3e}_Pr{prandtl:.2f}_msh{round(nx/aspect_ratio)*order}x{ny*order}"
 
         cluster.submit_script(
             command,
