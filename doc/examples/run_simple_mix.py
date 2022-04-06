@@ -5,16 +5,14 @@ from snek5000_cbox.solver import Simul
 params = Simul.create_default_params()
 
 aspect_ratio = params.oper.aspect_ratio = 1.0
-params.prandtl = 0.71
+params.prandtl = 1.0
 
-params.rayleigh = 2.0e08
+params.Ra_side = 1e5
+params.Ra_vert = 2000
 
 params.output.sub_directory = "examples_cbox/simple"
 
 params.oper.dim = 2
-
-params.oper.delta_T_lateral = 1.0
-params.oper.delta_T_vertical = 1.0
 
 nb_elements = ny = 8
 params.oper.ny = nb_elements
@@ -30,7 +28,9 @@ order = params.oper.elem.order = params.oper.elem.order_out = 10
 
 params.oper.mesh_stretch_factor = 0.0  # zero means regular
 
-params.short_name_type_run = f"Ra{params.rayleigh:.3e}_{nx*order}x{ny*order}"
+params.short_name_type_run = (
+    f"Ra{params.Ra_side:.3e}_{params.Ra_vert:.3e}_{nx*order}x{ny*order}"
+)
 
 # creation of the coordinates of the points saved by history points
 n1d = 5
@@ -65,7 +65,7 @@ params.nek.general.write_control = "runTime"
 params.nek.general.write_interval = 10.0
 
 params.nek.general.variable_dt = True
-params.nek.general.target_cfl = 2.0
+params.nek.general.target_cfl = 1.0
 params.nek.general.time_stepper = "BDF3"
 params.nek.general.extrapolation = "OIFS"
 
@@ -73,4 +73,4 @@ params.output.history_points.write_interval = 10
 
 sim = Simul(params)
 
-sim.make.exec("run_fg", resources={"nproc": 4})
+# sim.make.exec("run_fg", resources={"nproc": 4})

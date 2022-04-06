@@ -14,7 +14,7 @@ def test_simple_simul():
     params.prandtl = 0.71
 
     # for aspect ratio 1, Ra_c = 1.825E08
-    params.rayleigh = 1.83e08
+    params.Ra_side = 1.83e08
 
     params.output.sub_directory = "tests_snek_cbox"
 
@@ -22,16 +22,13 @@ def test_simple_simul():
     params.oper.dim = 2
 
     nb_elements = 8
-    params.oper.nx = nb_elements
     params.oper.ny = nb_elements
-    params.oper.nz = nb_elements
+    params.oper.nx = int(nb_elements / aspect_ratio)
 
-    Lx = params.oper.Lx = 1.0
-    Ly = params.oper.Ly = Lx * aspect_ratio
+    Ly = params.oper.Ly
+    Lx = params.oper.Lx = Ly / aspect_ratio
 
     params.oper.elem.order = params.oper.elem.order_out = 7
-
-    params.oper.delta_T_lateral = 1.0
 
     # creation of the coordinates of the points saved by history points
     n1d = 4
@@ -74,7 +71,7 @@ def test_init_vertical():
     params = Simul.create_default_params()
 
     params.oper.dim = 2
-    params.oper.delta_T_lateral = 1.0
+    params.Ra_side = 1.0
 
     Simul(params)
 
@@ -101,7 +98,7 @@ def test_init_RB():
     params = Simul.create_default_params()
 
     params.oper.dim = 2
-    params.oper.delta_T_vertical = 1.0
+    params.Ra_vert = 1.0
 
     Simul(params)
 
@@ -128,8 +125,8 @@ def test_init_mix():
     params = Simul.create_default_params()
 
     params.oper.dim = 2
-    params.oper.delta_T_lateral = 1.0
-    params.oper.delta_T_vertical = 1.0
+    params.Ra_side = 1.0
+    params.Ra_vert = 1.0
 
     Simul(params)
 

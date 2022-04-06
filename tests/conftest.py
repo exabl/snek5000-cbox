@@ -1,5 +1,6 @@
 import os
 from contextlib import contextmanager
+from pathlib import Path
 
 import pytest
 
@@ -24,6 +25,7 @@ def pytest_collection_modifyitems(config, items):
         if "slow" in item.keywords:
             item.add_marker(skip_slow)
 
+
 @contextmanager
 def unset_snek_debug():
     old_snek_debug = os.environ.pop("SNEK_DEBUG", None)
@@ -31,8 +33,9 @@ def unset_snek_debug():
         yield
     finally:
         if old_snek_debug is not None:
-            os.environ["SNEK_DEBUG"] = old_snek_debug            
-            
+            os.environ["SNEK_DEBUG"] = old_snek_debug
+
+
 @pytest.fixture(scope="module")
 def sim_cbox_executed():
     from snek5000_cbox.solver import Simul
@@ -44,8 +47,8 @@ def sim_cbox_executed():
     params.nek.general.dt = 1e-3
     params.nek.general.num_steps = 12
     params.nek.general.write_interval = 3
-    
-    params.oper.delta_T_lateral = 1.0
+
+    params.Ra_side = 100
     params.oper.nproc_min = 2
     params.oper.nproc_max = 12
     params.oper.dim = 2

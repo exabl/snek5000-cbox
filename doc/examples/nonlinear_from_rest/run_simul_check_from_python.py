@@ -3,7 +3,7 @@
 Example of commands:
 
 ```
-python run_simul_check_from_python.py --delta-T-lateral 1.0 -nx 12 --order 10 -Ra 1.89e08 -np 4
+python run_simul_check_from_python.py --Ra_side 1e5 -nx 12 --order 10 -np 4
 ```
 
 """
@@ -34,7 +34,10 @@ parser.add_argument(
 parser.add_argument("-Pr", "--Prandtl", type=float, default=0.71, help="Prandtl number")
 
 parser.add_argument(
-    "-Ra", "--Rayleigh", type=float, default=1.89e08, help="Rayleigh number"
+    "--Ra-side", type=float, default=0.0, help="Sidewall Rayleigh number"
+)
+parser.add_argument(
+    "--Ra-vert", type=float, default=0.0, help="Vertical Rayleigh number"
 )
 
 parser.add_argument("-ny", type=int, default=12, help="Number of y elements")
@@ -59,19 +62,6 @@ parser.add_argument(
     help="Periodic boundary condition in z direction",
 )
 
-parser.add_argument(
-    "--delta-T-lateral",
-    type=float,
-    default=0.0,
-    help="Lateral temperature difference",
-)
-parser.add_argument(
-    "--delta-T-vertical",
-    type=float,
-    default=0.0,
-    help="Vertical temperature difference",
-)
-
 parser.add_argument("--end-time", type=float, default=4000, help="End time")
 parser.add_argument("--num-steps", type=int, default=4000, help="Number of time steps")
 parser.add_argument("--dt-max", type=float, default=0.1, help="Maximum dt")
@@ -86,7 +76,8 @@ def main(args):
     params = Simul.create_default_params()
 
     params.prandtl = args.Prandtl
-    params.rayleigh = args.Rayleigh
+    params.Ra_side = args.Ra_side
+    params.Ra_vert = args.Ra_vert
 
     Ly = params.oper.Ly
     Lx = params.oper.Lx = Ly / args.aspect_ratio_y
@@ -95,9 +86,6 @@ def main(args):
     params.oper.x_periodicity = args.x_periodicity
     params.oper.y_periodicity = args.y_periodicity
     params.oper.z_periodicity = args.z_periodicity
-
-    params.oper.delta_T_lateral = args.delta_T_lateral
-    params.oper.delta_T_vertical = args.delta_T_vertical
 
     params.oper.mesh_stretch_factor = args.stretch_factor
     params.oper.aspect_ratio = args.aspect_ratio_y
@@ -112,12 +100,19 @@ def main(args):
     order = params.oper.elem.order = args.order
     params.oper.elem.order_out = order
 
-    params.output.sub_directory = (
-        f"check_cbox/{dim}D/NL_sim/Pr_{args.Prandtl:.2f}/asp_{args.aspect_ratio_y:.3f}"
-    )
-    params.short_name_type_run = (
-        f"asp{args.aspect_ratio_y:.3f}_Ra{args.Rayleigh:.3e}_Pr{args.Prandtl:.2f}"
-    )
+    if params.Ra_side > 0 and params.Ra_vert == 0:
+        params.output.sub_directory = f"check_SW/{dim}D/NL_sim/Pr_{args.Prandtl:.2f}/asp_{args.aspect_ratio_y:.3f}"
+        params.short_name_type_run = (
+            f"asp{args.aspect_ratio_y:.3f}_Ra_s{args.Ra_side:.3e}_Pr{args.Prandtl:.2f}"
+        )
+    elif params.Ra_side == 0 and params.Ra_vert > 0:
+        params.output.sub_directory = f"check_RB/{dim}D/NL_sim/Pr_{args.Prandtl:.2f}/asp_{args.aspect_ratio_y:.3f}"
+        params.short_name_type_run = (
+            f"asp{args.aspect_ratio_y:.3f}_Ra_v{args.Ra_side:.3e}_Pr{args.Prandtl:.2f}"
+        )
+    elif params.Ra_side == 0 and params.Ra_vert > 0:
+        params.output.sub_directory = f"check_MC/{dim}D/NL_sim/Pr_{args.Prandtl:.2f}/asp_{args.aspect_ratio_y:.3f}"
+        params.short_name_type_run = f"asp{args.aspect_ratio_y:.3f}_Ra_s{args.Ra_side:.3e}_Ra_v{args.Ra_side:.3e}_Pr{args.Prandtl:.2f}"
 
     params.nek.general.dt = args.dt_max
     params.nek.general.time_stepper = "BDF3"

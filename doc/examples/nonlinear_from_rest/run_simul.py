@@ -89,8 +89,8 @@ def main(args):
     params.oper.y_periodicity = args.y_periodicity
     params.oper.z_periodicity = args.z_periodicity
 
-    params.oper.delta_T_lateral = args.delta_T_lateral
-    params.oper.delta_T_vertical = args.delta_T_vertical
+    params.oper.delta_T_side = args.delta_T_side
+    params.oper.delta_T_vert = args.delta_T_vert
 
     params.oper.mesh_stretch_factor = args.stretch_factor
     params.oper.aspect_ratio = args.aspect_ratio_y

@@ -8,13 +8,12 @@ aspect_ratio = params.oper.aspect_ratio = 1.0 / 9
 params.prandtl = 1.0
 
 # for an infinite layer of fluid, the onset of convection is at Ra_c = 1708
-params.rayleigh = 1750
+params.Ra_vert = 1750
 
 params.output.sub_directory = "examples_cbox/simple/RB"
 
 params.oper.dim = 2
 
-params.oper.delta_T_vertical = 1.0
 params.oper.x_periodicity = True
 
 nb_elements = ny = 1
@@ -33,7 +32,7 @@ params.oper.elem.staggered = False
 
 params.oper.mesh_stretch_factor = 0.0  # zero means regular
 
-params.short_name_type_run = f"Ra{params.rayleigh:.3e}_{nx*order}x{ny*order}"
+params.short_name_type_run = f"Ra{params.Ra_vert:.3e}_{nx*order}x{ny*order}"
 
 # creation of the coordinates of the points saved by history points
 n1d = 5
@@ -73,4 +72,4 @@ params.output.history_points.write_interval = 10
 
 sim = Simul(params)
 
-sim.make.exec("run_fg", resources={"nproc": 4})
+# sim.make.exec("run_fg", resources={"nproc": 4})

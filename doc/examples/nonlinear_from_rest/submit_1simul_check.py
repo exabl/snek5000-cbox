@@ -14,8 +14,8 @@ order = 10
 stretch_factor = 0.0
 dim = 2
 
-delta_T_lateral = 1.0
-delta_T_vertical = 0.0
+delta_T_side = 1.0
+delta_T_vert = 0.0
 
 x_periodicity = False
 y_periodicity = False
@@ -43,7 +43,7 @@ command = (
     f"run_simul_check_from_python.py -R {Ra_c_test} -Pr {prandtl} -ny {ny} "
     f"--order {order} --dt-max {dt_max} --end-time {end_time} -np {nb_procs} "
     f"-a_y {aspect_ratio} --stretch-factor {stretch_factor} "
-    f"--delta-T-lateral {delta_T_lateral} --delta-T-vertical {delta_T_vertical}"
+    f"--delta-T-lateral {delta_T_side} --delta-T-vertical {delta_T_vert}"
 )
 
 if x_periodicity:
@@ -57,15 +57,15 @@ print(command)
 
 name_run = f"_asp_{aspect_ratio:.3f}_Ra_{Ra_c_test:.3e}_Pr_{prandtl:.2f}_msh_{round(nx/aspect_ratio)*order}x{ny*order}"
 
-if delta_T_lateral == 1.0 and delta_T_vertical == 0.0:
+if delta_T_side == 1.0 and delta_T_vert == 0.0:
 
     name_run = "VC" + name_run
 
-elif delta_T_lateral == 0.0 and delta_T_vertical == 1.0:
+elif delta_T_side == 0.0 and delta_T_vert == 1.0:
 
     name_run = "RB" + name_run
 
-elif delta_T_lateral == 1.0 and delta_T_vertical == 1.0:
+elif delta_T_side == 1.0 and delta_T_vert == 1.0:
 
     name_run = "MC" + name_run
 

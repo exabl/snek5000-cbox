@@ -14,11 +14,10 @@ order = 10
 stretch_factor = 0.0
 dim = 2
 
-delta_T_lateral = 1.0
-delta_T_vertical = 0.0
 
-x_periodicity = False
-y_periodicity = False
+Ra_vert = 1750
+
+x_periodicity = True
 z_periodicity = False
 
 
@@ -41,39 +40,25 @@ for aspect_ratio, Ra_c_test in Ra_c_tests.items():
     if ny / aspect_ratio - nx:
         continue
 
-    Ra_numbers = np.logspace(np.log10(Ra_c_test), np.log10(1.04 * Ra_c_test), 4)
+    Ra_vert_nums = np.logspace(np.log10(Ra_c_test), np.log10(1.04 * Ra_c_test), 4)
 
-    for Ra in Ra_numbers:
+    for Ra_vert_num in Ra_vert_nums:
 
         command = (
-            f"run_simul_check_from_python.py -R {Ra} -Pr {prandtl} -ny {ny} "
+            f"run_simul_check_from_python.py -Pr {prandtl} -ny {ny} "
             f"--order {order} --dt-max {dt_max} --end-time {end_time} -np {nb_procs} "
             f"-a_y {aspect_ratio} --stretch-factor {stretch_factor} "
-            f"--delta-T-lateral {delta_T_lateral} --delta-T-vertical {delta_T_vertical}"
+            f"--Ra-vert {Ra_vert_num}"
         )
 
         if x_periodicity:
             command += " --x-periodicity"
-        elif y_periodicity:
-            command += " --y-periodicity"
         elif z_periodicity:
             command += " --z-periodicity"
 
         print(command)
 
-        name_run = f"_asp_{aspect_ratio:.3f}_Ra_{Ra:.3e}_Pr_{prandtl:.2f}_msh_{round(nx/aspect_ratio)*order}x{ny*order}"
-
-        if delta_T_lateral == 1.0 and delta_T_vertical == 0.0:
-
-            name_run = "VC" + name_run
-
-        elif delta_T_lateral == 0.0 and delta_T_vertical == 1.0:
-
-            name_run = "RB" + name_run
-
-        elif delta_T_lateral == 1.0 and delta_T_vertical == 1.0:
-
-            name_run = "MC" + name_run
+        name_run = f"RB_asp_{aspect_ratio:.3f}_Ra_{Ra_vert_num:.3e}_Pr_{prandtl:.2f}_msh_{round(nx/aspect_ratio)*order}x{ny*order}"
 
         cluster.submit_script(
             command,
