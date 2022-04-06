@@ -16,7 +16,7 @@ params.prandtl = 0.71
 # for aspect ratio 1, Ra_c = 1.825e08
 params.Ra_side = 2.0e08
 
-params.output.sub_directory = "examples_cbox/simple"
+params.output.sub_directory = "examples_cbox/simple/SW"
 
 params.oper.dim = 2
 
@@ -77,4 +77,4 @@ params.output.history_points.write_interval = 10
 
 sim = Simul(params)
 
-# sim.make.exec("run_fg", resources={"nproc": 4})
+sim.make.exec("run_fg", resources={"nproc": 4})

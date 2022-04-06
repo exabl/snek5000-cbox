@@ -3,7 +3,7 @@
 Example of commands:
 
 ```
-python run_simul.py --Ra-side 1e5 -ny 12 --order 10 -Ra 1.89e08 -np 4
+python run_simul.py --Ra-side 1e5 -ny 12 --order 10 -np 4
 ```
 
 """
@@ -69,7 +69,8 @@ def main(args):
     params = Simul.create_default_params()
 
     params.prandtl = args.Prandtl
-    params.rayleigh = args.Rayleigh
+    params.Ra_side = args.Ra_side
+    params.Ra_vert = args.Ra_vert
 
     Ly = params.oper.Ly
     Lx = params.oper.Lx = Ly / args.aspect_ratio_y
@@ -78,9 +79,6 @@ def main(args):
     params.oper.x_periodicity = args.x_periodicity
     params.oper.y_periodicity = args.y_periodicity
     params.oper.z_periodicity = args.z_periodicity
-
-    params.oper.delta_T_side = args.delta_T_side
-    params.oper.delta_T_vert = args.delta_T_vert
 
     params.oper.mesh_stretch_factor = args.stretch_factor
     params.oper.aspect_ratio = args.aspect_ratio_y
@@ -95,12 +93,25 @@ def main(args):
     order = params.oper.elem.order = args.order
     params.oper.elem.order_out = order
 
-    params.output.sub_directory = (
-        f"test_cbox/{dim}D/NL_sim/Pr_{args.Prandtl:.2f}/asp_{args.aspect_ratio_y:.3f}"
-    )
-    params.short_name_type_run = (
-        f"asp{args.aspect_ratio_y:.3f}_Ra{args.Rayleigh:.3e}_Pr{args.Prandtl:.2f}"
-    )
+    if params.Ra_side > 0 and params.Ra_vert == 0:
+        params.output.sub_directory = (
+            f"SW/{dim}D/NL_sim/Pr_{args.Prandtl:.2f}/asp_{args.aspect_ratio_y:.3f}"
+        )
+        params.short_name_type_run = (
+            f"asp{args.aspect_ratio_y:.3f}_Ra_s{args.Ra_side:.3e}_Pr{args.Prandtl:.2f}"
+        )
+    elif params.Ra_side == 0 and params.Ra_vert > 0:
+        params.output.sub_directory = (
+            f"RB/{dim}D/NL_sim/Pr_{args.Prandtl:.2f}/asp_{args.aspect_ratio_y:.3f}"
+        )
+        params.short_name_type_run = (
+            f"asp{args.aspect_ratio_y:.3f}_Ra_v{args.Ra_side:.3e}_Pr{args.Prandtl:.2f}"
+        )
+    elif params.Ra_side > 0 and params.Ra_vert > 0:
+        params.output.sub_directory = (
+            f"MC/{dim}D/NL_sim/Pr_{args.Prandtl:.2f}/asp_{args.aspect_ratio_y:.3f}"
+        )
+        params.short_name_type_run = f"asp{args.aspect_ratio_y:.3f}_Ra_s{args.Ra_side:.3e}_Ra_v{args.Ra_side:.3e}_Pr{args.Prandtl:.2f}"
 
     params.nek.general.dt = -args.dt_max
     params.nek.general.time_stepper = "BDF3"

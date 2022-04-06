@@ -1,13 +1,3 @@
-"""
-
-Example of commands:
-
-```
-python run_simul_check_from_python.py --Ra_side 1e5 -nx 12 --order 10 -np 4
-```
-
-"""
-
 import argparse
 from time import sleep
 import os
@@ -101,17 +91,17 @@ def main(args):
     params.oper.elem.order_out = order
 
     if params.Ra_side > 0 and params.Ra_vert == 0:
-        params.output.sub_directory = f"check_SW/{dim}D/NL_sim/Pr_{args.Prandtl:.2f}/asp_{args.aspect_ratio_y:.3f}"
+        params.output.sub_directory = f"SW_check/{dim}D/NL_sim/Pr_{args.Prandtl:.2f}/asp_{args.aspect_ratio_y:.3f}"
         params.short_name_type_run = (
             f"asp{args.aspect_ratio_y:.3f}_Ra_s{args.Ra_side:.3e}_Pr{args.Prandtl:.2f}"
         )
     elif params.Ra_side == 0 and params.Ra_vert > 0:
-        params.output.sub_directory = f"check_RB/{dim}D/NL_sim/Pr_{args.Prandtl:.2f}/asp_{args.aspect_ratio_y:.3f}"
+        params.output.sub_directory = f"RB_check/{dim}D/NL_sim/Pr_{args.Prandtl:.2f}/asp_{args.aspect_ratio_y:.3f}"
         params.short_name_type_run = (
             f"asp{args.aspect_ratio_y:.3f}_Ra_v{args.Ra_side:.3e}_Pr{args.Prandtl:.2f}"
         )
-    elif params.Ra_side == 0 and params.Ra_vert > 0:
-        params.output.sub_directory = f"check_MC/{dim}D/NL_sim/Pr_{args.Prandtl:.2f}/asp_{args.aspect_ratio_y:.3f}"
+    elif params.Ra_side > 0 and params.Ra_vert > 0:
+        params.output.sub_directory = f"MC_check/{dim}D/NL_sim/Pr_{args.Prandtl:.2f}/asp_{args.aspect_ratio_y:.3f}"
         params.short_name_type_run = f"asp{args.aspect_ratio_y:.3f}_Ra_s{args.Ra_side:.3e}_Ra_v{args.Ra_side:.3e}_Pr{args.Prandtl:.2f}"
 
     params.nek.general.dt = args.dt_max

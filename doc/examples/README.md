@@ -1,7 +1,7 @@
 This solver can simulate convective flows in rectangular cavities in three main configurations:  
 
 # 1- Sidewall convection
-In order to simulate the flow in a side wall heated and cooled cavity one needs to activate it by assigning sidewall Rayleigh number:
+In order to simulate the flow in a side wall heated and cooled cavity one needs to activate it by assigning sidewall Rayleigh number for example:
 
 ```python
 params.Ra_side = 1e5
@@ -62,10 +62,10 @@ params.oper.z_periodicity = True
 
 # 2- Rayleigh-Bénard convection
 
-In order to simulate the flow in a Rayleigh-Bénard cavity (bottom plate heated and top cooled) one needs to activate it by assigning vertical Rayleigh number:: 
+In order to simulate the flow in a Rayleigh-Bénard cavity (bottom plate heated and top cooled) one needs to activate it by assigning vertical Rayleigh number for example: 
 
 ```python
-params.Ra_vert = 1.0
+params.Ra_vert = 1750
 ```
 
 In this case, it is possible to have different configuration based on the dimension of the problem and boundary conditions:
@@ -123,11 +123,10 @@ params.oper.z_periodicity = True
 
 # 3- Mixed case (sidewall convection + Rayleigh-Bénard convection)
 
-In order to simulate the flow in a cavity that both sidewalls and horizontal ones are differentially heated and cooled, one needs to activate it by assigning sidewall and vertical Rayleigh numbers: 
-
+In order to simulate the flow in a cavity that both sidewalls and horizontal ones are differentially heated submit_simul
 ```python
-params.Ra_side = 1.0
-params.Ra_vert = 1.0
+params.Ra_side = 5000
+params.Ra_vert = 5000
 ```
 In this case, it is possible to have different configuration based on the dimension of the problem and boundary conditions:
 

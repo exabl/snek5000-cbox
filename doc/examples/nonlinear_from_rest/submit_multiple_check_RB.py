@@ -14,7 +14,6 @@ order = 10
 stretch_factor = 0.0
 dim = 2
 
-
 Ra_vert = 1750
 
 x_periodicity = True

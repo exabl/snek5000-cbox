@@ -8,7 +8,7 @@ aspect_ratio = params.oper.aspect_ratio = 1.0 / 9
 params.prandtl = 1.0
 
 # for an infinite layer of fluid, the onset of convection is at Ra_c = 1708
-params.Ra_vert = 1750
+params.Ra_vert = 1760
 
 params.output.sub_directory = "examples_cbox/simple/RB"
 
@@ -60,8 +60,8 @@ if params.oper.dim == 3:
 params.output.history_points.coords = coords
 params.oper.max.hist = len(coords) + 1
 
-params.nek.general.dt = -0.02
-params.nek.general.num_steps = 225000
+params.nek.general.dt = -0.03
+params.nek.general.num_steps = 150000
 params.nek.general.target_cfl = 2.01
 params.nek.general.time_stepper = "BDF2"
 
@@ -72,4 +72,4 @@ params.output.history_points.write_interval = 10
 
 sim = Simul(params)
 
-# sim.make.exec("run_fg", resources={"nproc": 4})
+sim.make.exec("run_fg", resources={"nproc": 4})

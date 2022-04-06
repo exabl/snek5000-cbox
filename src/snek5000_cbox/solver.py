@@ -180,6 +180,9 @@ User parameter for the aspect ratio in .usr file (subroutine useric, userbc):
 
     def __init__(self, params):
 
+        if params.oper.Ly != 1.0:
+            raise ValueError("One have to assign `params.oper.Ly = 1.0`")
+
         if params.Ra_side > 0 and params.Ra_vert == 0:
 
             params.oper.delta_T_side = 1.0

@@ -10,7 +10,7 @@ params.prandtl = 1.0
 params.Ra_side = 1e5
 params.Ra_vert = 2000
 
-params.output.sub_directory = "examples_cbox/simple"
+params.output.sub_directory = "examples_cbox/simple/MC"
 
 params.oper.dim = 2
 
@@ -73,4 +73,4 @@ params.output.history_points.write_interval = 10
 
 sim = Simul(params)
 
-# sim.make.exec("run_fg", resources={"nproc": 4})
+sim.make.exec("run_fg", resources={"nproc": 4})
