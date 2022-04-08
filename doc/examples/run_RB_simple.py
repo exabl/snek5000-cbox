@@ -4,33 +4,35 @@ from snek5000_cbox.solver import Simul
 
 params = Simul.create_default_params()
 
-aspect_ratio = params.oper.aspect_ratio = 1.0
-params.prandtl = 0.71
+aspect_ratio = params.oper.aspect_ratio = 1.0/41.0
+params.prandtl = 1.0
 
-params.rayleigh = 2.0e08
+# for an infinite layer of fluid with Pr = 1.0, the onset of convection is at Ra_c = 1708
+params.Ra_vert = 1710
 
-params.output.sub_directory = "examples_cbox/simple"
+params.output.sub_directory = "examples_cbox/simple/RB"
 
 params.oper.dim = 2
 
-params.oper.delta_T_lateral = 1.0
-params.oper.delta_T_vertical = 1.0
+params.oper.x_periodicity = True
 
-nb_elements = nx = ny = 12
-params.oper.nx = nb_elements
-params.oper.ny = int(nb_elements * aspect_ratio)
-params.oper.nz = int(nb_elements * aspect_ratio)
+nb_elements = ny = 1
+params.oper.ny = nb_elements
+nx = params.oper.nx = int(nb_elements / aspect_ratio)
+params.oper.nz = int(nb_elements / aspect_ratio)
 
-Lx = params.oper.Lx = 1.0
-Ly = params.oper.Ly = Lx * aspect_ratio
-Lz = params.oper.Lz = Lx * aspect_ratio
+Ly = params.oper.Ly
+Lx = params.oper.Lx = Ly / aspect_ratio
+Lz = params.oper.Lz = Ly / aspect_ratio
 
 
-order = params.oper.elem.order = params.oper.elem.order_out = 10
+order = params.oper.elem.order = params.oper.elem.order_out = 12
+params.oper.elem.staggered = False
+params.oper.noise_amplitude = 1e-3
 
 params.oper.mesh_stretch_factor = 0.0  # zero means regular
 
-params.short_name_type_run = f"Ra{params.rayleigh:.3e}_{nx*order}x{ny*order}"
+params.short_name_type_run = f"Ra{params.Ra_vert:.3e}_{nx*order}x{ny*order}"
 
 # creation of the coordinates of the points saved by history points
 n1d = 5
@@ -58,16 +60,14 @@ if params.oper.dim == 3:
 params.output.history_points.coords = coords
 params.oper.max.hist = len(coords) + 1
 
-params.nek.general.end_time = 600
+params.nek.general.dt = 0.05
+params.nek.general.end_time = 6000
 params.nek.general.stop_at = "endTime"
-
-params.nek.general.write_control = "runTime"
-params.nek.general.write_interval = 10.0
-
-params.nek.general.variable_dt = True
 params.nek.general.target_cfl = 2.0
 params.nek.general.time_stepper = "BDF3"
-params.nek.general.extrapolation = "OIFS"
+
+params.nek.general.write_control = "runTime"
+params.nek.general.write_interval = 100
 
 params.output.history_points.write_interval = 10
 

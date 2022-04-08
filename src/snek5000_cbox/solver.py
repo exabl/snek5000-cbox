@@ -31,8 +31,8 @@ class SimulCbox(SimulKTH):
     def _complete_params_with_default(cls, params):
         """Add missing default parameters."""
         params = super()._complete_params_with_default(params)
-        params._set_attribs({"prandtl": 0.71, "rayleigh": 1.8e8})
-        params._record_nek_user_params({"prandtl": 1, "rayleigh": 2})
+        params._set_attribs({"prandtl": 0.71, "Ra_side": 0.0, "Ra_vert": 0.0})
+        params._record_nek_user_params({"prandtl": 1, "Ra_side": 2, "Ra_vert": 3})
         return params
 
     @classmethod
@@ -45,12 +45,15 @@ class SimulCbox(SimulKTH):
 
         params.oper.nproc_min = 2
 
+        params.oper.Ly = 1.0
+
         params.nek.velocity.density = 1.0
         params.nek.temperature.rho_cp = 1.0
 
-        params.nek.temperature.residual_tol = 1e-14
-        params.nek.velocity.residual_tol = 1e-14
-        params.nek.pressure.residual_tol = 1e-14
+        params.nek.temperature.residual_tol = 1e-8
+        params.nek.temperature.absolute_tol = 1e-8
+        params.nek.velocity.residual_tol = 1e-8
+        params.nek.pressure.residual_tol = 1e-8
 
         params.oper._set_attribs({"mesh_stretch_factor": 0.0})
         params.oper._record_nek_user_params({"mesh_stretch_factor": 4})
@@ -71,35 +74,35 @@ User parameter for mesh stretching in .usr file (subroutine usrdat2):
 """
         )
 
-        params.oper._set_attribs({"delta_T_lateral": 0.0})
-        params.oper._record_nek_user_params({"delta_T_lateral": 5})
+        params.oper._set_attribs({"delta_T_side": 0.0})
+        params.oper._record_nek_user_params({"delta_T_side": 5})
         params.oper._set_doc(
             params.oper._doc
             + """
-User parameter for lateral temperature difference in .usr file (subroutine userbc):
+User parameter for sidewall temperature difference in .usr file (subroutine userbc):
 
-- ``delta_T_lateral``: float
+- ``delta_T_side``: float
   
   Lateral temperature difference (default = 0.0, meaning no temperature difference). 
   
 """
         )
 
-        params.oper._set_attribs({"delta_T_vertical": 0.0})
-        params.oper._record_nek_user_params({"delta_T_vertical": 6})
+        params.oper._set_attribs({"delta_T_vert": 0.0})
+        params.oper._record_nek_user_params({"delta_T_vert": 6})
         params.oper._set_doc(
             params.oper._doc
             + """
 User parameter for vertical temperature difference in .usr file (subroutine userbc):
 
-- ``delta_T_lateral``: float
+- ``delta_T_vert``: float
   
   Vertical temperature difference (default = 0.0, meaning no temperature difference). 
   
 """
         )
 
-        params.oper._set_attribs({"noise_amplitude": 1e-7})
+        params.oper._set_attribs({"noise_amplitude": 1e-5})
         params.oper._record_nek_user_params({"noise_amplitude": 7})
         params.oper._set_doc(
             params.oper._doc
@@ -112,7 +115,7 @@ User parameter for noise amplitude in .usr file (subroutine useric):
   
 """
         )
-        
+
         params.oper._set_attribs({"aspect_ratio": 1.0})
         params.oper._record_nek_user_params({"aspect_ratio": 8})
         params.oper._set_doc(
@@ -170,14 +173,22 @@ User parameter for the aspect ratio in .usr file (subroutine useric, userbc):
             {"write_interval_pert_field": 1000},
         )
         params.output.phys_fields._record_nek_user_params(
-            {"write_interval_pert_field": 3}
+            {"write_interval_pert_field": 9}
         )
 
         return params
 
     def __init__(self, params):
 
-        if params.oper.delta_T_lateral == 1.0 and params.oper.delta_T_vertical == 0.0:
+        if params.oper.Ly != 1.0:
+            raise ValueError("One have to assign `params.oper.Ly = 1.0`")
+
+        if params.Ra_side > 0 and params.Ra_vert == 0:
+
+            params.oper.delta_T_side = 1.0
+
+            rayleigh = params.Ra_side
+
             if params.oper.dim == 2:
                 if params.oper.y_periodicity:
 
@@ -205,7 +216,12 @@ User parameter for the aspect ratio in .usr file (subroutine useric, userbc):
                     params.oper.boundary = list("WWWWWW")
                     params.oper.boundary_scalars = list("ttIIII")
 
-        elif params.oper.delta_T_lateral == 0.0 and params.oper.delta_T_vertical == 1.0:
+        elif params.Ra_side == 0 and params.Ra_vert > 0:
+
+            params.oper.delta_T_vert = 1.0
+
+            rayleigh = params.Ra_vert
+
             if params.oper.dim == 2:
                 if params.oper.x_periodicity:
 
@@ -232,7 +248,15 @@ User parameter for the aspect ratio in .usr file (subroutine useric, userbc):
                     params.oper.boundary = list("WWWWWW")
                     params.oper.boundary_scalars = list("IIttII")
 
-        elif params.oper.delta_T_lateral == 1.0 and params.oper.delta_T_vertical == 1.0:
+        elif params.Ra_side > 0 and params.Ra_vert > 0:
+
+            params.oper.delta_T_side = 1.0
+            params.oper.delta_T_vert = (
+                params.Ra_vert / params.Ra_side * params.oper.delta_T_side
+            )
+
+            rayleigh = params.Ra_side
+
             if params.oper.dim == 2:
 
                 params.oper.boundary = list("WWWW")
@@ -249,8 +273,8 @@ User parameter for the aspect ratio in .usr file (subroutine useric, userbc):
                     params.oper.boundary = list("WWWWWW")
                     params.oper.boundary_scalars = list("ttttII")
 
-        params.nek.velocity.viscosity = params.prandtl / params.rayleigh ** (1 / 2)
-        params.nek.temperature.conductivity = 1.0 / params.rayleigh ** (1 / 2)
+        params.nek.velocity.viscosity = params.prandtl / rayleigh ** (1 / 2)
+        params.nek.temperature.conductivity = 1.0 / rayleigh ** (1 / 2)
 
         super().__init__(params)
 

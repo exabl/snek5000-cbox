@@ -17,7 +17,7 @@ def test_simple_simul():
     params.prandtl = 0.71
 
     # for aspect ratio 1, Ra_c = 1.825E08
-    params.rayleigh = 1.83e08
+    params.Ra_side = 1.83e08
 
     params.output.sub_directory = "tests_snek_cbox"
 
@@ -25,18 +25,16 @@ def test_simple_simul():
     params.oper.dim = 2
 
     nb_elements = 8
-    params.oper.nx = nb_elements
     params.oper.ny = nb_elements
-    params.oper.nz = nb_elements
+    params.oper.nx = int(nb_elements / aspect_ratio)
+    params.oper.nz = int(nb_elements / aspect_ratio)
 
-    Lx = params.oper.Lx = 1.0
-    Ly = params.oper.Ly = Lx * aspect_ratio
+    Ly = params.oper.Ly
+    Lx = params.oper.Lx = Ly / aspect_ratio
 
     params.oper.mesh_stretch_factor = 0.1
 
     params.oper.elem.order = params.oper.elem.order_out = 7
-
-    params.oper.delta_T_lateral = 1.0
 
     # creation of the coordinates of the points saved by history points
     n1d = 4
@@ -61,7 +59,7 @@ def test_simple_simul():
     params.nek.general.variable_dt = False
     # Negative dt means fixed dt
     dt = params.nek.general.dt = 0.03
-    params.nek.general.time_stepper = "BDF3"
+    params.nek.general.time_stepper = "BDF2"
     params.nek.general.extrapolation = "OIFS"
 
     params.output.phys_fields.write_interval_pert_field = 500
