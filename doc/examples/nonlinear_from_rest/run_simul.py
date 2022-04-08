@@ -113,21 +113,20 @@ def main(args):
         )
         params.short_name_type_run = f"asp{args.aspect_ratio_y:.3f}_Ra_s{args.Ra_side:.3e}_Ra_v{args.Ra_side:.3e}_Pr{args.Prandtl:.2f}"
 
-    params.nek.general.dt = -args.dt_max
+    params.nek.general.dt = args.dt_max
     params.nek.general.time_stepper = "BDF3"
 
-    # params.nek.general.end_time = args.end_time
-    # params.nek.general.stop_at = "endTime"
+    params.nek.general.end_time = args.end_time
+    params.nek.general.stop_at = "endTime"
 
     params.nek.general.write_control = "runTime"
     params.nek.general.write_interval = 20.0
 
-    params.nek.general.num_steps = 225000
-    params.nek.general.target_cfl = 2.0
+    # params.nek.general.target_cfl = 2.0
     params.nek.general.extrapolation = "OIFS"
 
-    params.output.phys_fields.write_interval_pert_field = 1000
-    params.output.history_points.write_interval = 10
+    params.output.phys_fields.write_interval_pert_field = 10
+    params.output.history_points.write_interval = 5
 
     # creation of the coordinates of the points saved by history points
     n1d = 5

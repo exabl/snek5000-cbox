@@ -2,6 +2,8 @@ import os
 from contextlib import contextmanager
 from pathlib import Path
 
+from snek5000.util.gfortran_log import log_matches
+
 import pytest
 
 

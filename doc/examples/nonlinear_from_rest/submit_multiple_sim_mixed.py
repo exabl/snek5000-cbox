@@ -4,12 +4,14 @@ from fluiddyn.clusters.legi import Calcul2 as Cluster
 
 prandtl = 0.71
 
+dim = 2
+
 aspect_ratio = 1.0
 ny = 12
 order = 10
 stretch_factor = 0.0
 
-num_steps = 4000000
+end_time = 3000
 dt = 0.05
 nb_procs = 10
 
@@ -17,8 +19,6 @@ Ra_side = 1000
 Ra_vert = 1000
 
 z_periodicity = False
-
-better_Ra_c_numbers = {1.0: 1.825e8}
 
 cluster = Cluster()
 
@@ -32,25 +32,21 @@ cluster.commands_setting_env = [
     "export FLUIDSIM_PATH=$PROJET_DIR/numerical/",
 ]
 
-if aspect_ratio in better_Ra_c_numbers:
-    Ra_c_guessed = better_Ra_c_numbers[aspect_ratio]
-else:
-    Ra_c_guessed = 1.93e8 * aspect_ratio ** -3.15
 
-Ra_numbs = np.logspace(np.log10(0.99 * Ra_c_guessed), np.log10(1.02 * Ra_c_guessed), 5)
+Ra_side_numbs = np.logspace(np.log10(0.99 * Ra_side), np.log10(1.02 * Ra_side), 5)
+Ra_vert_numbs = np.logspace(np.log10(0.99 * Ra_vert), np.log10(1.02 * Ra_vert), 5)
 
-print(Ra_numbs)
 
 nx = int(ny / aspect_ratio)
 if ny / aspect_ratio - nx:
     raise ValueError
 
-for Ra_side_num in Ra_numbs:
-    for Ra_vert_num in Ra_numbs:
+for Ra_side_num in Ra_side_numbs:
+    for Ra_vert_num in Ra_vert_numbs:
 
         command = (
-            f"run_simul.py -Pr {prandtl} -ny {ny} "
-            f"--order {order} --dt-max {dt} --num-steps {num_steps} -np {nb_procs} "
+            f"run_simul.py -Pr {prandtl} -ny {ny} --dim {dim} "
+            f"--order {order} --dt-max {dt} --end-time {end_time} -np {nb_procs} "
             f"-a_y {aspect_ratio} --stretch-factor {stretch_factor} "
             f"--Ra-side {Ra_side_num} --Ra-vert {Ra_vert_num}"
         )

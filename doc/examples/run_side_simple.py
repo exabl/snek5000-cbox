@@ -13,8 +13,8 @@ params = Simul.create_default_params()
 aspect_ratio = params.oper.aspect_ratio = 1.0
 params.prandtl = 0.71
 
-# for aspect ratio 1, Ra_c = 1.825e08
-params.Ra_side = 2.0e08
+# The onset of oscillatory flow for aspect ration 1.0 is at Ra_c = 1.825e8
+params.Ra_side = 2.0e8
 
 params.output.sub_directory = "examples_cbox/simple/SW"
 
@@ -62,16 +62,14 @@ if params.oper.dim == 3:
 params.output.history_points.coords = coords
 params.oper.max.hist = len(coords) + 1
 
-params.nek.general.end_time = 600
+params.nek.general.end_time = 500
 params.nek.general.stop_at = "endTime"
-
-params.nek.general.write_control = "runTime"
-params.nek.general.write_interval = 10.0
-
-params.nek.general.variable_dt = True
 params.nek.general.target_cfl = 2.0
 params.nek.general.time_stepper = "BDF3"
 params.nek.general.extrapolation = "OIFS"
+
+params.nek.general.write_control = "runTime"
+params.nek.general.write_interval = 10
 
 params.output.history_points.write_interval = 10
 

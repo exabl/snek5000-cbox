@@ -160,13 +160,17 @@
              if (x.eq.0) then
                  temp = -dTl
              elseif (x.eq.xmax) then
-                 temp = dTv     
+                 temp = dTl     
              elseif(y.eq.0) then
                  temp = dTv
              elseif (y.eq.ymax) then
                  temp = -dTv
              elseif (x.eq.0.and.y.eq.0) then
                  temp = (dTv-dTl)/2.
+             elseif (x.eq.0.and.y.eq.ymax) then
+                 temp = (-dTv-dTl)/2.
+             elseif (x.eq.xmax.and.y.eq.0) then
+                 temp = (dTl+dTv)/2.        
              elseif (x.eq.xmax.and.y.eq.ymax) then
                  temp = (dTl-dTv)/2.        
              endif

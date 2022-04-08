@@ -113,13 +113,11 @@ def main(args):
     params.nek.general.write_control = "runTime"
     params.nek.general.write_interval = 20.0
 
-    # params.nek.general.variable_dt = True
     # params.nek.general.target_cfl = 2.0
-    # params.nek.general.time_stepper = "BDF3"
     params.nek.general.extrapolation = "OIFS"
 
-    params.output.phys_fields.write_interval_pert_field = 1000
-    params.output.history_points.write_interval = 10
+    params.output.phys_fields.write_interval_pert_field = 10
+    params.output.history_points.write_interval = 5
 
     # creation of the coordinates of the points saved by history points
     n1d = 5

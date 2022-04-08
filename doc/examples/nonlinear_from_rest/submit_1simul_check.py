@@ -1,9 +1,10 @@
 from fluiddyn.clusters.legi import Calcul8 as Cluster
 
-from critical_Ra import Ra_c as Ra_c_tests
+from critical_Ra_sidewall import Ra_c as Ra_c_tests
 
 prandtl = 1.0
 aspect_ratio = 1.25
+dim = 2
 
 dt_max = 0.005
 end_time = 3000
@@ -40,7 +41,7 @@ if ny / aspect_ratio - nx:
     raise ValueError
 
 command = (
-    f"run_simul_check_from_python.py -Pr {prandtl} -ny {ny} "
+    f"run_simul_check_from_python.py -Pr {prandtl} -ny {ny} --dim {dim} "
     f"--order {order} --dt-max {dt_max} --end-time {end_time} -np {nb_procs} "
     f"-a_y {aspect_ratio} --stretch-factor {stretch_factor} "
     f"--Ra-side {Ra_side} --Ra-vert {Ra_vert}"

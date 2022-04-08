@@ -2,7 +2,7 @@ import numpy as np
 
 import matplotlib.pyplot as plt
 
-from critical_Ra import Ra_c
+from critical_Ra_sidewall import Ra_c
 
 # Ra_c = {0.5: 3.2e8, 0.875: 2.855e8, 1.0: 1.875e8, 1.125: 1.125e8}
 
