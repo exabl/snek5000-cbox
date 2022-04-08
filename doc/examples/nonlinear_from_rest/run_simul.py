@@ -105,13 +105,13 @@ def main(args):
             f"RB/{dim}D/NL_sim/Pr_{args.Prandtl:.2f}/asp_{args.aspect_ratio_y:.3f}"
         )
         params.short_name_type_run = (
-            f"asp{args.aspect_ratio_y:.3f}_Ra_v{args.Ra_side:.3e}_Pr{args.Prandtl:.2f}"
+            f"asp{args.aspect_ratio_y:.3f}_Ra_v{args.Ra_vert:.3e}_Pr{args.Prandtl:.2f}"
         )
     elif params.Ra_side > 0 and params.Ra_vert > 0:
         params.output.sub_directory = (
             f"MC/{dim}D/NL_sim/Pr_{args.Prandtl:.2f}/asp_{args.aspect_ratio_y:.3f}"
         )
-        params.short_name_type_run = f"asp{args.aspect_ratio_y:.3f}_Ra_s{args.Ra_side:.3e}_Ra_v{args.Ra_side:.3e}_Pr{args.Prandtl:.2f}"
+        params.short_name_type_run = f"asp{args.aspect_ratio_y:.3f}_Ra_s{args.Ra_side:.3e}_Ra_v{args.Ra_vert:.3e}_Pr{args.Prandtl:.2f}"
 
     params.nek.general.dt = args.dt_max
     params.nek.general.time_stepper = "BDF3"

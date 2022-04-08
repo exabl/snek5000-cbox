@@ -8,16 +8,16 @@ prandtl = 1.0
 dim = 2
 
 dt_max = 0.005
-end_time = 3000
+end_time = 30
 nb_procs = 10
 
-ny = 2
+ny = 8
 order = 10
 stretch_factor = 0.0
 
 Ra_vert = 1750
 
-x_periodicity = True
+x_periodicity = False
 z_periodicity = False
 
 

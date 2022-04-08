@@ -8,7 +8,7 @@ prandtl = 0.71
 
 dim = 2
 
-aspect_ratio = 1.0 / 41
+aspect_ratio = 1.0 
 ny = 12
 order = 10
 stretch_factor = 0.0
@@ -17,7 +17,7 @@ end_time = 3000
 dt = 0.05
 nb_procs = 10
 
-x_periodicity = True
+x_periodicity = False
 z_periodicity = False
 
 cluster = Cluster()

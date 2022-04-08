@@ -3,15 +3,15 @@ import numpy as np
 from fluiddyn.clusters.legi import Calcul2 as Cluster
 from critical_Ra_sidewall import Ra_c_SW as Ra_c_SW_tests
 
-prandtl = 1.0
+prandtl = 0.71
 
 dim = 2
 
-dt_max = 0.005
-end_time = 3000
+dt_max = 0.05
+end_time = 30
 nb_procs = 10
 
-ny = 2
+ny = 8
 order = 10
 stretch_factor = 0.0
 
@@ -39,7 +39,7 @@ for aspect_ratio, Ra_c_test in Ra_c_SW_tests.items():
         continue
 
     Ra_side_nums = np.logspace(np.log10(Ra_c_test), np.log10(1.04 * Ra_c_test), 4)
-    Ra_vert_nums = np.logspace(np.log10(Ra_c_test), np.log10(1.04 * Ra_c_test), 4)
+    Ra_vert_nums = np.logspace(np.log10(2.04*Ra_c_test), np.log10(3.04 * Ra_c_test), 4)
 
     for Ra_side_num in Ra_side_nums:
         for Ra_vert_num in Ra_vert_nums:

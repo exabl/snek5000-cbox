@@ -8,10 +8,10 @@ prandtl = 1.0
 dim = 2
 
 dt_max = 0.005
-end_time = 3000
+end_time = 30
 nb_procs = 10
 
-ny = 2
+ny = 10
 order = 10
 stretch_factor = 0.0
 
@@ -32,7 +32,7 @@ cluster.commands_setting_env = [
 ]
 
 
-for aspect_ratio, Ra_c_test in Ra_c_SW_tests:
+for aspect_ratio, Ra_c_test in Ra_c_SW_tests.items():
 
     nx = int(ny / aspect_ratio)
     if ny / aspect_ratio - nx:
