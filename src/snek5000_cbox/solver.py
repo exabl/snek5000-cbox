@@ -47,6 +47,10 @@ class SimulCbox(SimulKTH):
 
         params.oper.Ly = 1.0
 
+        params.nek.problemtype._set_attribs(
+            {"solveBaseFlow": "no", "numberOfPerturbations": 1}
+        )
+
         params.nek.velocity.density = 1.0
         params.nek.temperature.rho_cp = 1.0
 
@@ -111,7 +115,7 @@ User parameter for noise amplitude in .usr file (subroutine useric):
 
 - ``noise_amplitude``: float
   
-  Noise amplitude for initial condition(default = 1e7). 
+  Noise amplitude for initial condition(default = 1e-5). 
   
 """
         )

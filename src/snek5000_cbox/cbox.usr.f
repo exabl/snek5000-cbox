@@ -67,8 +67,8 @@
       common /SCRUZ/ vtmp(lx1*ly1*lz1*lelt,ldim),ttmp(lx1*ly1*lz1*lelt)
       real vtmp, ttmp
 
-      nit_hist = UPARAM(10)
-      nit_pert = UPARAM(9)
+      nit_hist = abs(UPARAM(10))
+      nit_pert = abs(UPARAM(9))
 
       if (ISTEP.eq.0) then
          TIME = 0
@@ -121,67 +121,59 @@
       include 'INPUT'
       include 'SOLN'            
       include 'NEKUSE'
-      
+        
       integer ntot
       real delta_T_side, delta_T_vert, aspect_ratio
-      real xmax, ymax, dTl, dTv
+      real xmax, ymax, dTs, dTv
 
-      delta_T_side = UPARAM(5)
-      delta_T_vert = UPARAM(6)
-      aspect_ratio = UPARAM(8)
-        
+      delta_T_side = abs(UPARAM(5))
+      delta_T_vert = abs(UPARAM(6))
+      aspect_ratio = abs(UPARAM(8))
+            
       ymax = 1.
       xmax = ymax/aspect_ratio
 
-      dTl = delta_T_side/2.
+      dTs = delta_T_side/2.
       dTv = delta_T_vert/2.
 
       ! base flow
       if (JP.eq.0) then
+        
          ux = 0.
          uy = 0.
          uz = 0.
 
          if (delta_T_side.ne.0.and.delta_T_vert.eq.0) then      
-             if (x.eq.0) then
-               temp = -dTl
-             elseif (x.eq.xmax) then
-                 temp = dTl
-             endif
-
-         elseif (delta_T_vert.ne.0.and.delta_T_side.eq.0) then      
-             if (y.eq.0) then
-                 temp = dTv
-             elseif (y.eq.ymax) then   
-                 temp = -dTv
-             endif
-      
-         elseif (delta_T_side.ne.0.and.delta_T_vert.ne.0) then
-             if (x.eq.0) then
-                 temp = -dTl
-             elseif (x.eq.xmax) then
-                 temp = dTl     
-             elseif(y.eq.0) then
-                 temp = dTv
-             elseif (y.eq.ymax) then
-                 temp = -dTv
-             elseif (x.eq.0.and.y.eq.0) then
-                 temp = (dTv-dTl)/2.
-             elseif (x.eq.0.and.y.eq.ymax) then
-                 temp = (-dTv-dTl)/2.
-             elseif (x.eq.xmax.and.y.eq.0) then
-                 temp = (dTl+dTv)/2.        
-             elseif (x.eq.xmax.and.y.eq.ymax) then
-                 temp = (dTl-dTv)/2.        
-             endif
+            temp = delta_T_side * (x/xmax - 0.5)
+         elseif (delta_T_vert.ne.0.and.delta_T_side.eq.0) then          
+            temp = delta_T_vert * (0.5- y/ymax)
+         elseif (delta_T_side.ne.0.and.delta_T_vert.ne.0) then    
+            if (x.eq.0) then
+               temp = -dTs
+            elseif (x.eq.xmax) then
+               temp = dTs     
+            elseif(y.eq.0) then
+               temp = dTv
+            elseif (y.eq.ymax) then
+               temp = -dTv
+            elseif (x.eq.0.and.y.eq.0) then
+               temp = (dTv-dTs)/2.
+            elseif (x.eq.0.and.y.eq.ymax) then
+               temp = (-dTv-dTs)/2.
+            elseif (x.eq.xmax.and.y.eq.0) then
+               temp = (dTs+dTv)/2.        
+            elseif (x.eq.xmax.and.y.eq.ymax) then
+               temp = (dTs-dTv)/2.        
+            endif
          endif
 
       ! perturbation
       else
+
          ux = 0.
          uy = 0.
          uz = 0.
-         temp = 0.
+         temp = 0.  
       endif
 
       return
@@ -197,30 +189,34 @@
       real delta_T_side, delta_T_vert, amplitude, aspect_ratio
       real xmax, ymax, ran
 
-      delta_T_side = UPARAM(5)
-      delta_T_vert = UPARAM(6)
-      amplitude = UPARAM(7)
-      aspect_ratio = UPARAM(8)
-        
+      delta_T_side = abs(UPARAM(5))
+      delta_T_vert = abs(UPARAM(6))
+      amplitude = abs(UPARAM(7))
+      aspect_ratio = abs(UPARAM(8))
+            
       ymax = 1.
       xmax = ymax/aspect_ratio
 
       ! base flow
       if (JP.eq.0) then
-    
+        
          ux = 0.0
          uy = 0.0
          uz = 0.0
-         
+
          call random_number(temp)
          temp = amplitude * temp
 
          if (delta_T_vert.ne.0.and.delta_T_side.eq.0) then
-             temp = delta_T_vert * (0.5- y/ymax) + temp 
+            if (IFPERT) then
+               temp = delta_T_vert * (0.5- y/ymax)
+            else
+               temp = delta_T_vert * (0.5- y/ymax) + temp
+            endif
          elseif (delta_T_side.ne.0.and.delta_T_vert.eq.0) then
-             temp = -delta_T_side * (x/xmax - 0.5) + temp
+                temp = delta_T_side * (x/xmax - 0.5) + temp
          endif
-         
+            
       ! perturbation
       else
 
@@ -230,12 +226,12 @@
 
          call random_number(temp)
          temp = amplitude * temp
-      endif
+         endif
 
       return
       end
 !-----------------------------------------------------------------------
-      ! This routine to modify element vertices
+! This routine to modify element vertices
       subroutine usrdat
       include 'SIZE'
 
@@ -252,7 +248,7 @@
       real stretch_x, stretch_y, stretch_z, xx, yy, zz, twopi
       real xmax, ymax, zmax
 
-      stretch_x = UPARAM(4)
+      stretch_x = abs(UPARAM(4))
 
       if (stretch_x.ne.0.0) then
          ntot = nx1*ny1*nz1*nelt

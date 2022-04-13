@@ -10,7 +10,7 @@ dt_max = 0.005
 end_time = 3000
 nb_procs = 10
 
-ny = 2
+nx = 12
 order = 10
 stretch_factor = 0.0
 dim = 2
@@ -36,12 +36,12 @@ cluster.commands_setting_env = [
     "export FLUIDSIM_PATH=$PROJET_DIR/numerical/",
 ]
 
-nx = int(ny / aspect_ratio)
-if ny / aspect_ratio - nx:
+ny = int(nx * aspect_ratio)
+if nx * aspect_ratio - ny:
     raise ValueError
 
 command = (
-    f"run_simul_check_from_python.py -Pr {prandtl} -ny {ny} --dim {dim} "
+    f"run_simul_check_from_python.py -Pr {prandtl} -nx {nx} --dim {dim} "
     f"--order {order} --dt-max {dt_max} --end-time {end_time} -np {nb_procs} "
     f"-a_y {aspect_ratio} --stretch-factor {stretch_factor} "
     f"--Ra-side {Ra_side} --Ra-vert {Ra_vert}"
@@ -56,7 +56,7 @@ elif z_periodicity:
 
 print(command)
 
-name_run = f"_asp{aspect_ratio:.3f}_Ra{Ra_c_test:.3e}_Pr{prandtl:.2f}_msh{round(nx/aspect_ratio)*order}x{ny*order}"
+name_run = f"_asp{aspect_ratio:.3f}_Ra{Ra_c_test:.3e}_Pr{prandtl:.2f}_msh{nx*order}x{round(nx*aspect_ratio)*order}"
 
 if Ra_side > 0.0 and Ra_vert == 0.0:
 
