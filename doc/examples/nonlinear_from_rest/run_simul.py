@@ -126,7 +126,7 @@ def main(args):
     params.nek.general.extrapolation = "OIFS"
 
     params.output.phys_fields.write_interval_pert_field = 10
-    params.output.history_points.write_interval = 5
+    params.output.history_points.write_interval = 200.0
 
     # creation of the coordinates of the points saved by history points
     n1d = 5
