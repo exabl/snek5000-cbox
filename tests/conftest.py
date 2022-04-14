@@ -6,6 +6,8 @@ from snek5000.util.gfortran_log import log_matches
 
 import pytest
 
+import numpy as np
+
 
 def pytest_addoption(parser):
     # https://pytest.readthedocs.io/en/latest/example/simple.html#control-skipping-of-tests-according-to-command-line-option
@@ -75,3 +77,5 @@ def sim_cbox_executed():
             print(file.read())
         raise RuntimeError("cbox simulation failed")
     return sim
+
+    

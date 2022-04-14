@@ -62,7 +62,7 @@ params.oper.max.hist = len(coords) + 1
 
 # params.nek.general.variable_dt = False
 params.nek.general.dt = 0.05
-params.nek.general.end_time = 3000
+params.nek.general.end_time = 500
 params.nek.general.stop_at = "endTime"
 params.nek.general.target_cfl = 2.0
 params.nek.general.time_stepper = "BDF3"
