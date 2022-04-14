@@ -67,7 +67,7 @@ def test_simple_simul():
 
     sim = Simul(params)
 
-    sim.make.exec("run_fg", resources={"nproc": 2})
+    sim.make.exec("run_fg", resources={"nproc": 4})
 
     sim = load(sim.path_run)
     coords, df = sim.output.history_points.load()

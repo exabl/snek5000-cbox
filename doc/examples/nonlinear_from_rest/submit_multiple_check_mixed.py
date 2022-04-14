@@ -11,7 +11,7 @@ dt_max = 0.05
 end_time = 30
 nb_procs = 10
 
-ny = 8
+nx = 8
 order = 10
 stretch_factor = 0.0
 
@@ -34,8 +34,8 @@ cluster.commands_setting_env = [
 
 for aspect_ratio, Ra_c_test in Ra_c_SW_tests.items():
 
-    nx = int(ny / aspect_ratio)
-    if ny / aspect_ratio - nx:
+    ny = int(nx * aspect_ratio)
+    if nx * aspect_ratio - ny:
         continue
 
     Ra_side_nums = np.logspace(np.log10(Ra_c_test), np.log10(1.04 * Ra_c_test), 4)
@@ -45,7 +45,7 @@ for aspect_ratio, Ra_c_test in Ra_c_SW_tests.items():
         for Ra_vert_num in Ra_vert_nums:
 
             command = (
-                f"run_simul_check_from_python.py -Pr {prandtl} -ny {ny} "
+                f"run_simul_check_from_python.py -Pr {prandtl} -nx {nx} "
                 f"--order {order} --dt-max {dt_max} --end-time {end_time} -np {nb_procs} "
                 f"-a_y {aspect_ratio} --stretch-factor {stretch_factor} "
                 f"--Ra-side {Ra_side_num} --Ra-vert {Ra_vert_num}"
@@ -56,7 +56,7 @@ for aspect_ratio, Ra_c_test in Ra_c_SW_tests.items():
 
             print(command)
 
-            name_run = f"MC_asp{aspect_ratio:.3f}_Ra{Ra_side_num:.3e}_{Ra_vert_num:.3e}_Pr{prandtl:.2f}_msh{round(nx/aspect_ratio)*order}x{ny*order}"
+            name_run = f"MC_asp{aspect_ratio:.3f}_Ra{Ra_side_num:.3e}_{Ra_vert_num:.3e}_Pr{prandtl:.2f}_msh{nx*order}x{round(nx*aspect_ratio)*order}"
 
             cluster.submit_script(
                 command,

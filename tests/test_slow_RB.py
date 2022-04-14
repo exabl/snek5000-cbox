@@ -8,23 +8,19 @@ from snek5000_cbox.solver import Simul
 from snek5000 import load
 
 
-@pytest.mark.slow
-def test_simple_simul():
+def params_RB():
 
     params = Simul.create_default_params()
-
-    aspect_ratio = params.oper.aspect_ratio = 1.0
-    params.prandtl = 0.71
-
-    # for aspect ratio 1, Ra_c = ?
-    params.Ra_vert = 1.0e4
+    aspect_ratio = params.oper.aspect_ratio = 1.0 / 41
+    params.prandtl = 1.0
+    params.Ra_vert = 1705
 
     params.output.sub_directory = "tests_snek_cbox"
 
     params.oper.nproc_min = 2
     params.oper.dim = 2
 
-    nb_elements = 8
+    nb_elements = 1
     params.oper.ny = nb_elements
     params.oper.nx = int(nb_elements / aspect_ratio)
     params.oper.nz = int(nb_elements / aspect_ratio)
@@ -32,9 +28,12 @@ def test_simple_simul():
     Ly = params.oper.Ly
     Lx = params.oper.Lx = Ly / aspect_ratio
 
-    params.oper.mesh_stretch_factor = 0.0
+    params.oper.x_periodicity = True
 
-    params.oper.elem.order = params.oper.elem.order_out = 7
+    params.oper.mesh_stretch_factor = 0.0
+    params.oper.noise_amplitude = 1e-3
+
+    params.oper.elem.order = params.oper.elem.order_out = 12
 
     # creation of the coordinates of the points saved by history points
     n1d = 4
@@ -53,36 +52,131 @@ def test_simple_simul():
     params.output.history_points.coords = coords
     params.oper.max.hist = len(coords) + 1
 
-    num_steps = params.nek.general.num_steps = 5000
-    params.nek.general.write_interval = 500
-
-    params.nek.general.variable_dt = False
-    dt = params.nek.general.dt = 0.04
+    params.nek.general.dt = 0.05
+    params.nek.general.end_time = 500
+    params.nek.general.stop_at = "endTime"
+    params.nek.general.target_cfl = 2.0
     params.nek.general.time_stepper = "BDF3"
-    params.nek.general.extrapolation = "OIFS"
 
-    params.output.phys_fields.write_interval_pert_field = 500
-    params.output.history_points.write_interval = 10
+    params.nek.general.write_control = "runTime"
+    params.nek.general.write_interval = 1000
+
+    params.output.history_points.write_interval = 100
+    params.output.phys_fields.write_interval_pert_field = 200
+
+    return params
+
+
+# for an infinite layer of fluid with Pr = 1.0, the onset of convection is at Ra_c = 1708
+
+
+@pytest.mark.slow
+def test_simple_RB_nonconvective_simul():
+
+    params = params_RB()
+
+    params.Ra_vert = 1705
 
     sim = Simul(params)
 
-    sim.make.exec("run_fg", resources={"nproc": 2})
+    sim.make.exec("run_fg", resources={"nproc": 4})
 
     sim = load(sim.path_run)
     coords, df = sim.output.history_points.load()
 
-    assert coords.ndim == 2 and coords.shape == (n1d ** 2, 2)
-
-    times = df[df.index_points == 0].time
+    times = df[df.index_points == 1].time
     t_max = times.max()
 
-    assert t_max == num_steps * dt
-    assert len(times) == num_steps / params.output.history_points.write_interval + 1
-
-    # check a physical result: since there is no probe close to the center,
+    # check a physical result,
     temperature_last = df[df.time == t_max].temperature
     assert temperature_last.abs().max() < 0.45
-    assert temperature_last.abs().min() > 0.05
+
+    # check we do not have convection,
+    ux_last = df[df.time == t_max].ux
+    assert ux_last.abs().max() < 1e-2 * params.oper.noise_amplitude
+
+    # if everything is fine, we can cleanup the directory of the simulation
+    rmtree(sim.path_run, ignore_errors=True)
+
+
+@pytest.mark.slow
+def test_simple_RB_convective_simul():
+
+    params = params_RB()
+
+    params.Ra_vert = 1725
+
+    sim = Simul(params)
+
+    sim.make.exec("run_fg", resources={"nproc": 4})
+
+    sim = load(sim.path_run)
+    coords, df = sim.output.history_points.load()
+
+    times = df[df.index_points == 1].time
+    t_max = times.max()
+
+    # check a physical result,
+    temperature_last = df[df.time == t_max].temperature
+    assert temperature_last.abs().max() < 0.45
+
+    # check we have convection,
+    ux_last = df[df.time == t_max].ux
+    assert ux_last.abs().max() < 1e5 * params.oper.noise_amplitude
+
+    # if everything is fine, we can cleanup the directory of the simulation
+    rmtree(sim.path_run, ignore_errors=True)
+
+
+@pytest.mark.slow
+def test_RB_linear_nonconvective_simul():
+
+    params = params_RB()
+
+    params.Ra_vert = 1705
+
+    params.nek.problemtype.equation = "incompLinNS"
+    params.oper.elem.staggered = "auto"
+
+    sim = Simul(params)
+    sim.make.exec("run_fg", resources={"nproc": 4})
+
+    sim = load(sim.path_run)
+    coords, df = sim.output.history_points.load()
+
+    times = df[df.index_points == 1].time
+    t_max = times.max()
+
+    # check we do not have convection,
+    ux_last = df[df.time == t_max].ux
+    assert ux_last.abs().max() < 1e-2 * params.oper.noise_amplitude
+
+    # if everything is fine, we can cleanup the directory of the simulation
+    rmtree(sim.path_run, ignore_errors=True)
+
+
+@pytest.mark.slow
+def test_RB_linear_nconvective_simul():
+
+    params = params_RB()
+
+    params.Ra_vert = 1725
+
+    params.nek.problemtype.equation = "incompLinNS"
+    params.oper.elem.staggered = "auto"
+
+    sim = Simul(params)
+    sim.make.exec("run_fg", resources={"nproc": 4})
+
+    sim = load(sim.path_run)
+    coords, df = sim.output.history_points.load()
+
+    times = df[df.index_points == 1].time
+    t_max = times.max()
+
+    # check we have convection,
+    ux_last = df[df.time == t_max].ux
+    assert ux_last.abs().max() < 1e5 * params.oper.noise_amplitude
 
     # if everything is fine, we can cleanup the directory of the simulation
     rmtree(sim.path_run, ignore_errors=True)
