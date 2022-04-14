@@ -2,22 +2,21 @@ import numpy as np
 
 from fluiddyn.clusters.legi import Calcul8 as Cluster
 
-from critical_Ra_RB import Ra_c_RB as Ra_c_RB_tests
 
-prandtl = 4.38
+prandtl = 0.71
 
 dim = 2
 
-aspect_ratio = 1.0 
-nx = 32
+aspect_ratio = 1.0
+nx = 28
 order = 10
 stretch_factor = 0.0
 
-end_time = 3000
+end_time = 5000
 dt = 0.05
 nb_procs = 10
 
-x_periodicity = False
+y_periodicity = False
 z_periodicity = False
 
 cluster = Cluster()
@@ -32,36 +31,29 @@ cluster.commands_setting_env = [
     "export FLUIDSIM_PATH=$PROJET_DIR/numerical/",
 ]
 
-if aspect_ratio in Ra_c_RB_tests:
-    Ra_c_guessed = Ra_c_RB_tests[aspect_ratio]
-else:
-    Ra_c_guessed = 1.93e8 * aspect_ratio ** -3.15
-
-Ra_numbs = np.logspace(np.log10(0.99 * Ra_c_guessed), np.log10(1.02 * Ra_c_guessed), 5)
-Ra_numbs = [1e9]
-print(Ra_numbs)
+Ra_numbs = [1.835e8, 1.840e8, 1.845e8, 1.850e8]
 
 ny = int(nx * aspect_ratio)
 if nx * aspect_ratio - ny:
     raise ValueError
 
-for Ra_vert_num in Ra_numbs:
+for Ra_side_num in Ra_numbs:
 
     command = (
-        f"run_simul.py -Pr {prandtl} -nx {nx} --dim {dim} "
+        f"run_simul_linear.py -Pr {prandtl} -nx {nx} --dim {dim} "
         f"--order {order} --dt-max {dt} --end-time {end_time} -np {nb_procs} "
         f"-a_y {aspect_ratio} --stretch-factor {stretch_factor} "
-        f"--Ra-vert {Ra_vert_num}"
+        f"--Ra-side {Ra_side_num}"
     )
 
-    if x_periodicity:
-        command += " --x-periodicity"
+    if y_periodicity:
+        command += " --y-periodicity"
     elif z_periodicity:
         command += " --z-periodicity"
 
     print(command)
 
-    name_run = f"RB_asp{aspect_ratio:.3f}_Ra{Ra_vert_num:.3e}_Pr{prandtl:.2f}_msh{nx*order}x{round(nx*aspect_ratio)*order}"
+    name_run = f"LSW_asp{aspect_ratio:.3f}_Ra{Ra_side_num:.3e}_Pr{prandtl:.2f}_msh{nx*order}x{round(nx*aspect_ratio)*order}"
 
     cluster.submit_script(
         command,

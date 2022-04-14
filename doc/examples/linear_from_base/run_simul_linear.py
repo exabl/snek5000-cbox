@@ -1,16 +1,7 @@
-"""
-
-Example of commands:
-
-```
-python run_simul.py --Ra-side 1e5 -ny 12 --order 10 -np 4
-```
-
-"""
-
 import argparse
 
 import numpy as np
+from shutil import copyfile
 
 from snek5000_cbox.solver import Simul
 
@@ -93,25 +84,24 @@ def main(args):
     order = params.oper.elem.order = args.order
     params.oper.elem.order_out = order
 
+    params.nek.problemtype.equation = "incompLinNS"
+    params.oper.elem.staggered = "auto"
+
     if params.Ra_side > 0 and params.Ra_vert == 0:
         params.output.sub_directory = (
-            f"SW_Rac/{dim}D/NL_sim/Pr_{args.Prandtl:.2f}/asp_{args.aspect_ratio_y:.3f}"
+            f"SW/{dim}D/Lin_sim/Pr_{args.Prandtl:.2f}/asp_{args.aspect_ratio_y:.3f}"
         )
-        params.short_name_type_run = (
-            f"asp{args.aspect_ratio_y:.3f}_Ra_s{args.Ra_side:.3e}_Pr{args.Prandtl:.2f}"
-        )
+        params.short_name_type_run = f"Lin_asp{args.aspect_ratio_y:.3f}_Ra_s{args.Ra_side:.3e}_Pr{args.Prandtl:.2f}"
     elif params.Ra_side == 0 and params.Ra_vert > 0:
         params.output.sub_directory = (
-            f"RB/{dim}D/NL_sim/Pr_{args.Prandtl:.2f}/asp_{args.aspect_ratio_y:.3f}"
+            f"RB/{dim}D/Lin_sim/Pr_{args.Prandtl:.2f}/asp_{args.aspect_ratio_y:.3f}"
         )
-        params.short_name_type_run = (
-            f"asp{args.aspect_ratio_y:.3f}_Ra_v{args.Ra_vert:.3e}_Pr{args.Prandtl:.2f}"
-        )
+        params.short_name_type_run = f"Lin_asp{args.aspect_ratio_y:.3f}_Ra_v{args.Ra_vert:.3e}_Pr{args.Prandtl:.2f}"
     elif params.Ra_side > 0 and params.Ra_vert > 0:
         params.output.sub_directory = (
-            f"MC/{dim}D/NL_sim/Pr_{args.Prandtl:.2f}/asp_{args.aspect_ratio_y:.3f}"
+            f"MC/{dim}D/Lin_sim/Pr_{args.Prandtl:.2f}/asp_{args.aspect_ratio_y:.3f}"
         )
-        params.short_name_type_run = f"asp{args.aspect_ratio_y:.3f}_Ra_s{args.Ra_side:.3e}_Ra_v{args.Ra_vert:.3e}_Pr{args.Prandtl:.2f}"
+        params.short_name_type_run = f"Lin_asp{args.aspect_ratio_y:.3f}_Ra_s{args.Ra_side:.3e}_Ra_v{args.Ra_vert:.3e}_Pr{args.Prandtl:.2f}"
 
     params.nek.general.dt = args.dt_max
     params.nek.general.time_stepper = "BDF3"
@@ -120,13 +110,16 @@ def main(args):
     params.nek.general.stop_at = "endTime"
 
     params.nek.general.write_control = "runTime"
-    params.nek.general.write_interval = 20.0
+    params.nek.general.write_interval = args.end_time
+    params.output.phys_fields.write_interval_pert_field = 50000.0
+    params.output.history_points.write_interval = 200.0
 
     # params.nek.general.target_cfl = 2.0
-    params.nek.general.extrapolation = "OIFS"
+    params.nek.general.extrapolation = "standard"
 
-    params.output.phys_fields.write_interval_pert_field = 10
-    params.output.history_points.write_interval = 200.0
+    params.nek.general.start_from = "base_flow.restart"
+
+    restart_file = "./base_flow.restart"
 
     # creation of the coordinates of the points saved by history points
     n1d = 5
@@ -154,6 +147,8 @@ def main(args):
     params.oper.max.hist = len(coords) + 1
 
     sim = Simul(params)
+
+    copyfile(restart_file, sim.params.output.path_session / "base_flow.restart")
 
     # sim.output.write_snakemake_config(
     #     custom_env_vars={"MPIEXEC_FLAGS": "--report-pid PID.txt"}

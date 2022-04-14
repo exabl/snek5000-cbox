@@ -1,6 +1,6 @@
 import numpy as np
 
-from fluiddyn.clusters.legi import Calcul2 as Cluster
+from fluiddyn.clusters.legi import Calcul8 as Cluster
 
 from critical_Ra_sidewall import Ra_c_SW as Ra_c_SW_tests
 
@@ -9,11 +9,11 @@ prandtl = 0.71
 dim = 2
 
 aspect_ratio = 1.0
-nx = 12
+nx = 32
 order = 10
 stretch_factor = 0.0
 
-end_time = 3000
+end_time = 8000
 dt = 0.05
 nb_procs = 10
 
@@ -35,10 +35,11 @@ cluster.commands_setting_env = [
 if aspect_ratio in Ra_c_SW_tests.items():
     Ra_c_guessed = Ra_c_SW_tests[aspect_ratio]
 else:
-    Ra_c_guessed = 1.93e8 * aspect_ratio ** -3.15
+    Ra_c_guessed = 1.93e8 * aspect_ratio**-3.15
 
-Ra_numbs = np.logspace(np.log10(0.99 * Ra_c_guessed), np.log10(1.02 * Ra_c_guessed), 5)
-
+Ra_c_guessed = 2e8
+Ra_numbs = np.logspace(np.log10(0.9 * Ra_c_guessed), np.log10(1.6 * Ra_c_guessed), 5)
+Ra_numbs = [1.8e8]
 ny = int(nx * aspect_ratio)
 if nx * aspect_ratio - ny:
     raise ValueError
