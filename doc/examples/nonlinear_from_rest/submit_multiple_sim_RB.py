@@ -8,7 +8,7 @@ prandtl = 4.38
 
 dim = 2
 
-aspect_ratio = 1.0 
+aspect_ratio = 1.0
 nx = 32
 order = 10
 stretch_factor = 0.0
@@ -19,6 +19,8 @@ nb_procs = 10
 
 x_periodicity = False
 z_periodicity = False
+
+sfd_activation = 0.0
 
 cluster = Cluster()
 
@@ -51,7 +53,7 @@ for Ra_vert_num in Ra_numbs:
         f"run_simul.py -Pr {prandtl} -nx {nx} --dim {dim} "
         f"--order {order} --dt-max {dt} --end-time {end_time} -np {nb_procs} "
         f"-a_y {aspect_ratio} --stretch-factor {stretch_factor} "
-        f"--Ra-vert {Ra_vert_num}"
+        f"--Ra-vert {Ra_vert_num} --sfd-activation {sfd_activation}"
     )
 
     if x_periodicity:

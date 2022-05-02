@@ -20,6 +20,8 @@ nb_procs = 10
 y_periodicity = False
 z_periodicity = False
 
+sfd_activation = 0.0
+
 cluster = Cluster()
 
 cluster.commands_setting_env = [
@@ -35,7 +37,7 @@ cluster.commands_setting_env = [
 if aspect_ratio in Ra_c_SW_tests.items():
     Ra_c_guessed = Ra_c_SW_tests[aspect_ratio]
 else:
-    Ra_c_guessed = 1.93e8 * aspect_ratio**-3.15
+    Ra_c_guessed = 1.93e8 * aspect_ratio ** -3.15
 
 Ra_c_guessed = 2e8
 Ra_numbs = np.logspace(np.log10(0.9 * Ra_c_guessed), np.log10(1.6 * Ra_c_guessed), 5)
@@ -50,7 +52,7 @@ for Ra_side_num in Ra_numbs:
         f"run_simul.py -Pr {prandtl} -nx {nx} --dim {dim} "
         f"--order {order} --dt-max {dt} --end-time {end_time} -np {nb_procs} "
         f"-a_y {aspect_ratio} --stretch-factor {stretch_factor} "
-        f"--Ra-side {Ra_side_num}"
+        f"--Ra-side {Ra_side_num} --sfd-activation {sfd_activation}"
     )
 
     if y_periodicity:

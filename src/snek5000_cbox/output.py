@@ -26,6 +26,7 @@ class OutputCbox(OutputBase):
                 ("map2D.f", "MAP2D", "FRAMELP"),
                 ("stat.f", "STATD", "MAP2D", "FRAMELP"),
                 ("stat_IO.f", "STATD", "MAP2D", "FRAMELP"),
+                ("sfd.f", "SFDD", "FRAMELP"),
                 ("math_tools.f",),
             ],
         }

@@ -18,6 +18,7 @@ stretch_factor = 0.0
 
 z_periodicity = False
 
+sfd_activation = 0.0
 
 cluster = Cluster()
 
@@ -39,7 +40,9 @@ for aspect_ratio, Ra_c_test in Ra_c_SW_tests.items():
         continue
 
     Ra_side_nums = np.logspace(np.log10(Ra_c_test), np.log10(1.04 * Ra_c_test), 4)
-    Ra_vert_nums = np.logspace(np.log10(2.04*Ra_c_test), np.log10(3.04 * Ra_c_test), 4)
+    Ra_vert_nums = np.logspace(
+        np.log10(2.04 * Ra_c_test), np.log10(3.04 * Ra_c_test), 4
+    )
 
     for Ra_side_num in Ra_side_nums:
         for Ra_vert_num in Ra_vert_nums:
@@ -48,7 +51,7 @@ for aspect_ratio, Ra_c_test in Ra_c_SW_tests.items():
                 f"run_simul_check_from_python.py -Pr {prandtl} -nx {nx} "
                 f"--order {order} --dt-max {dt_max} --end-time {end_time} -np {nb_procs} "
                 f"-a_y {aspect_ratio} --stretch-factor {stretch_factor} "
-                f"--Ra-side {Ra_side_num} --Ra-vert {Ra_vert_num}"
+                f"--Ra-side {Ra_side_num} --Ra-vert {Ra_vert_num} --sfd-activation {sfd_activation}"
             )
 
             if z_periodicity:

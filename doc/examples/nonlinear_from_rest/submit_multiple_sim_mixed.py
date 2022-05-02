@@ -20,6 +20,8 @@ Ra_vert = 1000
 
 z_periodicity = False
 
+sfd_activation = 0.0
+
 cluster = Cluster()
 
 cluster.commands_setting_env = [
@@ -48,7 +50,7 @@ for Ra_side_num in Ra_side_numbs:
             f"run_simul.py -Pr {prandtl} -nx {nx} --dim {dim} "
             f"--order {order} --dt-max {dt} --end-time {end_time} -np {nb_procs} "
             f"-a_y {aspect_ratio} --stretch-factor {stretch_factor} "
-            f"--Ra-side {Ra_side_num} --Ra-vert {Ra_vert_num}"
+            f"--Ra-side {Ra_side_num} --Ra-vert {Ra_vert_num} --sfd-activation {sfd_activation}"
         )
 
         if z_periodicity:

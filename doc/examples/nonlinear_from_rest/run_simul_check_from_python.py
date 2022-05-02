@@ -35,6 +35,9 @@ parser.add_argument("-nz", type=int, default=12, help="Number of z elements")
 parser.add_argument("--order", type=int, default=10, help=" Polynomial order")
 parser.add_argument("--dim", type=int, default=2, help="2D or 3D")
 parser.add_argument("--stretch-factor", type=float, default=0.0, help="Stretch factor")
+parser.add_argument(
+    "--sfd-activation", type=float, default=0.0, help="SFD method activation"
+)
 
 parser.add_argument(
     "--x-periodicity",
@@ -79,6 +82,7 @@ def main(args):
 
     params.oper.mesh_stretch_factor = args.stretch_factor
     params.oper.aspect_ratio = args.aspect_ratio_y
+    params.oper.sfd_activation = args.sfd_activation
 
     params.oper.nproc_min = 2
     dim = params.oper.dim = args.dim

@@ -106,20 +106,6 @@ User parameter for vertical temperature difference in .usr file (subroutine user
 """
         )
 
-        params.oper._set_attribs({"noise_amplitude": 1e-5})
-        params.oper._record_nek_user_params({"noise_amplitude": 7})
-        params.oper._set_doc(
-            params.oper._doc
-            + """
-User parameter for noise amplitude in .usr file (subroutine useric):
-
-- ``noise_amplitude``: float
-  
-  Noise amplitude for initial condition(default = 1e-5). 
-  
-"""
-        )
-
         params.oper._set_attribs({"aspect_ratio": 1.0})
         params.oper._record_nek_user_params({"aspect_ratio": 8})
         params.oper._set_doc(
@@ -169,6 +155,22 @@ User parameter for the aspect ratio in .usr file (subroutine useric, userbc):
   
   Periodic boundary condition in z direction (default = False, meaning 
   we have wall). 
+  
+"""
+        )
+
+        params.oper._set_attribs({"sfd_activation": 0.0})
+        params.oper._record_nek_user_params({"sfd_activation": 7})
+        params.oper._set_doc(
+            params.oper._doc
+            + """
+User parameter for activation of selective frequency damping method in .usr file
+
+- ``sfd_activation``: float
+  
+  Selective Frequency Damping (SFD) activation parameter(default = 0.0 , meaning 
+  we don't use KTH framewok's SFD method to compute base flow).
+  A value other than 0.0 for this parameter, activates SFD. 
   
 """
         )
@@ -279,6 +281,28 @@ User parameter for the aspect ratio in .usr file (subroutine useric, userbc):
 
         params.nek.velocity.viscosity = params.prandtl / rayleigh ** (1 / 2)
         params.nek.temperature.conductivity = 1.0 / rayleigh ** (1 / 2)
+
+        if params.oper.sfd_activation != 0.0:
+            params.nek._set_child("sfd")
+            attribs = {
+                "filterwdth": 1.05,
+                "controlcff": 0.5,
+                "residualtol": 1e-8,
+                "loginterval": 50,
+                "sfdreadchpnt": False,
+            }
+            params.nek.sfd._set_attribs(attribs)
+            params.nek.chkpoint._set_doc(
+                """
+    Runtime parameter section for selective frequency damping module (`KTH toolbox <https://github.com/KTH-Nek5000/KTH_Toolbox>`__)
+
+    - ``filterwdth``: Filter width 
+    - ``controlcff``: Control coefficient
+    - ``residualtol``: Tolerance for residual
+    - ``loginterval``: Frequency for logging convegence data
+    - ``residualtol``: Restat from checkpoint in SFD 
+"""
+            )
 
         super().__init__(params)
 

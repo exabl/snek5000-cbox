@@ -22,6 +22,8 @@ x_periodicity = False
 y_periodicity = False
 z_periodicity = False
 
+sfd_activation = 0.0
+
 Ra_c_test = Ra_c_tests[aspect_ratio]
 
 cluster = Cluster()
@@ -44,7 +46,7 @@ command = (
     f"run_simul_check_from_python.py -Pr {prandtl} -nx {nx} --dim {dim} "
     f"--order {order} --dt-max {dt_max} --end-time {end_time} -np {nb_procs} "
     f"-a_y {aspect_ratio} --stretch-factor {stretch_factor} "
-    f"--Ra-side {Ra_side} --Ra-vert {Ra_vert}"
+    f"--Ra-side {Ra_side} --Ra-vert {Ra_vert} --sfd-activation {sfd_activation}"
 )
 
 if x_periodicity:

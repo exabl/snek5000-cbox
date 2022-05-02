@@ -33,7 +33,6 @@ Lz = params.oper.Lz = Ly / aspect_ratio
 order = params.oper.elem.order = params.oper.elem.order_out = 10
 
 params.oper.mesh_stretch_factor = 0.0  # zero means regular
-params.oper.noise_amplitude = 0.0
 
 params.short_name_type_run = f"Ra{params.Ra_side:.3e}_{nx*order}x{ny*order}"
 
@@ -62,6 +61,8 @@ if params.oper.dim == 3:
 
 params.output.history_points.coords = coords
 params.oper.max.hist = len(coords) + 1
+
+params.oper.sfd_activation = 0.0
 
 params.nek.general.end_time = 600
 params.nek.general.stop_at = "endTime"
