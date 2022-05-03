@@ -182,6 +182,27 @@ User parameter for activation of selective frequency damping method in .usr file
             {"write_interval_pert_field": 9}
         )
 
+        params.nek._set_child("sfd")
+        attribs = {
+            "filterwdth": 1.05,
+            "controlcff": 0.5,
+            "residualtol": 1e-8,
+            "loginterval": 50,
+            "sfdreadchpnt": False,
+        }
+        params.nek.sfd._set_attribs(attribs)
+        params.nek.chkpoint._set_doc(
+            """
+Runtime parameter section for selective frequency damping module (`KTH toolbox <https://github.com/KTH-Nek5000/KTH_Toolbox>`__)
+
+- ``filterwdth``: Filter width 
+- ``controlcff``: Control coefficient
+- ``residualtol``: Tolerance for residual
+- ``loginterval``: Frequency for logging convegence data
+- ``residualtol``: Restat from checkpoint in SFD 
+"""
+        )
+
         return params
 
     def __init__(self, params):
@@ -281,28 +302,6 @@ User parameter for activation of selective frequency damping method in .usr file
 
         params.nek.velocity.viscosity = params.prandtl / rayleigh ** (1 / 2)
         params.nek.temperature.conductivity = 1.0 / rayleigh ** (1 / 2)
-
-        if params.oper.sfd_activation != 0.0:
-            params.nek._set_child("sfd")
-            attribs = {
-                "filterwdth": 1.05,
-                "controlcff": 0.5,
-                "residualtol": 1e-8,
-                "loginterval": 50,
-                "sfdreadchpnt": False,
-            }
-            params.nek.sfd._set_attribs(attribs)
-            params.nek.chkpoint._set_doc(
-                """
-    Runtime parameter section for selective frequency damping module (`KTH toolbox <https://github.com/KTH-Nek5000/KTH_Toolbox>`__)
-
-    - ``filterwdth``: Filter width 
-    - ``controlcff``: Control coefficient
-    - ``residualtol``: Tolerance for residual
-    - ``loginterval``: Frequency for logging convegence data
-    - ``residualtol``: Restat from checkpoint in SFD 
-"""
-            )
 
         super().__init__(params)
 
