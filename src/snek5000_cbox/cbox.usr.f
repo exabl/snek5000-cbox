@@ -20,10 +20,10 @@
       include 'SFDD'           
 
       integer ix, iy, iz, ieg, iel
-      real rtmp, Pr_, activate_sfd
+      real rtmp, Pr_, enable_sfd
 
       Pr_ = abs(UPARAM(1))
-      activate_sfd = abs(UPARAM(7))
+      enable_sfd = abs(UPARAM(7))
 
       ! local element number
       iel = GLLEL(ieg)
@@ -42,7 +42,7 @@
       FFX = 0
       FFY = rtmp
       if (IF3D) FFZ = 0
-      if (activate_sfd.ne.0.0) then
+      if (enable_sfd.ne.0.0) then
          call sfd_forcing(FFX,FFY,FFZ,ix,iy,iz,ieg)
       endif
 
@@ -70,13 +70,11 @@
       integer n, nit_pert, nit_hist
       
       common /SCRUZ/ vtmp(lx1*ly1*lz1*lelt,ldim),ttmp(lx1*ly1*lz1*lelt)
-      real vtmp, ttmp
-      real activate_sfd
+      real vtmp, ttmp, enable_sfd
 
       nit_hist = abs(UPARAM(10))
       nit_pert = abs(UPARAM(9))
-      activate_sfd = abs(UPARAM(7))
-
+      enable_sfd = UPARAM(7)
 
       if (ISTEP.eq.0) then
          TIME = 0
@@ -87,7 +85,7 @@
       ! monitor simulation
       call frame_monitor
       call chkpt_main
-      if (activate_sfd.ne.0.0) then
+      if (enable_sfd.ne.0.0) then
          call sfd_main
       endif   
 
@@ -306,14 +304,14 @@
       include 'FRAMELP'
       include 'INPUT' 
 
-      real activate_sfd
+      real enable_sfd
 
-      activate_sfd = abs(UPARAM(7))
+      enable_sfd = abs(UPARAM(7))
 
       ! register modules
       call io_register
       call chkpt_register
-      if (activate_sfd.ne.0.0) then
+      if (enable_sfd.ne.0.0) then
          call sfd_register
       endif   
 
@@ -326,13 +324,13 @@
       include 'FRAMELP'
       include 'INPUT' 
 
-      real activate_sfd
+      real enable_sfd
 
-      activate_sfd = abs(UPARAM(7))
+      enable_sfd = abs(UPARAM(7))
 
       ! initialise modules
       call chkpt_init
-      if (activate_sfd.ne.0.0) then
+      if (enable_sfd.ne.0.0) then
          call sfd_init
       endif   
 
@@ -345,13 +343,14 @@
       include 'FRAMELP'
       include 'INPUT' 
 
-      real activate_sfd
+      real enable_sfd
 
-      activate_sfd = abs(UPARAM(7))
+      enable_sfd = abs(UPARAM(7))
 
-      if (activate_sfd.ne.0.0) then
+      if (enable_sfd.ne.0.0) then
          call sfd_end
       endif
 
       return
       end subroutine
+

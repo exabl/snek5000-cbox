@@ -18,8 +18,6 @@ stretch_factor = 0.0
 
 z_periodicity = False
 
-sfd_activation = 0.0
-
 cluster = Cluster()
 
 cluster.commands_setting_env = [
@@ -51,7 +49,7 @@ for aspect_ratio, Ra_c_test in Ra_c_SW_tests.items():
                 f"run_simul_check_from_python.py -Pr {prandtl} -nx {nx} "
                 f"--order {order} --dt-max {dt_max} --end-time {end_time} -np {nb_procs} "
                 f"-a_y {aspect_ratio} --stretch-factor {stretch_factor} "
-                f"--Ra-side {Ra_side_num} --Ra-vert {Ra_vert_num} --sfd-activation {sfd_activation}"
+                f"--Ra-side {Ra_side_num} --Ra-vert {Ra_vert_num}"
             )
 
             if z_periodicity:

@@ -62,9 +62,9 @@ if params.oper.dim == 3:
 params.output.history_points.coords = coords
 params.oper.max.hist = len(coords) + 1
 
-params.oper.sfd_activation = 0.0
+# params.oper.enable_sfd = float(True)
 
-params.nek.general.end_time = 600
+params.nek.general.end_time = 10
 params.nek.general.stop_at = "endTime"
 params.nek.general.target_cfl = 2.0
 params.nek.general.time_stepper = "BDF3"

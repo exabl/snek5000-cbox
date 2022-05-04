@@ -159,18 +159,18 @@ User parameter for the aspect ratio in .usr file (subroutine useric, userbc):
 """
         )
 
-        params.oper._set_attribs({"sfd_activation": 0.0})
-        params.oper._record_nek_user_params({"sfd_activation": 7})
+        params.oper._set_attribs({"enable_sfd": float(False)})
+        params.oper._record_nek_user_params({"enable_sfd": 7})
         params.oper._set_doc(
             params.oper._doc
             + """
-User parameter for activation of selective frequency damping method in .usr file
+User parameter for activation of Selective Frequency Damping method in .usr file
 
-- ``sfd_activation``: float
+- ``enable_sfd``: float
   
-  Selective Frequency Damping (SFD) activation parameter(default = 0.0 , meaning 
+  Selective Frequency Damping (SFD) activation parameter(default = float(False) , meaning 
   we don't use KTH framewok's SFD method to compute base flow).
-  A value other than 0.0 for this parameter, activates SFD. 
+  ``params.oper.enable_sfd = float(True)``, activates SFD. 
   
 """
         )
@@ -193,13 +193,13 @@ User parameter for activation of selective frequency damping method in .usr file
         params.nek.sfd._set_attribs(attribs)
         params.nek.chkpoint._set_doc(
             """
-Runtime parameter section for selective frequency damping module (`KTH toolbox <https://github.com/KTH-Nek5000/KTH_Toolbox>`__)
+Runtime parameter section for Selective Frequency Damping module (`KTH toolbox <https://github.com/KTH-Nek5000/KTH_Toolbox>`__)
 
 - ``filterwdth``: Filter width 
 - ``controlcff``: Control coefficient
 - ``residualtol``: Tolerance for residual
 - ``loginterval``: Frequency for logging convegence data
-- ``residualtol``: Restat from checkpoint in SFD 
+- ``sfdreadchpnt``: Restart from checkpoint in SFD 
 """
         )
 

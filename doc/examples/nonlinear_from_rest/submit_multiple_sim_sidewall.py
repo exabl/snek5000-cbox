@@ -20,7 +20,7 @@ nb_procs = 10
 y_periodicity = False
 z_periodicity = False
 
-sfd_activation = 0.0
+enable_sfd = False
 
 cluster = Cluster()
 
@@ -52,13 +52,15 @@ for Ra_side_num in Ra_numbs:
         f"run_simul.py -Pr {prandtl} -nx {nx} --dim {dim} "
         f"--order {order} --dt-max {dt} --end-time {end_time} -np {nb_procs} "
         f"-a_y {aspect_ratio} --stretch-factor {stretch_factor} "
-        f"--Ra-side {Ra_side_num} --sfd-activation {sfd_activation}"
+        f"--Ra-side {Ra_side_num}"
     )
 
     if y_periodicity:
         command += " --y-periodicity"
     elif z_periodicity:
         command += " --z-periodicity"
+    elif enable_sfd:
+        command += " --enable-sfd"
 
     print(command)
 
