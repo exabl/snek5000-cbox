@@ -92,7 +92,7 @@ def test_init_side():
 
     Simul(params)
 
-    params.oper.sfd_activation = 1.0
+    params.oper.enable_sfd = float(True)
 
     Simul(params)
 
