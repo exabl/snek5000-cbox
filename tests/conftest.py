@@ -45,7 +45,7 @@ def sim_cbox_executed():
     from snek5000_cbox.solver import Simul
 
     params = Simul.create_default_params()
-    params.output.sub_directory = "test_snek5000"
+    params.output.sub_directory = "tests_snek5000"
 
     params.nek.general.stop_at = "numSteps"
     params.nek.general.dt = 1e-3

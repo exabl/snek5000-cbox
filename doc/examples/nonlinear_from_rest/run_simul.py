@@ -104,6 +104,10 @@ def main(args):
         params.output.sub_directory = (
             f"SW/{dim}D/NL_sim/Pr_{args.Prandtl:.2f}/asp_{args.aspect_ratio_y:.3f}"
         )
+        if params.oper.enable_sfd == 1.0:
+            params.output.sub_directory = (
+                f"SW/{dim}D/SFD/Pr_{args.Prandtl:.2f}/asp_{args.aspect_ratio_y:.3f}"
+            )
         params.short_name_type_run = (
             f"asp{args.aspect_ratio_y:.3f}_Ra_s{args.Ra_side:.3e}_Pr{args.Prandtl:.2f}"
         )
@@ -111,6 +115,10 @@ def main(args):
         params.output.sub_directory = (
             f"RB/{dim}D/NL_sim/Pr_{args.Prandtl:.2f}/asp_{args.aspect_ratio_y:.3f}"
         )
+        if params.oper.enable_sfd == 1.0:
+            params.output.sub_directory = (
+                f"RB/{dim}D/SFD/Pr_{args.Prandtl:.2f}/asp_{args.aspect_ratio_y:.3f}"
+            )
         params.short_name_type_run = (
             f"asp{args.aspect_ratio_y:.3f}_Ra_v{args.Ra_vert:.3e}_Pr{args.Prandtl:.2f}"
         )
@@ -118,6 +126,10 @@ def main(args):
         params.output.sub_directory = (
             f"MC/{dim}D/NL_sim/Pr_{args.Prandtl:.2f}/asp_{args.aspect_ratio_y:.3f}"
         )
+        if params.oper.enable_sfd == 1.0:
+            params.output.sub_directory = (
+                f"MC/{dim}D/SFD/Pr_{args.Prandtl:.2f}/asp_{args.aspect_ratio_y:.3f}"
+            )
         params.short_name_type_run = f"asp{args.aspect_ratio_y:.3f}_Ra_s{args.Ra_side:.3e}_Ra_v{args.Ra_vert:.3e}_Pr{args.Prandtl:.2f}"
 
     params.nek.general.dt = args.dt_max

@@ -4,10 +4,11 @@ import pytest
 
 import numpy as np
 
-from snek5000_cbox.solver import Simul
 from snek5000 import load
+from snek5000_cbox.solver import Simul
 
 
+@pytest.mark.slow
 def params_RB():
 
     params = Simul.create_default_params()
@@ -174,7 +175,7 @@ def test_RB_linear_convective_simul():
     coords, df = sim.output.history_points.load()
 
     times = df[df.index_points == 1].time
-    
+
     t_max = times.max()
 
     # check we have convection,
