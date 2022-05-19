@@ -7,8 +7,8 @@ params = Simul.create_default_params()
 aspect_ratio = params.oper.aspect_ratio = 1.0
 params.prandtl = 1.0
 
-params.Ra_side = 1e8
-params.Ra_vert = 1e5
+params.Ra_side = 1e5
+params.Ra_vert = 1e4
 
 params.output.sub_directory = "examples_cbox/simple/MC"
 
@@ -59,7 +59,7 @@ params.output.history_points.coords = coords
 params.oper.max.hist = len(coords) + 1
 
 params.nek.general.dt = 0.05
-params.nek.general.end_time = 500
+params.nek.general.end_time = 800
 params.nek.general.stop_at = "endTime"
 
 params.nek.general.write_control = "runTime"

@@ -20,7 +20,7 @@ params.output.sub_directory = "examples_cbox/simple/SW"
 
 params.oper.dim = 2
 
-nb_elements = ny = 12
+nb_elements = ny = 10
 params.oper.ny = nb_elements
 nx = params.oper.nx = int(nb_elements / aspect_ratio)
 params.oper.nz = int(nb_elements / aspect_ratio)
@@ -32,7 +32,7 @@ Lz = params.oper.Lz = Ly / aspect_ratio
 
 order = params.oper.elem.order = params.oper.elem.order_out = 10
 
-params.oper.mesh_stretch_factor = 0.0  # zero means regular
+params.oper.mesh_stretch_factor = 0.08  # zero means regular
 
 params.short_name_type_run = f"Ra{params.Ra_side:.3e}_{nx*order}x{ny*order}"
 
@@ -62,7 +62,7 @@ if params.oper.dim == 3:
 params.output.history_points.coords = coords
 params.oper.max.hist = len(coords) + 1
 
-# params.oper.enable_sfd = float(True) 
+# params.oper.enable_sfd = float(True)
 
 params.nek.general.end_time = 800
 params.nek.general.stop_at = "endTime"
@@ -78,5 +78,3 @@ params.output.history_points.write_interval = 10
 sim = Simul(params)
 
 sim.make.exec("run_fg", resources={"nproc": 4})
-
-

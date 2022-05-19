@@ -15,7 +15,7 @@ params.output.sub_directory = "examples_cbox/simple/LinSW"
 
 params.oper.dim = 2
 
-nb_elements = ny = 12
+nb_elements = ny = 10
 params.oper.ny = nb_elements
 nx = params.oper.nx = int(nb_elements / aspect_ratio)
 params.oper.nz = int(nb_elements / aspect_ratio)
@@ -27,7 +27,7 @@ Lz = params.oper.Lz = Ly / aspect_ratio
 
 order = params.oper.elem.order = params.oper.elem.order_out = 10
 
-params.oper.mesh_stretch_factor = 0.0  # zero means regular
+params.oper.mesh_stretch_factor = 0.08  # zero means regular
 
 params.short_name_type_run = f"Ra{params.Ra_side:.3e}_{nx*order}x{ny*order}"
 
