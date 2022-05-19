@@ -115,7 +115,7 @@ def test_SW_nonlinear():
 
     growth_rate = compute_growth_rate(sim)
 
-    assert 0.0049 < growth_rate < 0.0055
+    assert 0.0049 < growth_rate < 0.0058
 
     # if everything is fine, we can cleanup the directory of the simulation
 
