@@ -29,7 +29,6 @@ Lz = params.oper.Lz = Ly / aspect_ratio
 
 
 order = params.oper.elem.order = params.oper.elem.order_out = 12
-params.oper.noise_amplitude = 1e-3
 
 params.oper.mesh_stretch_factor = 0.0  # zero means regular
 

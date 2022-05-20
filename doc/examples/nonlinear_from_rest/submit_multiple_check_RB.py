@@ -20,7 +20,6 @@ Ra_vert = 1750
 x_periodicity = False
 z_periodicity = False
 
-
 cluster = Cluster()
 
 cluster.commands_setting_env = [

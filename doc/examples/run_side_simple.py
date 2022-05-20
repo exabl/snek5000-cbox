@@ -14,13 +14,13 @@ aspect_ratio = params.oper.aspect_ratio = 1.0
 params.prandtl = 0.71
 
 # The onset of oscillatory flow for aspect ration 1.0 is at Ra_c = 1.825e8
-params.Ra_side = 2.0e8
+params.Ra_side = 1.86e8
 
 params.output.sub_directory = "examples_cbox/simple/SW"
 
 params.oper.dim = 2
 
-nb_elements = ny = 12
+nb_elements = ny = 10
 params.oper.ny = nb_elements
 nx = params.oper.nx = int(nb_elements / aspect_ratio)
 params.oper.nz = int(nb_elements / aspect_ratio)
@@ -32,8 +32,7 @@ Lz = params.oper.Lz = Ly / aspect_ratio
 
 order = params.oper.elem.order = params.oper.elem.order_out = 10
 
-params.oper.mesh_stretch_factor = 0.0  # zero means regular
-params.oper.noise_amplitude = 0.0
+params.oper.mesh_stretch_factor = 0.08  # zero means regular
 
 params.short_name_type_run = f"Ra{params.Ra_side:.3e}_{nx*order}x{ny*order}"
 
@@ -63,14 +62,16 @@ if params.oper.dim == 3:
 params.output.history_points.coords = coords
 params.oper.max.hist = len(coords) + 1
 
-params.nek.general.end_time = 600
+# params.oper.enable_sfd = float(True)
+
+params.nek.general.end_time = 800
 params.nek.general.stop_at = "endTime"
 params.nek.general.target_cfl = 2.0
 params.nek.general.time_stepper = "BDF3"
 params.nek.general.extrapolation = "OIFS"
 
 params.nek.general.write_control = "runTime"
-params.nek.general.write_interval = 100
+params.nek.general.write_interval = 10
 
 params.output.history_points.write_interval = 10
 

@@ -55,6 +55,7 @@ jobs:
         git clone --depth 1 https://github.com/exabl/Nek5000.git lib/Nek5000
         pip install git+https://github.com/exabl/snek5000#egg=snek5000[tests]
         pip install -e .
+        pip install .[tests]
 
     - name: Run tests
       run: |

@@ -106,20 +106,6 @@ User parameter for vertical temperature difference in .usr file (subroutine user
 """
         )
 
-        params.oper._set_attribs({"noise_amplitude": 1e-5})
-        params.oper._record_nek_user_params({"noise_amplitude": 7})
-        params.oper._set_doc(
-            params.oper._doc
-            + """
-User parameter for noise amplitude in .usr file (subroutine useric):
-
-- ``noise_amplitude``: float
-  
-  Noise amplitude for initial condition(default = 1e-5). 
-  
-"""
-        )
-
         params.oper._set_attribs({"aspect_ratio": 1.0})
         params.oper._record_nek_user_params({"aspect_ratio": 8})
         params.oper._set_doc(
@@ -173,11 +159,48 @@ User parameter for the aspect ratio in .usr file (subroutine useric, userbc):
 """
         )
 
+        params.oper._set_attribs({"enable_sfd": float(False)})
+        params.oper._record_nek_user_params({"enable_sfd": 7})
+        params.oper._set_doc(
+            params.oper._doc
+            + """
+User parameter for activation of Selective Frequency Damping method in .usr file
+
+- ``enable_sfd``: float
+  
+  Selective Frequency Damping (SFD) activation parameter(default = float(False) , meaning 
+  we don't use KTH framewok's SFD method to compute base flow).
+  ``params.oper.enable_sfd = float(True)``, activates SFD. 
+  
+"""
+        )
+
         params.output.phys_fields._set_attribs(
             {"write_interval_pert_field": 1000},
         )
         params.output.phys_fields._record_nek_user_params(
             {"write_interval_pert_field": 9}
+        )
+
+        params.nek._set_child("sfd")
+        attribs = {
+            "filterwdth": 1.05,
+            "controlcff": 0.5,
+            "residualtol": 1e-8,
+            "loginterval": 50,
+            "sfdreadchpnt": False,
+        }
+        params.nek.sfd._set_attribs(attribs)
+        params.nek.chkpoint._set_doc(
+            """
+Runtime parameter section for Selective Frequency Damping module (`KTH toolbox <https://github.com/KTH-Nek5000/KTH_Toolbox>`__)
+
+- ``filterwdth``: Filter width 
+- ``controlcff``: Control coefficient
+- ``residualtol``: Tolerance for residual
+- ``loginterval``: Frequency for logging convegence data
+- ``sfdreadchpnt``: Restart from checkpoint in SFD 
+"""
         )
 
         return params

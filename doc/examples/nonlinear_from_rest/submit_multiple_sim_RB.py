@@ -8,7 +8,7 @@ prandtl = 4.38
 
 dim = 2
 
-aspect_ratio = 1.0 
+aspect_ratio = 1.0
 nx = 32
 order = 10
 stretch_factor = 0.0

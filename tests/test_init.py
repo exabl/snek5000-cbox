@@ -66,7 +66,7 @@ def test_simple_simul():
     rmtree(sim.path_run, ignore_errors=True)
 
 
-def test_init_vertical():
+def test_init_side():
 
     params = Simul.create_default_params()
 
@@ -89,6 +89,10 @@ def test_init_vertical():
     Simul(params)
 
     params.oper.y_periodicity = True
+
+    Simul(params)
+
+    params.oper.enable_sfd = float(True)
 
     Simul(params)
 

@@ -18,7 +18,6 @@ stretch_factor = 0.0
 
 z_periodicity = False
 
-
 cluster = Cluster()
 
 cluster.commands_setting_env = [
@@ -39,7 +38,9 @@ for aspect_ratio, Ra_c_test in Ra_c_SW_tests.items():
         continue
 
     Ra_side_nums = np.logspace(np.log10(Ra_c_test), np.log10(1.04 * Ra_c_test), 4)
-    Ra_vert_nums = np.logspace(np.log10(2.04*Ra_c_test), np.log10(3.04 * Ra_c_test), 4)
+    Ra_vert_nums = np.logspace(
+        np.log10(2.04 * Ra_c_test), np.log10(3.04 * Ra_c_test), 4
+    )
 
     for Ra_side_num in Ra_side_nums:
         for Ra_vert_num in Ra_vert_nums:

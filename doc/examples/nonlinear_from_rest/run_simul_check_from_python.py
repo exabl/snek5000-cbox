@@ -37,6 +37,12 @@ parser.add_argument("--dim", type=int, default=2, help="2D or 3D")
 parser.add_argument("--stretch-factor", type=float, default=0.0, help="Stretch factor")
 
 parser.add_argument(
+    "--enable-sfd",
+    action="store_true",
+    help="Activate Selective Frequency Damping (SFD)",
+)
+
+parser.add_argument(
     "--x-periodicity",
     action="store_true",
     help="Periodic boundary condition in x direction",
@@ -79,6 +85,7 @@ def main(args):
 
     params.oper.mesh_stretch_factor = args.stretch_factor
     params.oper.aspect_ratio = args.aspect_ratio_y
+    params.oper.enable_sfd = float(args.enable_sfd)
 
     params.oper.nproc_min = 2
     dim = params.oper.dim = args.dim

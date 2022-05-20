@@ -16,12 +16,14 @@
       include 'NEKUSE'          
       include 'PARALLEL'        
       include 'SOLN'            
-      include 'INPUT'           
+      include 'INPUT'
+      include 'SFDD'           
 
       integer ix, iy, iz, ieg, iel
-      real rtmp, Pr_
+      real rtmp, Pr_, enable_sfd
 
       Pr_ = abs(UPARAM(1))
+      enable_sfd = abs(UPARAM(7))
 
       ! local element number
       iel = GLLEL(ieg)
@@ -40,6 +42,9 @@
       FFX = 0
       FFY = rtmp
       if (IF3D) FFZ = 0
+      if (enable_sfd.ne.0.0) then
+         call sfd_forcing(FFX,FFY,FFZ,ix,iy,iz,ieg)
+      endif
 
       return
       end
@@ -65,10 +70,11 @@
       integer n, nit_pert, nit_hist
       
       common /SCRUZ/ vtmp(lx1*ly1*lz1*lelt,ldim),ttmp(lx1*ly1*lz1*lelt)
-      real vtmp, ttmp
+      real vtmp, ttmp, enable_sfd
 
       nit_hist = abs(UPARAM(10))
       nit_pert = abs(UPARAM(9))
+      enable_sfd = UPARAM(7)
 
       if (ISTEP.eq.0) then
          TIME = 0
@@ -79,6 +85,10 @@
       ! monitor simulation
       call frame_monitor
       call chkpt_main
+      if (enable_sfd.ne.0.0) then
+         call sfd_main
+      endif   
+
       ! finalise framework
       if (istep.eq.nsteps.or.lastep.eq.1) then
          call frame_end
@@ -191,7 +201,7 @@
 
       delta_T_side = abs(UPARAM(5))
       delta_T_vert = abs(UPARAM(6))
-      amplitude = abs(UPARAM(7))
+      amplitude = 1e-5
       aspect_ratio = abs(UPARAM(8))
             
       ymax = 1.
@@ -292,10 +302,18 @@
       implicit none
       include 'SIZE'
       include 'FRAMELP'
+      include 'INPUT' 
+
+      real enable_sfd
+
+      enable_sfd = abs(UPARAM(7))
 
       ! register modules
       call io_register
       call chkpt_register
+      if (enable_sfd.ne.0.0) then
+         call sfd_register
+      endif   
 
       return
       end subroutine
@@ -304,9 +322,17 @@
       implicit none
       include 'SIZE'
       include 'FRAMELP'
+      include 'INPUT' 
+
+      real enable_sfd
+
+      enable_sfd = abs(UPARAM(7))
 
       ! initialise modules
       call chkpt_init
+      if (enable_sfd.ne.0.0) then
+         call sfd_init
+      endif   
 
       return
       end subroutine
@@ -315,6 +341,16 @@
       implicit none
       include 'SIZE'
       include 'FRAMELP'
-      
+      include 'INPUT' 
+
+      real enable_sfd
+
+      enable_sfd = abs(UPARAM(7))
+
+      if (enable_sfd.ne.0.0) then
+         call sfd_end
+      endif
+
       return
       end subroutine
+

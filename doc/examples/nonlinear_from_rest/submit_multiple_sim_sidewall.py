@@ -20,6 +20,8 @@ nb_procs = 10
 y_periodicity = False
 z_periodicity = False
 
+enable_sfd = False
+
 cluster = Cluster()
 
 cluster.commands_setting_env = [
@@ -35,7 +37,7 @@ cluster.commands_setting_env = [
 if aspect_ratio in Ra_c_SW_tests.items():
     Ra_c_guessed = Ra_c_SW_tests[aspect_ratio]
 else:
-    Ra_c_guessed = 1.93e8 * aspect_ratio**-3.15
+    Ra_c_guessed = 1.93e8 * aspect_ratio ** -3.15
 
 Ra_c_guessed = 2e8
 Ra_numbs = np.logspace(np.log10(0.9 * Ra_c_guessed), np.log10(1.6 * Ra_c_guessed), 5)
@@ -57,6 +59,8 @@ for Ra_side_num in Ra_numbs:
         command += " --y-periodicity"
     elif z_periodicity:
         command += " --z-periodicity"
+    elif enable_sfd:
+        command += " --enable-sfd"
 
     print(command)
 

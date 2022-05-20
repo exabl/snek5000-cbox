@@ -40,6 +40,12 @@ parser.add_argument("--dim", type=int, default=2, help="2D or 3D")
 parser.add_argument("--stretch-factor", type=float, default=0.0, help="Stretch factor")
 
 parser.add_argument(
+    "--enable-sfd",
+    action="store_true",
+    help="Activate Selective Frequency Damping (SFD)",
+)
+
+parser.add_argument(
     "--x-periodicity",
     action="store_true",
     help="Periodic boundary condition in x direction",
@@ -82,6 +88,7 @@ def main(args):
 
     params.oper.mesh_stretch_factor = args.stretch_factor
     params.oper.aspect_ratio = args.aspect_ratio_y
+    params.oper.enable_sfd = float(args.enable_sfd)
 
     params.oper.nproc_min = 2
     dim = params.oper.dim = args.dim
@@ -95,8 +102,12 @@ def main(args):
 
     if params.Ra_side > 0 and params.Ra_vert == 0:
         params.output.sub_directory = (
-            f"SW_Rac/{dim}D/NL_sim/Pr_{args.Prandtl:.2f}/asp_{args.aspect_ratio_y:.3f}"
+            f"SW/{dim}D/NL_sim/Pr_{args.Prandtl:.2f}/asp_{args.aspect_ratio_y:.3f}"
         )
+        if args.enable_sfd:
+            params.output.sub_directory = (
+                f"SW/{dim}D/SFD/Pr_{args.Prandtl:.2f}/asp_{args.aspect_ratio_y:.3f}"
+            )
         params.short_name_type_run = (
             f"asp{args.aspect_ratio_y:.3f}_Ra_s{args.Ra_side:.3e}_Pr{args.Prandtl:.2f}"
         )
@@ -104,6 +115,10 @@ def main(args):
         params.output.sub_directory = (
             f"RB/{dim}D/NL_sim/Pr_{args.Prandtl:.2f}/asp_{args.aspect_ratio_y:.3f}"
         )
+        if args.enable_sfd:
+            params.output.sub_directory = (
+                f"RB/{dim}D/SFD/Pr_{args.Prandtl:.2f}/asp_{args.aspect_ratio_y:.3f}"
+            )
         params.short_name_type_run = (
             f"asp{args.aspect_ratio_y:.3f}_Ra_v{args.Ra_vert:.3e}_Pr{args.Prandtl:.2f}"
         )
@@ -111,6 +126,10 @@ def main(args):
         params.output.sub_directory = (
             f"MC/{dim}D/NL_sim/Pr_{args.Prandtl:.2f}/asp_{args.aspect_ratio_y:.3f}"
         )
+        if args.enable_sfd:
+            params.output.sub_directory = (
+                f"MC/{dim}D/SFD/Pr_{args.Prandtl:.2f}/asp_{args.aspect_ratio_y:.3f}"
+            )
         params.short_name_type_run = f"asp{args.aspect_ratio_y:.3f}_Ra_s{args.Ra_side:.3e}_Ra_v{args.Ra_vert:.3e}_Pr{args.Prandtl:.2f}"
 
     params.nek.general.dt = args.dt_max
