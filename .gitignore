@@ -132,3 +132,5 @@ dmypy.json
 **/oar_launcher*
 **/.nfs*
 **/*.findent.tmp
+
+**/.vscode/*
