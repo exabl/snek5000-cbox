@@ -1,11 +1,6 @@
-name: Tests
+name: Tests slow
 
-on:
-  push:
-    branches: [ main ]
-    tags: ['*']
-  pull_request:
-    branches: [ main ]
+on: [workflow_dispatch]
 
 env:
   PIP_CACHE_DIR: ~/.cache/pip
@@ -16,7 +11,7 @@ jobs:
     strategy:
       max-parallel: 5
       matrix:
-        python-version: [3.8, 3.9, "3.10"]
+        python-version: [3.8, 3.9]
 
     steps:
     - name: Checkout
@@ -60,7 +55,7 @@ jobs:
       run: |
         export NEK_SOURCE_ROOT=$(pwd)"/lib/Nek5000"
         export PATH="$PATH:$NEK_SOURCE_ROOT/bin"
-        pytest -v --cov-report=xml --cov-report=term-missing
+        pytest -v --runslow --cov-report=xml --cov-report=term-missing
 
     - name: Upload coverage to codecov
       if: ${{ success() }}
