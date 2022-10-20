@@ -1,9 +1,3 @@
-"""
-To define environmental variable (in the terminal or in your .bashrc)
-use something like: export FLUIDSIM_PATH="/fsnet/project/meige/2020/20CONVECTION/numerical/"
-
-"""
-
 import numpy as np
 
 from snek5000_cbox.solver import Simul

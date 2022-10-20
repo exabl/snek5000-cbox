@@ -197,8 +197,8 @@ if __name__ == "__main__":
     while check_running():
         sleep(10)
         # TODO: make this call faster even for large .his file
-        # see https://github.com/exabl/snek5000/issues/108
-        # and https://github.com/exabl/snek5000/tree/faster-history-points-load
+        # see https://github.com/snek5000/snek5000/issues/108
+        # and https://github.com/snek5000/snek5000/tree/faster-history-points-load
         t0 = perf_counter()
         coords, df = sim.output.history_points.load_1point(
             index_point=5, key="temperature"

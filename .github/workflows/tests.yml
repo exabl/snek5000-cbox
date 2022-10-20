@@ -52,8 +52,8 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        git clone --depth 1 https://github.com/exabl/Nek5000.git lib/Nek5000
-        pip install git+https://github.com/exabl/snek5000#egg=snek5000[tests]
+        git clone --depth 1 https://github.com/snek5000/Nek5000.git lib/Nek5000
+        pip install git+https://github.com/snek5000/snek5000#egg=snek5000[tests]
         pip install -e .[tests]
 
     - name: Run tests
