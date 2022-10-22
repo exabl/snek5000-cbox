@@ -1,4 +1,3 @@
-from pytest import param
 from snek5000.info import InfoSolverMake
 
 from snek5000.solvers.kth import SimulKTH
@@ -67,13 +66,13 @@ class SimulCbox(SimulKTH):
 User parameter for mesh stretching in .usr file (subroutine usrdat2):
 
 - ``mesh_stretch_factor``: float
-  
-  Mesh stretch factor (default = 0.0, meaning no stretching). 
+
+  Mesh stretch factor (default = 0.0, meaning no stretching).
   The locations of the grid points are changed in the 3 directions (x, y, z)
   as follow: ``x_i  = x_i - stretch_factor_x*(sin(2pi*x_i/L_x))``.
   The stretching factors in different directions are computed such that
-  elements at the corners are of aspect ratio 1. Typical reasonable values 
-  could be between 0.05 and 0.1. 0.15 corresponds to a very strongly stretched 
+  elements at the corners are of aspect ratio 1. Typical reasonable values
+  could be between 0.05 and 0.1. 0.15 corresponds to a very strongly stretched
   mesh.
 """
         )
@@ -86,9 +85,9 @@ User parameter for mesh stretching in .usr file (subroutine usrdat2):
 User parameter for sidewall temperature difference in .usr file (subroutine userbc):
 
 - ``delta_T_side``: float
-  
-  Lateral temperature difference (default = 0.0, meaning no temperature difference). 
-  
+
+  Lateral temperature difference (default = 0.0, meaning no temperature difference).
+
 """
         )
 
@@ -100,9 +99,9 @@ User parameter for sidewall temperature difference in .usr file (subroutine user
 User parameter for vertical temperature difference in .usr file (subroutine userbc):
 
 - ``delta_T_vert``: float
-  
-  Vertical temperature difference (default = 0.0, meaning no temperature difference). 
-  
+
+  Vertical temperature difference (default = 0.0, meaning no temperature difference).
+
 """
         )
 
@@ -114,9 +113,9 @@ User parameter for vertical temperature difference in .usr file (subroutine user
 User parameter for the aspect ratio in .usr file (subroutine useric, userbc):
 
 - ``aspect_ratio``: float
-  
-  aspect_ratio to set initial and boundary conditions (default = 1.0). 
-  
+
+  aspect_ratio to set initial and boundary conditions (default = 1.0).
+
 """
         )
 
@@ -126,10 +125,10 @@ User parameter for the aspect ratio in .usr file (subroutine useric, userbc):
             + """
 
 - ``x_periodicity``: boolean
-  
-  Periodic boundary condition in x direction (default = False, meaning 
-  we have wall). 
-  
+
+  Periodic boundary condition in x direction (default = False, meaning
+  we have wall).
+
 """
         )
 
@@ -139,10 +138,10 @@ User parameter for the aspect ratio in .usr file (subroutine useric, userbc):
             + """
 
 - ``y_periodicity``: boolean
-  
-  Periodic boundary condition in y direction (default = False, meaning 
-  we have wall). 
-  
+
+  Periodic boundary condition in y direction (default = False, meaning
+  we have wall).
+
 """
         )
 
@@ -152,10 +151,10 @@ User parameter for the aspect ratio in .usr file (subroutine useric, userbc):
             + """
 
 - ``z_periodicity``: boolean
-  
-  Periodic boundary condition in z direction (default = False, meaning 
-  we have wall). 
-  
+
+  Periodic boundary condition in z direction (default = False, meaning
+  we have wall).
+
 """
         )
 
@@ -167,11 +166,11 @@ User parameter for the aspect ratio in .usr file (subroutine useric, userbc):
 User parameter for activation of Selective Frequency Damping method in .usr file
 
 - ``enable_sfd``: float
-  
-  Selective Frequency Damping (SFD) activation parameter(default = float(False) , meaning 
+
+  Selective Frequency Damping (SFD) activation parameter(default = float(False) , meaning
   we don't use KTH framewok's SFD method to compute base flow).
-  ``params.oper.enable_sfd = float(True)``, activates SFD. 
-  
+  ``params.oper.enable_sfd = float(True)``, activates SFD.
+
 """
         )
 
@@ -195,11 +194,11 @@ User parameter for activation of Selective Frequency Damping method in .usr file
             """
 Runtime parameter section for Selective Frequency Damping module (`KTH toolbox <https://github.com/KTH-Nek5000/KTH_Toolbox>`__)
 
-- ``filterwdth``: Filter width 
+- ``filterwdth``: Filter width
 - ``controlcff``: Control coefficient
 - ``residualtol``: Tolerance for residual
 - ``loginterval``: Frequency for logging convegence data
-- ``sfdreadchpnt``: Restart from checkpoint in SFD 
+- ``sfdreadchpnt``: Restart from checkpoint in SFD
 """
         )
 
