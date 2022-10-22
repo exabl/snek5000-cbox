@@ -210,72 +210,50 @@ Runtime parameter section for Selective Frequency Damping module (`KTH toolbox <
             raise ValueError("One have to assign `params.oper.Ly = 1.0`")
 
         if params.Ra_side > 0 and params.Ra_vert == 0:
-
             params.oper.delta_T_side = 1.0
-
             rayleigh = params.Ra_side
 
             if params.oper.dim == 2:
                 if params.oper.y_periodicity:
-
                     params.oper.boundary = list("WWPP")
                     params.oper.boundary_scalars = list("ttPP")
-
                 else:
-
                     params.oper.boundary = list("WWWW")
                     params.oper.boundary_scalars = list("ttII")
-
             else:
                 if params.oper.y_periodicity and params.oper.z_periodicity:
-
                     params.oper.boundary = list("WWPPPP")
                     params.oper.boundary_scalars = list("ttPPPP")
-
                 elif params.oper.z_periodicity:
-
                     params.oper.boundary = list("WWWWPP")
                     params.oper.boundary_scalars = list("ttIIPP")
-
                 else:
-
                     params.oper.boundary = list("WWWWWW")
                     params.oper.boundary_scalars = list("ttIIII")
 
         elif params.Ra_side == 0 and params.Ra_vert > 0:
-
             params.oper.delta_T_vert = 1.0
-
             rayleigh = params.Ra_vert
 
             if params.oper.dim == 2:
                 if params.oper.x_periodicity:
-
                     params.oper.boundary = list("PPWW")
                     params.oper.boundary_scalars = list("PPtt")
-
                 else:
-
                     params.oper.boundary = list("WWWW")
                     params.oper.boundary_scalars = list("IItt")
-
             else:
                 if params.oper.x_periodicity and params.oper.z_periodicity:
-
                     params.oper.boundary = list("PPWWPP")
                     params.oper.boundary_scalars = list("PPttPP")
-
                 elif params.oper.z_periodicity:
-
                     params.oper.boundary = list("WWWWPP")
                     params.oper.boundary_scalars = list("IIttPP")
-
                 else:
                     params.oper.boundary = list("WWWWWW")
                     params.oper.boundary_scalars = list("IIttII")
 
         elif params.Ra_side > 0 and params.Ra_vert > 0:
-
             params.oper.delta_T_side = 1.0
             params.oper.delta_T_vert = (
                 params.Ra_vert / params.Ra_side * params.oper.delta_T_side
@@ -284,20 +262,20 @@ Runtime parameter section for Selective Frequency Damping module (`KTH toolbox <
             rayleigh = params.Ra_side
 
             if params.oper.dim == 2:
-
                 params.oper.boundary = list("WWWW")
                 params.oper.boundary_scalars = list("tttt")
-
             else:
                 if params.oper.z_periodicity:
-
                     params.oper.boundary = list("WWWWPP")
                     params.oper.boundary_scalars = list("ttttPP")
-
                 else:
-
                     params.oper.boundary = list("WWWWWW")
                     params.oper.boundary_scalars = list("ttttII")
+
+        else:
+            raise ValueError(
+                "params.Ra_side or params.Ra_vert should be > 0"
+            )
 
         params.nek.velocity.viscosity = params.prandtl / rayleigh ** (1 / 2)
         params.nek.temperature.conductivity = 1.0 / rayleigh ** (1 / 2)

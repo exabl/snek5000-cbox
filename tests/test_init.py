@@ -47,7 +47,7 @@ def test_simple_simul():
     params.output.history_points.coords = coords
     params.oper.max.hist = len(coords) + 1
 
-    num_steps = params.nek.general.num_steps = 5000
+    params.nek.general.num_steps = 5000
     params.nek.general.write_interval = 500
 
     params.nek.general.variable_dt = False
