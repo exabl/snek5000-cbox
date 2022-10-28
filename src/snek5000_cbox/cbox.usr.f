@@ -67,10 +67,10 @@
       include 'TSTEP'           
       include 'SOLN'            
 
-      integer n, nit_pert, nit_hist
+      integer nxyz1, nxyz2, nit_pert, nit_hist
       
-      common /SCRUZ/ vtmp(lx1*ly1*lz1*lelt,ldim),ttmp(lx1*ly1*lz1*lelt)
-      real vtmp, ttmp, enable_sfd
+      real vtmp(lx1*ly1*lz1*lelt,ldim),ttmp(lx1*ly1*lz1*lelt) ! temporary variables
+      real ptmp(lx2*ly2*lz2*lelt), enable_sfd
 
       nit_hist = abs(UPARAM(10))
       nit_pert = abs(UPARAM(9))
@@ -103,24 +103,34 @@
       endif
 
       ! history points
-      if (mod(ISTEP,nit_hist).eq.0) then
-         if (.not. ifpert) then
-             call hpts()
-         else
 
-             call opcopy(vtmp(1,1),vtmp(1,2),vtmp(1,ndim),vx,vy,vz)
-             n = NX1*NY1*NZ1*NELV
-             call copy(ttmp,T,n)
-             call opcopy(vx, vy, vz, vxp, vyp, vzp)
-             call copy(T,TP,n)
+      ! We have two formulations for pressure solver
+      nxyz1 = nx1*ny1*nz1 ! velocity 
+      nxyz2 = nx2*ny2*nz2 ! pressure
+      
+      if (lhis.gt.1) then		
+         if (mod(ISTEP,nit_hist).eq.0) then
+            if (.not. ifpert) then
+               call hpts()
+            else
+               ! save base state in temporary variables
+               call opcopy(vtmp(1,1),vtmp(1,2),vtmp(1,ndim),vx,vy,vz)
+               call copy(ttmp,T,nxyz1*NELV)
+               call copy(ptmp,PR,nxyz2*NELV)
 
-             call hpts()
+               call opcopy(vx, vy, vz, vxp, vyp, vzp)
+               call copy(T,TP,nxyz1*NELV)
+               call copy(PR,PRP,nxyz2*NELV)
 
-             call opcopy(vx,vy,vz, vtmp(1,1),vtmp(1,2),vtmp(1,ndim))
-             call copy(T,ttmp,n)
+               call hpts()
+               ! restore base state
+               call opcopy(vx,vy,vz, vtmp(1,1),vtmp(1,2),vtmp(1,ndim))
+               call copy(T,ttmp,nxyz1*NELV)
+               call copy(PR,ptmp,nxyz2*NELV)
 
+            endif
          endif
-      endif
+      endif   
 
       return
       end
