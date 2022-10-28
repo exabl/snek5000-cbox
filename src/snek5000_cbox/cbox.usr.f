@@ -268,7 +268,7 @@
       real stretch_x, stretch_y, stretch_z, xx, yy, zz, twopi
       real xmax, ymax, zmax
 
-      stretch_x = abs(UPARAM(4))
+      stretch_y = abs(UPARAM(4))
 
       if (stretch_x.ne.0.0) then
          ntot = nx1*ny1*nz1*nelt
@@ -282,9 +282,9 @@
          twopi = 8 * atan(1.)
 
       ! stretch factors
-         stretch_y = stretch_x*ymax
+         stretch_x = stretch_y*xmax
          if (if3d) then
-             stretch_z = stretch_x*zmax
+             stretch_z = stretch_y*zmax
          endif   
             
          do i=1,ntot
