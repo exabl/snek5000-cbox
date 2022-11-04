@@ -95,7 +95,7 @@ def main(args):
 
     nx = params.oper.nx = args.nx
     ny = params.oper.ny = int(nx * args.aspect_ratio_y)
-    # nz = params.oper.nz = int(ny / args.aspect_ratio_z)
+    nz = params.oper.nz = int(ny / args.aspect_ratio_z)
 
     order = params.oper.elem.order = args.order
     params.oper.elem.order_out = order
