@@ -277,12 +277,12 @@ Runtime parameter section for Selective Frequency Damping module (`KTH toolbox <
 
         elif params.Ra_side > 0 and params.Ra_vert > 0:
 
-            params.oper.delta_T_side = 1.0
-            params.oper.delta_T_vert = (
-                params.Ra_vert / params.Ra_side * params.oper.delta_T_side
+            params.oper.delta_T_vert = 1.0
+            params.oper.delta_T_side = (
+                params.Ra_side / params.Ra_vert * params.oper.delta_T_vert
             )
 
-            rayleigh = params.Ra_side
+            rayleigh = params.Ra_vert
 
             if params.oper.dim == 2:
 
