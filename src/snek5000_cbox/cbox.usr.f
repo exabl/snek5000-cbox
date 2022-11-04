@@ -104,7 +104,7 @@
 
       ! history points
 
-      ! We have two formulations for pressure solver
+      ! we have two formulations for pressure solver
       nxyz1 = nx1*ny1*nz1 ! velocity 
       nxyz2 = nx2*ny2*nz2 ! pressure
       
