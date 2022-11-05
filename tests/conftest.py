@@ -77,5 +77,3 @@ def sim_cbox_executed():
             print(file.read())
         raise RuntimeError("cbox simulation failed")
     return sim
-
-    

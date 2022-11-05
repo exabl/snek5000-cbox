@@ -1,3 +1,9 @@
+"""
+To define environmental variable (in the terminal or in your .bashrc)
+use something like: export FLUIDSIM_PATH="/fsnet/project/meige/2020/20CONVECTION/numerical/"
+
+"""
+
 import numpy as np
 
 from snek5000_cbox.solver import Simul
@@ -14,7 +20,7 @@ params.output.sub_directory = "examples_cbox/simple/SW"
 
 params.oper.dim = 2
 
-nb_elements = ny = 12
+nb_elements = ny = 8
 params.oper.ny = nb_elements
 nx = params.oper.nx = int(nb_elements / aspect_ratio)
 params.oper.nz = int(nb_elements / aspect_ratio)
@@ -26,7 +32,7 @@ Lz = params.oper.Lz = Ly / aspect_ratio
 
 order = params.oper.elem.order = params.oper.elem.order_out = 8
 
-params.oper.mesh_stretch_factor = 0.1  # zero means regular
+params.oper.mesh_stretch_factor = 0.08  # zero means regular
 
 params.short_name_type_run = f"Ra{params.Ra_side:.3e}_{nx*order}x{ny*order}"
 
@@ -71,4 +77,4 @@ params.output.history_points.write_interval = 10
 
 sim = Simul(params)
 
-sim.make.exec("run_fg", resources={"nproc": 4})
+sim.make.exec("run_fg", resources={"nproc": 2})

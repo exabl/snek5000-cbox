@@ -123,7 +123,7 @@ def test_simple_RB_convective_simul():
 
     # check we have convection,
     ux_last = df[df.time == t_max].ux
-    assert ux_last.abs().max() > 2e-2  # noise amplitude is 1e-5
+    assert ux_last.abs().max() > 1e-2  # noise amplitude is 1e-5
 
     # if everything is fine, we can cleanup the directory of the simulation
     rmtree(sim.path_run, ignore_errors=True)
