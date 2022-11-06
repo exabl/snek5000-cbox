@@ -1,6 +1,7 @@
 import os
 from contextlib import contextmanager
 from pathlib import Path
+from pprint import pformat
 
 from snek5000.util.gfortran_log import log_matches
 
@@ -72,8 +73,20 @@ def sim_cbox_executed():
             log_matches(build_log, levels=["Error"])
             raise RuntimeError("cbox compilation failed")
 
-    if not sim.make.exec("run_fg", resources={"nproc": 2}):
-        with open(Path(sim.output.path_run) / "cbox.log") as file:
-            print(file.read())
+    print("launching simulation with run_fg...")
+    ok = sim.make.exec("run_fg", resources={"nproc": 2})
+    print("content of cbox.log after run_fg:")
+    with open(Path(sim.output.path_run) / "cbox.log") as file:
+        print(file.read())
+    if not ok:
         raise RuntimeError("cbox simulation failed")
+
+    path_run = Path(sim.output.path_run)
+    print(
+        f"Testing simulation done in {path_run}\nFiles:\n"
+        f"{pformat(sorted(p.name for p in path_run.glob('*')))}\n"
+        "Files in session_00:\n"
+        f"{pformat(sorted(p.name for p in (path_run / 'session_00').glob('*')))}"
+    )
+
     return sim
