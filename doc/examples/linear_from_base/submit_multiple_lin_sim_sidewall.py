@@ -23,7 +23,7 @@ for sim_dir in sim_dirs:
     Ra_num = sim.params.Ra_side
 
     restart_file = sorted(sim.output.path_session.glob("cbox0.f*"))[-1]
-    nx = sim.params.oper.nx
+    ny = sim.params.oper.ny
 
     order = sim.params.oper.elem.order
     stretch_factor = sim.params.oper.mesh_stretch_factor
@@ -50,12 +50,12 @@ for sim_dir in sim_dirs:
         "export FLUIDSIM_PATH=$PROJET_DIR/numerical/",
     ]
 
-    ny = int(nx * aspect_ratio)
-    if nx * aspect_ratio - ny:
+    nx = int(ny / aspect_ratio)
+    if ny / aspect_ratio - nx:
         raise ValueError
 
     command = (
-        f"run_simul_linear.py -Pr {prandtl} -nx {nx} --dim {dim} "
+        f"run_simul_linear.py -Pr {prandtl} -ny {ny} --dim {dim} "
         f"--order {order} --dt-max {dt} --end-time {end_time} -np {nb_nodes*nb_procs} "
         f"-a_y {aspect_ratio} --stretch-factor {stretch_factor} "
         f"--Ra-side {Ra_num} --restart-file {restart_file}"
