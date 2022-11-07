@@ -63,7 +63,10 @@ for sim_dir in sim_dirs:
 
     print(command)
 
-    name_run = f"LSW_asp{aspect_ratio:.1f}_Ra{Ra_num:.1e}_Pr{prandtl:.1f}_msh{nx*order}x{round(nx*aspect_ratio)*order}"
+    name_run = (
+        f"LSW_asp{aspect_ratio:.1f}_Ra{Ra_num:.1e}_Pr{prandtl:.1f}_msh{nx*order}"
+        f"x{round(nx*aspect_ratio)*order}"
+    )
 
     cluster.submit_script(
         command,
