@@ -53,8 +53,11 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         git clone --depth 1 https://github.com/snek5000/Nek5000.git lib/Nek5000
-        pip install git+https://github.com/snek5000/snek5000#egg=snek5000[tests]
         pip install -e .[tests]
+        pip install --force-reinstall "snek5000[tests] @ git+https://github.com/snek5000/snek5000.git"
+        pip install --no-deps --force-reinstall "fluidsim-core @ https://foss.heptapod.net/fluiddyn/fluidsim/-/archive/branch/default/fluidsim-branch-default.tar.gz#subdirectory=lib"
+        pip install --no-deps --force-reinstall "pymech @ git+https://github.com/eX-Mech/pymech.git"
+        pip install snakemake==7.17.1
 
     - name: Run tests
       run: |

@@ -105,20 +105,6 @@ User parameter for vertical temperature difference in .usr file (subroutine user
 """
         )
 
-        params.oper._set_attribs({"aspect_ratio": 1.0})
-        params.oper._record_nek_user_params({"aspect_ratio": 8})
-        params.oper._set_doc(
-            params.oper._doc
-            + """
-User parameter for the aspect ratio in .usr file (subroutine useric, userbc):
-
-- ``aspect_ratio``: float
-
-  aspect_ratio to set initial and boundary conditions (default = 1.0).
-
-"""
-        )
-
         params.oper._set_attribs({"x_periodicity": False})
         params.oper._set_doc(
             params.oper._doc
@@ -274,9 +260,7 @@ Runtime parameter section for Selective Frequency Damping module (`KTH toolbox <
                     params.oper.boundary_scalars = list("ttttII")
 
         else:
-            raise ValueError(
-                "params.Ra_side or params.Ra_vert should be > 0"
-            )
+            raise ValueError("params.Ra_side or params.Ra_vert should be > 0")
 
         params.nek.velocity.viscosity = params.prandtl / rayleigh ** (1 / 2)
         params.nek.temperature.conductivity = 1.0 / rayleigh ** (1 / 2)
