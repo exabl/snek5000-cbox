@@ -107,7 +107,7 @@ def main(args):
             )
         params.short_name_type_run = (
             f"asp{args.aspect_ratio_y:.3f}_Ra_s{args.Ra_side:.3e}_Pr{args.Prandtl:.2f}"
-            f"msh{nx*order}x{ny*order}"
+            f"_msh{nx*order}x{ny*order}"
         )
         if dim == 3:
             params.short_name_type_run = (
