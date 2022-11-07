@@ -6,10 +6,13 @@ from snek5000 import load
 
 
 prandtl = 0.2
-aspect = 2.0
+aspect_ratio = 2.0
 dim = 2
 
-dir_sim = f"/.fsnet/project/meige/2020/20CONVECTION/numerical/SW/{dim}D/SFD/Pr_{prandtl:.2f}/asp_{aspect:.3f}"
+dir_sim = (
+    f"/.fsnet/project/meige/2020/20CONVECTION/numerical/SW/{dim}D/SFD/"
+    f"Pr_{prandtl:.2f}/asp_{aspect_ratio:.3f}"
+)
 path = Path(dir_sim)
 sim_dirs = sorted(path.glob("cbox_*"))
 
@@ -19,7 +22,6 @@ for sim_dir in sim_dirs:
     prandtl = sim.params.prandtl
     Ra_num = sim.params.Ra_side
 
-    aspect_ratio = sim.params.oper.aspect_ratio
     restart_file = sorted(sim.output.path_session.glob("cbox0.f*"))[-1]
     nx = sim.params.oper.nx
 
