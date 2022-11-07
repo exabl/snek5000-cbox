@@ -13,7 +13,7 @@ aspect_ratio_y = 1.0
 prandtl = 4.38
 Ra_numbs = [1e9]
 
-nx = 32
+ny = 32
 order = 10
 stretch_factor = 0.0
 
@@ -40,8 +40,8 @@ cluster.commands_setting_env = [
 ]
 
 
-ny = int(nx * aspect_ratio_y)
-if nx * aspect_ratio_y - ny:
+nx = int(ny / aspect_ratio_y)
+if ny / aspect_ratio_y - nx:
     raise ValueError
 if dim == 3:
     nz = int(ny / aspect_ratio_z)
@@ -51,7 +51,7 @@ if dim == 3:
 for Ra_vert_num in Ra_numbs:
 
     command = (
-        f"run_simul.py -Pr {prandtl} -nx {nx} --dim {dim} "
+        f"run_simul.py -Pr {prandtl} -ny {ny} --dim {dim} "
         f"--order {order} --dt-max {dt} --end-time {end_time} -np {nb_nodes*nb_procs} "
         f"-a_y {aspect_ratio_y} --stretch-factor {stretch_factor} "
         f"--Ra-vert {Ra_vert_num}"

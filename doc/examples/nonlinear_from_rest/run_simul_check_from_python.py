@@ -30,7 +30,7 @@ parser.add_argument(
     "--Ra-vert", type=float, default=0.0, help="Vertical Rayleigh number"
 )
 
-parser.add_argument("-nx", type=int, default=12, help="Number of x elements")
+parser.add_argument("-ny", type=int, default=12, help="Number of y elements")
 parser.add_argument("-nz", type=int, default=12, help="Number of z elements")
 parser.add_argument("--order", type=int, default=10, help=" Polynomial order")
 parser.add_argument("--dim", type=int, default=2, help="2D or 3D")
@@ -84,14 +84,13 @@ def main(args):
     params.oper.z_periodicity = args.z_periodicity
 
     params.oper.mesh_stretch_factor = args.stretch_factor
-    params.oper.aspect_ratio = args.aspect_ratio_y
     params.oper.enable_sfd = float(args.enable_sfd)
 
     params.oper.nproc_min = 2
     dim = params.oper.dim = args.dim
 
-    nx = params.oper.nx = args.nx
-    ny = params.oper.ny = int(nx * args.aspect_ratio_y)
+    ny = params.oper.ny = args.ny
+    nx = params.oper.nx = int(ny / args.aspect_ratio_y)
     nz = params.oper.nz = int(ny / args.aspect_ratio_z)
 
     order = params.oper.elem.order = args.order
@@ -107,7 +106,7 @@ def main(args):
             )
         params.short_name_type_run = (
             f"asp{args.aspect_ratio_y:.3f}_Ra_s{args.Ra_side:.3e}_Pr{args.Prandtl:.2f}"
-            f"msh{nx*order}x{ny*order}"
+            f"_msh{nx*order}x{ny*order}"
         )
         if dim == 3:
             params.short_name_type_run = (
