@@ -2,9 +2,10 @@ import numpy as np
 
 from snek5000_cbox.solver import Simul
 
+
 params = Simul.create_default_params()
 
-aspect_ratio = params.oper.aspect_ratio = 1.0 / 41.0
+aspect_ratio = params.oper.aspect_ratio = 1.0 / 6.0
 params.prandtl = 1.0
 
 # for an infinite layer of fluid with Pr = 1.0, the onset of convection is at Ra_c = 1708
@@ -16,9 +17,10 @@ params.oper.dim = 2
 
 params.oper.x_periodicity = True
 
-nb_elements = ny = 1
+nb_elements = ny = 2
 params.oper.ny = nb_elements
 nx = params.oper.nx = int(nb_elements / aspect_ratio)
+nx = 20
 params.oper.nz = int(nb_elements / aspect_ratio)
 
 Ly = params.oper.Ly
@@ -26,7 +28,7 @@ Lx = params.oper.Lx = Ly / aspect_ratio
 Lz = params.oper.Lz = Ly / aspect_ratio
 
 
-order = params.oper.elem.order = params.oper.elem.order_out = 12
+order = params.oper.elem.order = params.oper.elem.order_out = 8
 params.oper.elem.staggered = False
 
 params.oper.mesh_stretch_factor = 0.0  # zero means regular
@@ -58,6 +60,9 @@ if params.oper.dim == 3:
 
 params.output.history_points.coords = coords
 params.oper.max.hist = len(coords) + 1
+
+params.nek.velocity.residual_tol = 1e-04
+params.nek.pressure.residual_tol = 1e-03
 
 # params.nek.general.variable_dt = False
 params.nek.general.dt = 0.05

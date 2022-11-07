@@ -8,7 +8,7 @@ aspect_ratio = params.oper.aspect_ratio = 1.0
 params.prandtl = 1.0
 
 params.Ra_side = 1e5
-params.Ra_vert = 1e4
+params.Ra_vert = 1e5
 
 params.output.sub_directory = "examples_cbox/simple/MC"
 

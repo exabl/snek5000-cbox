@@ -92,24 +92,67 @@ def main(args):
 
     nx = params.oper.nx = args.nx
     ny = params.oper.ny = int(nx * args.aspect_ratio_y)
-    # nz = params.oper.nz = int(ny / args.aspect_ratio_z)
+    nz = params.oper.nz = int(ny / args.aspect_ratio_z)
 
     order = params.oper.elem.order = args.order
     params.oper.elem.order_out = order
 
     if params.Ra_side > 0 and params.Ra_vert == 0:
-        params.output.sub_directory = f"SW_check/{dim}D/NL_sim/Pr_{args.Prandtl:.2f}/asp_{args.aspect_ratio_y:.3f}"
+        params.output.sub_directory = (
+            f"SW/{dim}D/NL_sim/Pr_{args.Prandtl:.2f}/asp_{args.aspect_ratio_y:.3f}"
+        )
+        if args.enable_sfd:
+            params.output.sub_directory = (
+                f"SW/{dim}D/SFD/Pr_{args.Prandtl:.2f}/asp_{args.aspect_ratio_y:.3f}"
+            )
         params.short_name_type_run = (
             f"asp{args.aspect_ratio_y:.3f}_Ra_s{args.Ra_side:.3e}_Pr{args.Prandtl:.2f}"
+            f"msh{nx*order}x{ny*order}"
         )
+        if dim == 3:
+            params.short_name_type_run = (
+                f"Ay{args.aspect_ratio_y:.3f}_Az{args.aspect_ratio_z:.3f}_Ra_s"
+                f"{args.Ra_side:.3e}_Pr{args.Prandtl:.2f}_msh{nx*order}x{ny*order}"
+                f"x{nz*order}"
+            )
+
     elif params.Ra_side == 0 and params.Ra_vert > 0:
-        params.output.sub_directory = f"RB_check/{dim}D/NL_sim/Pr_{args.Prandtl:.2f}/asp_{args.aspect_ratio_y:.3f}"
+        params.output.sub_directory = (
+            f"RB/{dim}D/NL_sim/Pr_{args.Prandtl:.2f}/asp_{args.aspect_ratio_y:.3f}"
+        )
+        if args.enable_sfd:
+            params.output.sub_directory = (
+                f"RB/{dim}D/SFD/Pr_{args.Prandtl:.2f}/asp_{args.aspect_ratio_y:.3f}"
+            )
         params.short_name_type_run = (
             f"asp{args.aspect_ratio_y:.3f}_Ra_v{args.Ra_vert:.3e}_Pr{args.Prandtl:.2f}"
+            f"_msh{nx*order}x{ny*order}"
         )
+        if dim == 3:
+            params.short_name_type_run = (
+                f"Ay{args.aspect_ratio_y:.3f}_Az{args.aspect_ratio_z:.3f}_Ra_s"
+                f"{args.Ra_vert:.3e}_Pr{args.Prandtl:.2f}_msh{nx*order}x{ny*order}"
+                f"x{nz*order}"
+            )
+
     elif params.Ra_side > 0 and params.Ra_vert > 0:
-        params.output.sub_directory = f"MC_check/{dim}D/NL_sim/Pr_{args.Prandtl:.2f}/asp_{args.aspect_ratio_y:.3f}"
-        params.short_name_type_run = f"asp{args.aspect_ratio_y:.3f}_Ra_s{args.Ra_side:.3e}_Ra_v{args.Ra_vert:.3e}_Pr{args.Prandtl:.2f}"
+        params.output.sub_directory = (
+            f"MC/{dim}D/NL_sim/Pr_{args.Prandtl:.2f}/asp_{args.aspect_ratio_y:.3f}"
+        )
+        if args.enable_sfd:
+            params.output.sub_directory = (
+                f"MC/{dim}D/SFD/Pr_{args.Prandtl:.2f}/asp_{args.aspect_ratio_y:.3f}"
+            )
+        params.short_name_type_run = (
+            f"asp{args.aspect_ratio_y:.3f}_Ra_s{args.Ra_side:.3e}_Ra_v{args.Ra_vert:.3e}"
+            f"_Pr{args.Prandtl:.2f}_msh{nx*order}x{ny*order}"
+        )
+        if dim == 3:
+            params.short_name_type_run = (
+                f"Ay{args.aspect_ratio_y:.3f}_Az{args.aspect_ratio_z:.3f}_Ra_s"
+                f"{args.Ra_side:.3e}_Ra_v{args.Ra_vert:.3e}_Pr{args.Prandtl:.2f}"
+                f"_msh{nx*order}x{ny*order}x{nz*order}"
+            )
 
     params.nek.general.dt = args.dt_max
     params.nek.general.time_stepper = "BDF3"

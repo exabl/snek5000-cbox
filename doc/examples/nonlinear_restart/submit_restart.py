@@ -1,31 +1,26 @@
+import numpy as np
+from pathlib import Path
+
 from fluiddyn.clusters.legi import Calcul8 as Cluster
+from snek5000 import load
 
-
-dim = 2
-
-if dim == 3:
-    aspect_ratio_z = 1.0
-
-aspect_ratio_y = 0.5
 
 prandtl = 0.71
-Ra_side = 1.0
-Ra_vert = 0.0
+aspect = 1.0
 
-nx = 32
-order = 10
-stretch_factor = 0.0
+dim = 3
 
-end_time = 4000
-dt = 0.05
+dir_sim = f"/.fsnet/project/meige/2020/20CONVECTION/numerical/SW/{dim}D/NL_sim/Pr_{prandtl:.2f}/asp_{aspect:.3f}"
+path = Path(dir_sim)
+sim_dirs = sorted(path.glob(f"*Az4.000_Ra_s*"))
 
 nb_procs = 10
 nb_nodes = 1
 walltime = "24:00:00"
 
-x_periodicity = False
-y_periodicity = False
-z_periodicity = False
+path_sim = sim_dirs[0]
+
+sim = load(path_sim)
 
 cluster = Cluster()
 
@@ -39,33 +34,27 @@ cluster.commands_setting_env = [
     "export FLUIDSIM_PATH=$PROJET_DIR/numerical/",
 ]
 
-ny = int(nx * aspect_ratio_y)
-if nx * aspect_ratio_y - ny:
-    raise ValueError
-if dim == 3:
-    nz = int(ny / aspect_ratio_z)
-    if ny / aspect_ratio_z - nz:
-        raise ValueError
+command = f"run_restart.py --path-sim {path_sim} -np {nb_nodes*nb_procs}"
 
-command = (
-    f"run_simul_check_from_python.py -Pr {prandtl} -nx {nx} --dim {dim} "
-    f"--order {order} --dt-max {dt} --end-time {end_time} -np {nb_nodes*nb_procs} "
-    f"-a_y {aspect_ratio_y} --stretch-factor {stretch_factor}"
-)
+# print(command)
+
+Ra_side = sim.params.Ra_side
+Ra_vert = sim.params.Ra_vert
+
+prandtl = sim.params.prandtl
+
+aspect_ratio_y = sim.params.oper.aspect_ratio
 
 if dim == 3:
-    command += f" -a_z {aspect_ratio_z}"
-if x_periodicity:
-    command += " --x-periodicity"
-if y_periodicity:
-    command += " --y-periodicity"
-if z_periodicity:
-    command += " --z-periodicity"
+    aspect_ratio_z = sim.params.oper.aspect_ratio / sim.params.oper.Lz
 
+nx = sim.params.oper.nx
+ny = sim.params.oper.ny
+nz = sim.params.oper.nz
+
+order = sim.params.oper.elem.order
 
 if Ra_side > 0.0 and Ra_vert == 0.0:
-
-    command += f"--Ra-side {Ra_side}"
 
     name_run = (
         f"_Ay{aspect_ratio_y:.1f}_Ra{Ra_side:.3e}_Pr{prandtl:.2f}_msh{nx*order}x"
@@ -80,8 +69,6 @@ if Ra_side > 0.0 and Ra_vert == 0.0:
 
 elif Ra_side == 0.0 and Ra_vert > 0.0:
 
-    command += f"--Ra-vert {Ra_vert}"
-
     name_run = (
         f"_Ay{aspect_ratio_y:.1f}_Ra{Ra_vert:.3e}_Pr{prandtl:.2f}_msh{nx*order}x"
         f"{round(nx*aspect_ratio_y)*order}"
@@ -95,8 +82,6 @@ elif Ra_side == 0.0 and Ra_vert > 0.0:
 
 elif Ra_side > 0.0 and Ra_vert > 0.0:
 
-    command += f"--Ra-side {Ra_side} --Ra-vert {Ra_vert}"
-
     name_run = (
         f"_Ay{aspect_ratio_y:.1f}_Ras{Ra_side:.3e}_Rav{Ra_vert:.3e}_Pr{prandtl:.2f}_msh"
         f"{nx*order}x{round(nx*aspect_ratio_y)*order}"
@@ -105,9 +90,6 @@ elif Ra_side > 0.0 and Ra_vert > 0.0:
         name_run = (
             f"_Az{aspect_ratio_z:.1f}" + name_run + f"x{round(ny/aspect_ratio_z)*order}"
         )
-    name_run = "MC" + name_run
-
-print(command)
 
 cluster.submit_script(
     command,
