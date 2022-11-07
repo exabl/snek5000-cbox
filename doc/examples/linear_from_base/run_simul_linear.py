@@ -54,6 +54,9 @@ parser.add_argument(
     "-np", "--nb-mpi-procs", type=int, default=4, help="Number of MPI processes"
 )
 
+parser.add_argument(
+    "--restart-file", help="Path to base state file from SFD simulation"
+)
 
 def main(args):
 
@@ -79,7 +82,7 @@ def main(args):
 
     nx = params.oper.nx = args.nx
     ny = params.oper.ny = int(nx * args.aspect_ratio_y)
-    # nz = params.oper.nz = int(ny / args.aspect_ratio_z)
+    nz = params.oper.nz = int(ny / args.aspect_ratio_z)
 
     order = params.oper.elem.order = args.order
     params.oper.elem.order_out = order
@@ -91,17 +94,46 @@ def main(args):
         params.output.sub_directory = (
             f"SW/{dim}D/Lin_sim/Pr_{args.Prandtl:.2f}/asp_{args.aspect_ratio_y:.3f}"
         )
-        params.short_name_type_run = f"Lin_asp{args.aspect_ratio_y:.3f}_Ra_s{args.Ra_side:.3e}_Pr{args.Prandtl:.2f}"
+        params.short_name_type_run = (
+            f"Lin_asp{args.aspect_ratio_y:.3f}_Ra_s{args.Ra_side:.3e}_Pr{args.Prandtl:.2f}"
+            f"_msh{nx*order}x{ny*order}"
+        )
+        if dim == 3:
+            params.short_name_type_run = (
+                f"Lin_Ay{args.aspect_ratio_y:.3f}_Az{args.aspect_ratio_z:.3f}_Ra_s"
+                f"{args.Ra_side:.3e}_Pr{args.Prandtl:.2f}_msh{nx*order}x{ny*order}"
+                f"x{nz*order}"
+            )
+
     elif params.Ra_side == 0 and params.Ra_vert > 0:
         params.output.sub_directory = (
             f"RB/{dim}D/Lin_sim/Pr_{args.Prandtl:.2f}/asp_{args.aspect_ratio_y:.3f}"
         )
-        params.short_name_type_run = f"Lin_asp{args.aspect_ratio_y:.3f}_Ra_v{args.Ra_vert:.3e}_Pr{args.Prandtl:.2f}"
+        params.short_name_type_run = (
+            f"Lin_asp{args.aspect_ratio_y:.3f}_Ra_v{args.Ra_vert:.3e}_Pr{args.Prandtl:.2f}"
+            f"_msh{nx*order}x{ny*order}"
+        )
+        if dim == 3:
+            params.short_name_type_run = (
+                f"Lin_Ay{args.aspect_ratio_y:.3f}_Az{args.aspect_ratio_z:.3f}_Ra_s"
+                f"{args.Ra_vert:.3e}_Pr{args.Prandtl:.2f}_msh{nx*order}x{ny*order}"
+                f"x{nz*order}"
+            )
+
     elif params.Ra_side > 0 and params.Ra_vert > 0:
         params.output.sub_directory = (
             f"MC/{dim}D/Lin_sim/Pr_{args.Prandtl:.2f}/asp_{args.aspect_ratio_y:.3f}"
         )
-        params.short_name_type_run = f"Lin_asp{args.aspect_ratio_y:.3f}_Ra_s{args.Ra_side:.3e}_Ra_v{args.Ra_vert:.3e}_Pr{args.Prandtl:.2f}"
+        params.short_name_type_run = (
+            f"Lin_asp{args.aspect_ratio_y:.3f}_Ra_s{args.Ra_side:.3e}_Ra_v{args.Ra_vert:.3e}"
+            f"_Pr{args.Prandtl:.2f}_msh{nx*order}x{ny*order}"
+        )
+        if dim == 3:
+            params.short_name_type_run = (
+                f"Lin_Ay{args.aspect_ratio_y:.3f}_Az{args.aspect_ratio_z:.3f}_Ra_s"
+                f"{args.Ra_side:.3e}_Ra_v{args.Ra_vert:.3e}_Pr{args.Prandtl:.2f}"
+                f"_msh{nx*order}x{ny*order}x{nz*order}"
+            )
 
     params.nek.general.dt = args.dt_max
     params.nek.general.time_stepper = "BDF3"
@@ -111,7 +143,7 @@ def main(args):
 
     params.nek.general.write_control = "runTime"
     params.nek.general.write_interval = args.end_time
-    params.output.phys_fields.write_interval_pert_field = 50000.0
+    params.output.phys_fields.write_interval_pert_field = 2000.0
     params.output.history_points.write_interval = 200.0
 
     # params.nek.general.target_cfl = 2.0
@@ -119,7 +151,7 @@ def main(args):
 
     params.nek.general.start_from = "base_flow.restart"
 
-    restart_file = "./base_flow.restart"
+    restart_file = args.restart_file
 
     # creation of the coordinates of the points saved by history points
     n1d = 5
