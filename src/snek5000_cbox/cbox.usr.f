@@ -148,7 +148,7 @@
 
       delta_T_side = abs(UPARAM(5))
       delta_T_vert = abs(UPARAM(6))      
-      aspect_ratio = abs(UPARAM(8))
+      aspect_ratio = abs(UPARAM(8)) ! glmax causes hanging the simulation
             
       ymax = 1.
       xmax = ymax/aspect_ratio
@@ -212,7 +212,7 @@
 
       delta_T_side = abs(UPARAM(5))
       delta_T_vert = abs(UPARAM(6))
-      aspect_ratio = abs(UPARAM(8))
+      aspect_ratio = abs(UPARAM(8)) ! glmax causes hanging the simulation
       amplitude = 1e-5
             
       ymax = 1.
