@@ -142,7 +142,7 @@
       include 'SOLN'            
       include 'NEKUSE'
         
-      integer ntot
+
       real delta_T_side, delta_T_vert, aspect_ratio
       real xmax, ymax, dTs, dTv
 
@@ -206,7 +206,7 @@
       include 'GEOM'            
       include 'INPUT'
 
-      integer ntot
+
       real delta_T_side, delta_T_vert, amplitude, aspect_ratio
       real xmax, ymax, ran
 
