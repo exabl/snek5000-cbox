@@ -86,6 +86,7 @@ def main(args):
     params.oper.y_periodicity = args.y_periodicity
     params.oper.z_periodicity = args.z_periodicity
 
+    params.oper.aspect_ratio = args.aspect_ratio_y
     params.oper.mesh_stretch_factor = args.stretch_factor
     params.oper.enable_sfd = float(args.enable_sfd)
 

@@ -143,19 +143,15 @@
       include 'NEKUSE'
         
       integer ntot
-      real delta_T_side, delta_T_vert
+      real delta_T_side, delta_T_vert, aspect_ratio
       real xmax, ymax, dTs, dTv
 
       delta_T_side = abs(UPARAM(5))
-      delta_T_vert = abs(UPARAM(6))
+      delta_T_vert = abs(UPARAM(6))      
+      aspect_ratio = abs(UPARAM(8))
             
-      ntot = nx1*ny1*nz1*nelt
-
-      xmax = glmax(xm1,ntot)
-      ymax = glmax(ym1,ntot)
-      if (if3d) then
-            zmax = glmax(zm1,ntot)
-      endif
+      ymax = 1.
+      xmax = ymax/aspect_ratio
 
       dTs = delta_T_side/2.
       dTv = delta_T_vert/2.
@@ -211,20 +207,16 @@
       include 'INPUT'
 
       integer ntot
-      real delta_T_side, delta_T_vert, amplitude
+      real delta_T_side, delta_T_vert, amplitude, aspect_ratio
       real xmax, ymax, ran
 
       delta_T_side = abs(UPARAM(5))
       delta_T_vert = abs(UPARAM(6))
+      aspect_ratio = abs(UPARAM(8))
       amplitude = 1e-5
-
-      ntot = nx1*ny1*nz1*nelt
-
-      xmax = glmax(xm1,ntot)
-      ymax = glmax(ym1,ntot)
-      if (if3d) then
-            zmax = glmax(zm1,ntot)
-      endif
+            
+      ymax = 1.
+      xmax = ymax/aspect_ratio
 
       ! base flow
       if (JP.eq.0) then

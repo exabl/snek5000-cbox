@@ -6,7 +6,7 @@ from snek5000_cbox.solver import Simul
 
 params = Simul.create_default_params()
 
-aspect_ratio = 1.0
+aspect_ratio = params.oper.aspect_ratio = 1.0
 params.prandtl = 0.71
 
 params.Ra_side = 1.86e8
