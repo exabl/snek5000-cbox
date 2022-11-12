@@ -79,7 +79,7 @@ def test_simple_RB_nonconvective_simul():
 
     sim = Simul(params)
 
-    sim.make.exec("run_fg", resources={"nproc": 4})
+    sim.make.exec("run_fg", set_resources={"nproc": 4})
 
     sim = load(sim.path_run)
     coords, df = sim.output.history_points.load()
@@ -109,7 +109,7 @@ def test_simple_RB_convective_simul():
 
     sim = Simul(params)
 
-    sim.make.exec("run_fg", resources={"nproc": 4})
+    sim.make.exec("run_fg", set_resources={"nproc": 4})
 
     sim = load(sim.path_run)
     coords, df = sim.output.history_points.load()
@@ -140,7 +140,7 @@ def test_RB_linear_nonconvective_simul():
     params.oper.elem.staggered = "auto"
 
     sim = Simul(params)
-    sim.make.exec("run_fg", resources={"nproc": 4})
+    sim.make.exec("run_fg", set_resources={"nproc": 4})
 
     sim = load(sim.path_run)
     coords, df = sim.output.history_points.load()
@@ -169,7 +169,7 @@ def test_RB_linear_convective_simul():
     params.oper.elem.staggered = "auto"
 
     sim = Simul(params)
-    sim.make.exec("run_fg", resources={"nproc": 4})
+    sim.make.exec("run_fg", set_resources={"nproc": 4})
 
     sim = load(sim.path_run)
     coords, df = sim.output.history_points.load()

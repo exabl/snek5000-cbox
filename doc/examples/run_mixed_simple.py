@@ -74,4 +74,4 @@ params.output.history_points.write_interval = 10
 
 sim = Simul(params)
 
-sim.make.exec("run_fg", resources={"nproc": 4})
+sim.make.exec("run_fg", set_resources={"nproc": 4})

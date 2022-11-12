@@ -21,7 +21,7 @@ def main(args):
 
     sim = Simul(params)
 
-    sim.make.exec("run_fg", resources={"nproc": args.nb_mpi_procs})
+    sim.make.exec("run_fg", set_resources={"nproc": args.nb_mpi_procs})
 
     return params, sim
 

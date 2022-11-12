@@ -71,4 +71,4 @@ sim = Simul(params)
 
 copyfile(restart_file, sim.params.output.path_session / "base_flow.restart")
 
-sim.make.exec("run_fg", resources={"nproc": 4})
+sim.make.exec("run_fg", set_resources={"nproc": 4})

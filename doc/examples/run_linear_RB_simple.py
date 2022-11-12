@@ -68,4 +68,4 @@ params.short_name_type_run = f"lin_Ra{params.Ra_vert:.3e}_{nx*order}x{ny*order}"
 
 sim = Simul(params)
 
-sim.make.exec("run_fg", resources={"nproc": 4})
+sim.make.exec("run_fg", set_resources={"nproc": 4})

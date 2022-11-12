@@ -199,7 +199,7 @@ def main(args):
         custom_env_vars={"MPIEXEC_FLAGS": "--report-pid PID.txt"}
     )
 
-    sim.make.exec("run", resources={"nproc": args.nb_mpi_procs})
+    sim.make.exec("run", set_resources={"nproc": args.nb_mpi_procs})
     return params, sim
 
 
