@@ -279,7 +279,7 @@
 
       stretch_y = abs(UPARAM(4))
 
-      if (stretch_x.ne.0.0) then
+      if (stretch_y.ne.0.0) then
          ntot = nx1*ny1*nz1*nelt
 
          xmax = glmax(xm1,ntot)
