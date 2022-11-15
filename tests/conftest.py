@@ -74,7 +74,7 @@ def sim_cbox_executed():
             raise RuntimeError("cbox compilation failed")
 
     print("launching simulation with run_fg...")
-    ok = sim.make.exec("run_fg", resources={"nproc": 2})
+    ok = sim.make.exec("run_fg", nproc=2)
     print("content of cbox.log after run_fg:")
     with open(Path(sim.output.path_run) / "cbox.log") as file:
         print(file.read())

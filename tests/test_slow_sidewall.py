@@ -97,7 +97,7 @@ def test_SW_nonlinear():
 
     sim = Simul(params)
 
-    sim.make.exec("run_fg", resources={"nproc": 4})
+    sim.make.exec("run_fg", nproc=4)
 
     sim = load(sim.path_run)
     coords, df = sim.output.history_points.load()
@@ -141,7 +141,7 @@ def test_SW_linear_base_from_SFD():
 
     sim_sfd = Simul(params)
 
-    sim_sfd.make.exec("run_fg", resources={"nproc": 4})
+    sim.make.exec("run_fg", nproc=4)
 
     restart_file = sim_sfd.params.output.path_session / "cbox0.f00059"
 
@@ -164,7 +164,7 @@ def test_SW_linear_base_from_SFD():
 
     copyfile(restart_file, sim.params.output.path_session / "base_flow.restart")
 
-    sim.make.exec("run_fg", resources={"nproc": 4})
+    sim.make.exec("run_fg", nproc=4)
 
     sim = load(sim.path_run)
 
@@ -204,7 +204,7 @@ def test_SW_linear_base_provided():
 
     copyfile(restart_file, sim.params.output.path_session / "base_flow.restart")
 
-    sim.make.exec("run_fg", resources={"nproc": 4})
+    sim.make.exec("run_fg", nproc=4)
 
     growth_rate_linear = compute_growth_rate(sim)
 
