@@ -142,19 +142,16 @@
       include 'SOLN'            
       include 'NEKUSE'
         
-      integer ntot
       real delta_T_side, delta_T_vert
       real xmax, ymax, dTs, dTv
 
       delta_T_side = abs(UPARAM(5))
       delta_T_vert = abs(UPARAM(6))
-            
-      ntot = nx1*ny1*nz1*nelt
 
-      xmax = glmax(xm1,ntot)
-      ymax = glmax(ym1,ntot)
+      xmax = u_oper_lx
+      ymax = u_oper_ly
       if (if3d) then
-            zmax = glmax(zm1,ntot)
+            zmax = u_oper_lz
       endif
 
       dTs = delta_T_side/2.
@@ -210,7 +207,6 @@
       include 'GEOM'            
       include 'INPUT'
 
-      integer ntot
       real delta_T_side, delta_T_vert, amplitude
       real xmax, ymax, ran
 
@@ -218,12 +214,10 @@
       delta_T_vert = abs(UPARAM(6))
       amplitude = 1e-5
 
-      ntot = nx1*ny1*nz1*nelt
-
-      xmax = glmax(xm1,ntot)
-      ymax = glmax(ym1,ntot)
+      xmax = u_oper_lx
+      ymax = u_oper_ly
       if (if3d) then
-            zmax = glmax(zm1,ntot)
+            zmax = u_oper_lz
       endif
 
       ! base flow
