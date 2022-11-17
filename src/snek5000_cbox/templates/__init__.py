@@ -6,5 +6,10 @@ env = jinja2.Environment(
 )
 
 box = env.get_template("box.j2")
-size = env.get_template("SIZE.j2")
 makefile_usr = env.get_template("makefile_usr.inc.j2")
+
+env = jinja2.Environment(
+    loader=jinja2.PackageLoader("snek5000_cbox", "templates"),
+    undefined=jinja2.StrictUndefined,
+)
+size = env.get_template("SIZE.j2")
