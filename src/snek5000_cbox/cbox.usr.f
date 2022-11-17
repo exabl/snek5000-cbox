@@ -62,10 +62,13 @@
 !-----------------------------------------------------------------------
       subroutine userchk
 
+      implicit none
+
       include 'SIZE'
       include 'INPUT'
       include 'TSTEP'
       include 'SOLN'
+      include 'CHKPOINTD'  ! chpt_ifrst
 
       integer nxyz1, nxyz2, nit_pert, nit_hist
 
@@ -92,6 +95,9 @@
       ! finalise framework
       if (istep.eq.nsteps.or.lastep.eq.1) then
          call frame_end
+      else if (istep .eq. 0 .and. (.not. chpt_ifrst) ) then
+      ! first timestep which is not restarted
+         call outpost(vx, vy, vz, pr, t, '   ')  ! write initial condition
       endif
 
       ! perturbation field
