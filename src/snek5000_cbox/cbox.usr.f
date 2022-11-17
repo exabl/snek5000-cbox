@@ -1,9 +1,9 @@
 !-----------------------------------------------------------------------
       subroutine uservp (ix,iy,iz,ieg)
       include 'SIZE'
-      include 'NEKUSE'          
-      include 'INPUT'           
-      include 'TSTEP'           
+      include 'NEKUSE'
+      include 'INPUT'
+      include 'TSTEP'
 
       udiff = 0.
       utrans = 0.
@@ -13,11 +13,11 @@
 !-----------------------------------------------------------------------
       subroutine userf  (ix,iy,iz,ieg)
       include 'SIZE'
-      include 'NEKUSE'          
-      include 'PARALLEL'        
-      include 'SOLN'            
+      include 'NEKUSE'
+      include 'PARALLEL'
+      include 'SOLN'
       include 'INPUT'
-      include 'SFDD'           
+      include 'SFDD'
 
       integer ix, iy, iz, ieg, iel
       real rtmp, Pr_, enable_sfd
@@ -27,7 +27,7 @@
 
       ! local element number
       iel = GLLEL(ieg)
-      
+
       FFX = 0
       FFY = 0
       FFZ = 0
@@ -62,13 +62,13 @@
 !-----------------------------------------------------------------------
       subroutine userchk
 
-      include 'SIZE'            
-      include 'INPUT'           
-      include 'TSTEP'           
-      include 'SOLN'            
+      include 'SIZE'
+      include 'INPUT'
+      include 'TSTEP'
+      include 'SOLN'
 
       integer nxyz1, nxyz2, nit_pert, nit_hist
-      
+
       real vtmp(lx1*ly1*lz1*lelt,ldim),ttmp(lx1*ly1*lz1*lelt) ! temporary variables
       real ptmp(lx2*ly2*lz2*lelt), enable_sfd
 
@@ -87,7 +87,7 @@
       call chkpt_main
       if (enable_sfd.ne.0.0) then
          call sfd_main
-      endif   
+      endif
 
       ! finalise framework
       if (istep.eq.nsteps.or.lastep.eq.1) then
@@ -105,10 +105,10 @@
       ! history points
 
       ! we have two formulations for pressure solver
-      nxyz1 = nx1*ny1*nz1 ! velocity 
+      nxyz1 = nx1*ny1*nz1 ! velocity
       nxyz2 = nx2*ny2*nz2 ! pressure
-      
-      if (lhis.gt.1) then		
+
+      if (lhis.gt.1) then
          if (mod(ISTEP,nit_hist).eq.0) then
             if (.not. ifpert) then
                call hpts()
@@ -130,18 +130,18 @@
 
             endif
          endif
-      endif   
+      endif
 
       return
       end
 !-----------------------------------------------------------------------
       subroutine userbc (ix,iy,iz,iside,ieg)
       include 'SIZE'
-      include 'GEOM'            
+      include 'GEOM'
       include 'INPUT'
-      include 'SOLN'            
+      include 'SOLN'
       include 'NEKUSE'
-        
+
       real delta_T_side, delta_T_vert
       real xmax, ymax, dTs, dTv
 
@@ -159,20 +159,20 @@
 
       ! base flow
       if (JP.eq.0) then
-        
+
          ux = 0.
          uy = 0.
          uz = 0.
 
-         if (delta_T_side.ne.0.and.delta_T_vert.eq.0) then      
+         if (delta_T_side.ne.0.and.delta_T_vert.eq.0) then
             temp = delta_T_side * (x/xmax - 0.5)
-         elseif (delta_T_vert.ne.0.and.delta_T_side.eq.0) then          
+         elseif (delta_T_vert.ne.0.and.delta_T_side.eq.0) then
             temp = delta_T_vert * (0.5- y/ymax)
-         elseif (delta_T_side.ne.0.and.delta_T_vert.ne.0) then    
+         elseif (delta_T_side.ne.0.and.delta_T_vert.ne.0) then
             if (x.eq.0) then
                temp = -dTs
             elseif (x.eq.xmax) then
-               temp = dTs     
+               temp = dTs
             elseif(y.eq.0) then
                temp = dTv
             elseif (y.eq.ymax) then
@@ -182,9 +182,9 @@
             elseif (x.eq.0.and.y.eq.ymax) then
                temp = (-dTv-dTs)/2.
             elseif (x.eq.xmax.and.y.eq.0) then
-               temp = (dTs+dTv)/2.        
+               temp = (dTs+dTv)/2.
             elseif (x.eq.xmax.and.y.eq.ymax) then
-               temp = (dTs-dTv)/2.        
+               temp = (dTs-dTv)/2.
             endif
          endif
 
@@ -194,7 +194,7 @@
          ux = 0.
          uy = 0.
          uz = 0.
-         temp = 0.  
+         temp = 0.
       endif
 
       return
@@ -203,8 +203,8 @@
       subroutine useric (ix,iy,iz,ieg)
       include 'SIZE'
       include 'NEKUSE'
-      include 'SOLN'            
-      include 'GEOM'            
+      include 'SOLN'
+      include 'GEOM'
       include 'INPUT'
 
       real delta_T_side, delta_T_vert, amplitude
@@ -222,7 +222,7 @@
 
       ! base flow
       if (JP.eq.0) then
-        
+
          ux = 0.0
          uy = 0.0
          uz = 0.0
@@ -239,12 +239,12 @@
          elseif (delta_T_side.ne.0.and.delta_T_vert.eq.0) then
                 temp = delta_T_side * (x/xmax - 0.5) + temp
          endif
-            
+
       ! perturbation
       else
 
          ux = 0.0
-         uy = 0.0 
+         uy = 0.0
          uz = 0.0
 
          call random_number(temp)
@@ -263,8 +263,8 @@
 !-----------------------------------------------------------------------
       subroutine usrdat2
       include 'SIZE'
-      include 'GEOM'           
-      include 'INPUT'           
+      include 'GEOM'
+      include 'INPUT'
       include 'SOLN'
 
       integer i, ntot
@@ -288,21 +288,21 @@
          stretch_x = stretch_y*xmax
          if (if3d) then
              stretch_z = stretch_y*zmax
-         endif   
-            
+         endif
+
          do i=1,ntot
              xx = xm1(i,1,1,1)
              yy = ym1(i,1,1,1)
              xm1(i,1,1,1) = xx - (stretch_x * (sin(twopi*xx/xmax)))
              ym1(i,1,1,1) = yy - (stretch_y * (sin(twopi*yy/ymax)))
-            
+
              if (if3d) then
                  zz = zm1(i,1,1,1)
                  zm1(i,1,1,1) = zz - (stretch_z * (sin(twopi*zz/zmax)))
-             endif   
+             endif
          enddo
-      endif      
-      
+      endif
+
       return
       end
 !-----------------------------------------------------------------------
@@ -315,7 +315,7 @@
       implicit none
       include 'SIZE'
       include 'FRAMELP'
-      include 'INPUT' 
+      include 'INPUT'
 
       real enable_sfd
 
@@ -326,7 +326,7 @@
       call chkpt_register
       if (enable_sfd.ne.0.0) then
          call sfd_register
-      endif   
+      endif
 
       return
       end subroutine
@@ -335,7 +335,7 @@
       implicit none
       include 'SIZE'
       include 'FRAMELP'
-      include 'INPUT' 
+      include 'INPUT'
 
       real enable_sfd
 
@@ -345,7 +345,7 @@
       call chkpt_init
       if (enable_sfd.ne.0.0) then
          call sfd_init
-      endif   
+      endif
 
       return
       end subroutine
@@ -354,7 +354,7 @@
       implicit none
       include 'SIZE'
       include 'FRAMELP'
-      include 'INPUT' 
+      include 'INPUT'
 
       real enable_sfd
 
@@ -366,4 +366,3 @@
 
       return
       end subroutine
-
