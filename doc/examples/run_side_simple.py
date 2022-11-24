@@ -7,7 +7,7 @@ params = Simul.create_default_params()
 aspect_ratio = 1.0
 params.prandtl = 0.71
 
-# The onset of oscillatory flow for aspect ration 1.0 is at Ra_c = 1.825e8
+# The onset of oscillatory flow for aspect ratio 1.0 is at Ra_c = 1.825e8
 params.Ra_side = 1.86e8
 
 params.output.sub_directory = "examples_cbox/simple/SW"

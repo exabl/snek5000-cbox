@@ -1,7 +1,6 @@
 """
 To define environmental variable (in the terminal or in your .bashrc)
 use something like: export FLUIDSIM_PATH="/fsnet/project/meige/2020/20CONVECTION/numerical/"
-
 """
 
 import numpy as np
@@ -10,7 +9,7 @@ from snek5000_cbox.solver import Simul
 
 params = Simul.create_default_params()
 
-aspect_ratio =  1.0
+aspect_ratio = 1.0
 params.prandtl = 0.71
 
 # The onset of oscillatory flow for aspect ration 1.0 is at Ra_c = 1.825e8
@@ -78,4 +77,3 @@ params.output.history_points.write_interval = 10
 sim = Simul(params)
 
 sim.make.exec("run_fg", nproc=2)
-
