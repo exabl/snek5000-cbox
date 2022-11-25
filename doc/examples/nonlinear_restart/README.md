@@ -1,4 +1,4 @@
-In this directory, we have have the scripts to restart simulations on the clusters. For instance consider [submit_restart.py](https://github.com/snek5000/snek5000-cbox/blob/main/doc/examples/nonlinear_restart/submit_restart.py) script. We define the directory of simulation that we want to restart as:
+In this directory, we have the scripts to restart simulations on the clusters. For instance consider [submit_restart.py](https://github.com/snek5000/snek5000-cbox/blob/main/doc/examples/nonlinear_restart/submit_restart.py) script. We define the directory of simulation that we want to restart as:
 
 ```python
 prandtl = 0.71
