@@ -19,3 +19,7 @@ we have two possibilities to restart:
     ```python
     params, Simul = load_for_restart(args.path_sim, use_checkpoint=2)
     ```
+## List of scripts
+
+- submit_retart.py: Script to submit multiple restart on the clusters.
+- run_restart.py: Restart simualtion script.
