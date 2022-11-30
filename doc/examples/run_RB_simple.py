@@ -2,7 +2,6 @@ import numpy as np
 
 from snek5000_cbox.solver import Simul
 
-
 params = Simul.create_default_params()
 
 aspect_ratio = 1.0 / 6.0
