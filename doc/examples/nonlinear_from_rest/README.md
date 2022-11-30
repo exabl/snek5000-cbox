@@ -1,13 +1,9 @@
-# Nonlinear simulations
+# Nonlinear simulations from rest
 
-In this directory, we have different scripts to launch non-linear simulations on the
-clusters with initial condition defined in the
+In this directory, we have different scripts to launch nonlinear simulations on a
+cluster with initial condition defined in the
 [`cbox.usr.f`](https://github.com/snek5000/snek5000-cbox/blob/main/src/snek5000_cbox/cbox.usr.f)
-file. We mainly focus on the scripts to launch sidewall convection simulations. For
-instance, in the script
-[submit_multiple_sim_sidewall.py](https://github.com/snek5000/snek5000-cbox/blob/main/doc/examples/nonlinear_from_rest/submit_multiple_sim_sidewall.py), we first import the type of job scheduling on clusters using
-[fluiddyn](https://fluiddyn.readthedocs.io/en/latest/generated/fluiddyn.clusters.html),
-then we define the parameters of simulation.
+file.
 
 ## Computing the base state for linear studies
 
@@ -22,11 +18,17 @@ enable_sfd = True
 
 ## List of scripts
 
-- submit_multiple_sim_sidewall.py: Script to submit multiple non-linear sidewall convection simulations on the clusters.
-- submit_multiple_sim_RB.py: Script to submit multiple non-linear Rayleigh-Bénard convection simulations on the clusters.
-- submit_multiple_sim_mixed.py: Script to submit multiple non-linear mixed case convection simulations on the clusters.
-- run_simul.py: Non-linear simualtion script.
-- submit_1simul_check.py: Script to submit one non-linear simulation with check from python on the clusters.
-- submit_multiple_check_sidewall.py: Script to submit multiple non-linear sidewall convection simulations with check from python on the clusters.
-- submit_multiple_check_RB.py: Script to submit multiple non-linear Rayleigh-Bénard convection simulations with check from python on the clusters.
-- run_simul_check_from_python.py: Non-linear simualtion script with check from python.
+### Scripts defining and launching simulations
+
+- `run_simul.py`: nonlinear stimulation script,
+- `run_simul_check_from_python.py`: nonlinear simulation script with checks from python.
+
+### Scripts submitting simulations on a cluster
+
+- `submit_multiple_sim_sidewall.py`: submit `run_simul.py` for multiple sidewall convection simulations,
+- `submit_multiple_sim_RB.py`: submit `run_simul.py` for multiple Rayleigh-Bénard convection simulations,
+- `submit_multiple_sim_mixed.py`: submit `run_simul.py` for multiple mixed case convection simulations,
+
+- `submit_1simul_check.py`: submit `run_simul_check_from_python.py` for one simulation with checks from python,
+- `submit_multiple_check_sidewall.py`: submit `run_simul_check_from_python.py` for multiple sidewall convection simulations with checks from python,
+- `submit_multiple_check_RB.py`: submit `run_simul_check_from_python.py` for multiple Rayleigh-Bénard convection simulations with checks from python.

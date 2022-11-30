@@ -102,17 +102,16 @@ params.oper.enable_sfd = float(True)
 
 ### Directories
 
-- nonlinear_from_rest: Scripts to launch non-linear simulations on the computational clusters.
-- nonlinear_restart: Script to launch restart non-linear simulations on the computational clusters.
-- linear_from_base: Scripts to launch linear simulations on the computational clusters.
+- nonlinear_from_rest: scripts to launch non-linear simulations on the computational clusters,
+- nonlinear_restart: script to launch restart non-linear simulations on the computational clusters,
+- linear_from_base: scripts to launch linear simulations on the computational clusters.
 
-### Scripts
+### Files
 
-- base_flow_side_simple.restart: The computed base state for run_linear_side_simple.py script.
-- run_side_short.py: Script to launch a short non-linear sidewall convection simulation.
-- run_side_simple.py: Script to launch a non-linear sidewall convection simulation.
-- run_linear_side_simple.py: Script to launch a linear sidewall convection simulation with provided base state.
-- run_RB_simple.py: Script to launch a non-linear Rayleigh-Bénard convection simulation.
-- run_linear_RB_simple.py: Script to launch a linear Rayleigh-Bénard convection simulation.
-- run_mixed_simple.py: Script to launch a non-linear mixed case convection simulation.
-
+- `base_flow_side_simple.restart`: base state used in `run_linear_side_simple.py`, computed with `run_side_simple.py`,
+- `run_side_short.py`: launch a short non-linear sidewall convection simulation,
+- `run_side_simple.py`: launch a non-linear sidewall convection simulation,
+- `run_linear_side_simple.py`: launch a linear sidewall convection simulation with provided base state `base_flow_side_simple.restart`,
+- `run_RB_simple.py`: launch a non-linear Rayleigh-Bénard convection simulation,
+- `run_linear_RB_simple.py`: launch a linear Rayleigh-Bénard convection simulation (analytical base state),
+- `run_mixed_simple.py`: launch a non-linear mixed case convection simulation.
