@@ -72,4 +72,3 @@ sim = Simul(params)
 copyfile(restart_file, sim.params.output.path_session / "base_flow.restart")
 
 sim.make.exec("run_fg", nproc=4)
-
