@@ -5,3 +5,8 @@ using SFD method. We use the last written field file as base state:
 ```python
 restart_file = sorted(sim.output.path_session.glob("cbox0.f*"))[-1]
 ```
+
+## List of scripts
+
+- submit_multiple_lin_sim_sidewall.py: Script to submit multiple linear simulation from base state on the clusters.
+- run_simul_linear.py: Linear simualtion script.
