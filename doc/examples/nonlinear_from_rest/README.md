@@ -19,3 +19,14 @@ one needs to assign:
 ```python
 enable_sfd = True
 ```
+
+## List of scripts
+
+- submit_multiple_sim_sidewall.py: Script to submit multiple non-linear sidewall convection simulations on the clusters.
+- submit_multiple_sim_RB.py: Script to submit multiple non-linear Rayleigh-Bénard convection simulations on the clusters.
+- submit_multiple_sim_mixed.py: Script to submit multiple non-linear mixed case convection simulations on the clusters.
+- run_simul.py: Non-linear simualtion script.
+- submit_1simul_check.py: Script to submit one non-linear simulation with check from python on the clusters.
+- submit_multiple_check_sidewall.py: Script to submit multiple non-linear sidewall convection simulations with check from python on the clusters.
+- submit_multiple_check_RB.py: Script to submit multiple non-linear Rayleigh-Bénard convection simulations with check from python on the clusters.
+- run_simul_check_from_python.py: Non-linear simualtion script with check from python.
