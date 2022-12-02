@@ -2,7 +2,8 @@ import numpy as np
 from pathlib import Path
 
 from fluiddyn.clusters.legi import Calcul8 as Cluster
-from snek5000 import load
+from snek5000 import load_params
+from snek5000.make import unlock
 
 
 prandtl = 0.71
@@ -23,7 +24,8 @@ walltime = "24:00:00"
 
 path_sim = sim_dirs[0]
 
-sim = load(path_sim)
+params = load_params(path_sim)
+# unlock(path_sim)
 
 cluster = Cluster()
 
@@ -37,25 +39,25 @@ cluster.commands_setting_env = [
     "export FLUIDSIM_PATH=$PROJET_DIR/numerical/",
 ]
 
-command = f"run_restart.py --path-sim {path_sim} -np {nb_nodes*nb_procs}"
+command = f"snek-restart {path_sim} -np {nb_nodes*nb_procs} --use-checkpoint 2"
 
 # print(command)
 
-Ra_side = sim.params.Ra_side
-Ra_vert = sim.params.Ra_vert
+Ra_side = params.Ra_side
+Ra_vert = params.Ra_vert
 
-prandtl = sim.params.prandtl
+prandtl = params.prandtl
 
-aspect_ratio_y = sim.params.oper.Ly / sim.params.oper.Lx
+aspect_ratio_y = params.oper.Ly / params.oper.Lx
 
 if dim == 3:
-    aspect_ratio_z = sim.params.oper.Ly / sim.params.oper.Lz
+    aspect_ratio_z = params.oper.Ly / params.oper.Lz
 
-nx = sim.params.oper.nx
-ny = sim.params.oper.ny
-nz = sim.params.oper.nz
+nx = params.oper.nx
+ny = params.oper.ny
+nz = params.oper.nz
 
-order = sim.params.oper.elem.order
+order = params.oper.elem.order
 
 if Ra_side > 0.0 and Ra_vert == 0.0:
 
@@ -94,7 +96,7 @@ elif Ra_side > 0.0 and Ra_vert > 0.0:
             f"_Az{aspect_ratio_z:.1f}" + name_run + f"x{round(ny/aspect_ratio_z)*order}"
         )
 
-cluster.submit_script(
+cluster.submit_command(
     command,
     name_run=name_run,
     walltime=walltime,

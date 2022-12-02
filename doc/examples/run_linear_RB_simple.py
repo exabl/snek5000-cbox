@@ -1,5 +1,4 @@
 import numpy as np
-from shutil import copyfile
 
 from snek5000_cbox.solver import Simul
 
