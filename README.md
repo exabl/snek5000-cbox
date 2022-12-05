@@ -15,7 +15,7 @@ differentially heated and cooled convective box with
 
 ## Install
 
-```
+```bash
 pip install snek5000-cbox
 ```
 
