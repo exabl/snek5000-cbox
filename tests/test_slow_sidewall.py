@@ -141,7 +141,7 @@ def test_SW_linear_base_from_SFD():
 
     sim_sfd = Simul(params)
 
-    sim.make.exec("run_fg", nproc=4)
+    sim_sfd.make.exec("run_fg", nproc=4)
 
     restart_file = sim_sfd.params.output.path_session / "cbox0.f00059"
 
