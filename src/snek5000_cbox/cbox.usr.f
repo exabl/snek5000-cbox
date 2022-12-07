@@ -80,7 +80,9 @@
       enable_sfd = UPARAM(7)
 
       if (ISTEP.eq.0) then
-         ! TIME = 0
+         if (IFPERT) then
+            TIME = 0
+         endif   
       ! start framework
          call frame_start
       endif
