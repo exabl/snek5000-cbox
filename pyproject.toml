@@ -16,7 +16,8 @@ source = ["snek5000_cbox", "./tests"]
 data_file = ".coverage/coverage"
 omit = [
     "*/try_*.py",
-    "*/_old_*.py"
+    "*/_old_*.py",
+    "tests/test_slow_*.py",
 ]
 
 [tool.coverage.report]

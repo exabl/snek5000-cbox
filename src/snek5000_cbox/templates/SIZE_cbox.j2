@@ -1,0 +1,9 @@
+{% extends 'SIZE.j2' %}
+
+{% block user_size %}
+      ! USER SPECIFIED: u_ prefix added to avoid name clash
+      real u_oper_lx, u_oper_ly, u_oper_lz
+      {{ parameter("u_oper_lx", params.oper.Lx) }}  ! length of box in x direction
+      {{ parameter("u_oper_ly", params.oper.Ly) }}  ! length of box in y direction
+      {{ parameter("u_oper_lz", params.oper.Lz) }}  ! length of box in z direction
+{% endblock %}
