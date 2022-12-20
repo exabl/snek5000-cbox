@@ -27,20 +27,15 @@ class SimulCbox(SimulKTH):
     InfoSolver = InfoSolverCbox
 
     @classmethod
-    def _complete_params_with_default(cls, params):
-        """Add missing default parameters."""
-        params = super()._complete_params_with_default(params)
-        params._set_attribs({"prandtl": 0.71, "Ra_side": 0.0, "Ra_vert": 0.0})
-        params._record_nek_user_params({"prandtl": 1, "Ra_side": 2, "Ra_vert": 3})
-        return params
-
-    @classmethod
     def create_default_params(cls):
         """Set default values of parameters as given in reference
         implementation.
 
         """
         params = super().create_default_params()
+
+        params._set_attribs({"prandtl": 0.71, "Ra_side": 0.0, "Ra_vert": 0.0})
+        params._record_nek_user_params({"prandtl": 1, "Ra_side": 2, "Ra_vert": 3})
 
         params.oper.nproc_min = 2
 
