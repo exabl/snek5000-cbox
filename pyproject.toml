@@ -1,6 +1,13 @@
 [build-system]
-requires = ["setuptools>=49.5.0", "wheel"]
+requires = [
+    "setuptools>=49.5.0",
+    "wheel",
+    "setuptools_scm[toml]>=7.0.0",
+    ]
 build-backend = "setuptools.build_meta"
+
+[tool.setuptools_scm]
+write_to = "src/snek5000_cbox/_version.py"
 
 [tool.pytest.ini_options]
 addopts = "--cov --cov-config=pyproject.toml --no-cov-on-fail"
