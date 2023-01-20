@@ -134,3 +134,5 @@ dmypy.json
 **/*.findent.tmp
 
 **/.vscode/*
+
+src/snek5000_cbox/_version.py
