@@ -8,7 +8,7 @@
 
 - `compute_growth_frequency_linear_KE.py`: function for computing the growth rate of the linear mode.
 
--`save_base_flows.py`: save the base states,
+- `save_base_flows.py`: save the base states,
 
 - `find_jet.py`: function for finding the length of oscillation of plume,
 
