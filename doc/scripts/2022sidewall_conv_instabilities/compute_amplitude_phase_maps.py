@@ -21,6 +21,7 @@ dir_save = "/.fsnet/project/meige/2020/20CONVECTION/numerical/SW/2D/Lin_sim"
 
 # Load simulation and data
 sim = load(dir_sim)
+# index depends on the simulation dumped files `p01cbox0.f0*
 fields = sim.output.phys_fields.load(prefix="p01", index="0017*")
 field_base = sim.output.phys_fields.load()
 

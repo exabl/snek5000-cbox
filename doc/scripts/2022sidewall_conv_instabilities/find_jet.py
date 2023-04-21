@@ -1,4 +1,4 @@
-def find_jet_legths(field_base, prandtl, aspect_ratio):
+def find_jet_lengths(field_base, prandtl, aspect_ratio):
     """
     Computes the horizontal and vertical lengths of a jet in a 2D thermal convection simulation.
 
