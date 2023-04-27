@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 from fluiddyn.util import has_to_be_made as _has_to_be_made
 
-path_base = 'path to directory of datasets'
+path_base = "path to directory of datasets"
 
 here = Path(__file__).absolute().parent
 tmp_dir = here.parent / "tmp"
