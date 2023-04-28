@@ -1,4 +1,8 @@
-## List of scripts to produce figures
+# Producing figures and supplementary material
+
+In this directory, we have the scripts to produce figures and supplementary material from datasets.
+
+## List of scripts
 
 - `util.py`: utilities for producing the figures; one needs to define the path of datasets in this script. 
 

@@ -1,8 +1,12 @@
+# Creating datasets
+
+In this directory, we have the scripts to create datasets.
+
 - The base states are computed from launching [`submit_multiple_sim_sidewall.py`](https://github.com/snek5000/snek5000-cbox/blob/main/doc/examples/nonlinear_from_rest/submit_multiple_sim_sidewall.py) with `enable_sfd = True`. 
 
 - The linear simulations are performed using [submit_multiple_lin_sim_sidewall.py](https://github.com/snek5000/snek5000-cbox/blob/main/doc/examples/linear_from_base/submit_multiple_lin_sim_sidewall.py).
 
-## List of scripts to create datasets
+## List of scripts
 
 - `compute_amplitude_phase_maps.py`: save the amplitude, phase, frequency, and growth rate of the leading linear mode by defining the directory of the linear simulations,
 
